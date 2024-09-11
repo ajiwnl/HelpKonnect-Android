@@ -1,9 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.TestPush" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.HelpKonnectMobile" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.TestPush" parent="Base.Theme.TestPush" />
+    <style name="Theme.HelpKonnectMobile" parent="Base.Theme.HelpKonnectMobile" />
 </resources>

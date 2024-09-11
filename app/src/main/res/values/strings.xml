@@ -1,5 +1,18 @@
 <resources>
-    <string name="app_name">TestPush</string>
+    <string name="app_name">HelpKonnect-Mobile</string>
+    <string name="open">Open Nav</string>
+    <string name="close">Close Nav</string>
+
+    <!-- Terms and Conditions text --> Fragemnt text -->
+    <string name="appstart">&lt; Get Konnected &gt;</string>
+    <!-- Signin Fragment text -->
+    <string name="logintext">Let Help-Konnect help you to match the right care for you.</string>
+    <!-- ForgotPassword Fragment text -->
+    <string name="createacctext">Create new Account</string>
+    <string name="signuptext">Sign up to Continue</string>
+    <!-- ForgotPassword Fragment text -->
+    <string name="forgotpassword">Enter your email and we will send you a link to change your password</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
