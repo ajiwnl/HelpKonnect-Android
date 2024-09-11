@@ -1,14 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserSettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/userProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/userUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="User1"
+            android:textColor="@color/black"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userProfile" />
+
+        <TextView
+            android:id="@+id/userBio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.90"
+            android:text="It is what is it?"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userUsername" />
+
+        <ImageView
+            android:id="@+id/editUserProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/editusericon"
+            app:layout_constraintBottom_toBottomOf="@+id/userBio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userBio"
+            app:layout_constraintTop_toBottomOf="@+id/userUsername" />
+
+        <TextView
+            android:id="@+id/fullnametitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="30dp"
+            android:text="Full Name"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userBio" />
+
+        <TextView
+            android:id="@+id/agetitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Age"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/userfullname"
+            app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+
+        <TextView
+            android:id="@+id/gendertitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Gender"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/useragetitle"
+            app:layout_constraintTop_toBottomOf="@+id/useragetitle" />
+
+        <TextView
+            android:id="@+id/userfullname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kenneth James Macas"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@+id/fullnametitle"
+            app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
+
+        <TextView
+            android:id="@+id/useragetitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@+id/agetitle"
+            app:layout_constraintTop_toBottomOf="@+id/agetitle" />
+
+        <TextView
+            android:id="@+id/userage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="@+id/gendertitle"
+            app:layout_constraintTop_toBottomOf="@+id/gendertitle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
