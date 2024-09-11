@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/homenav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Home">
+
+        </item>
+        <item android:id="@+id/chatbotnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Chatbot">
+
+        </item>
+        <item android:id="@+id/facnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Facilities">
+
+        </item>
+        <item android:id="@+id/journalnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Journal">
+
+        </item>
+        <item android:id="@+id/locnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Location">
+
+        </item>
+        <item android:id="@+id/tracknav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Tracker">
+
+        </item>
+        <item android:id="@+id/resnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Resources">
+
+        </item>
+        <item android:id="@+id/comnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Community">
+
+        </item>
+        <item android:id="@+id/setnav"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Settings">
+
+        </item>
+    </group>
+</menu>
