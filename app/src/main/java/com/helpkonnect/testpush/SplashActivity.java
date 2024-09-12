@@ -1,10 +1,9 @@
 package com.helpkonnect.testpush;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -13,12 +12,16 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_splash);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        setContentView(R.layout.activity_uam_termsandcondition);
+
+
+        // Find and set up the "startapp" TextView
+        TextView startapp = findViewById(R.id.touseraccount);
+
+        // Set an OnClickListener for navigating to the UserAccountManagementActivity
+        startapp.setOnClickListener(v -> {
+            Intent tosignin = new Intent(SplashActivity.this, UserAccountManagementActivity.class);
+            startActivity(tosignin);
         });
     }
 }
