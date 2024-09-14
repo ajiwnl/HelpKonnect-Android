@@ -1,4 +1,4 @@
-package com.helpkonnect.testpush;
+package com.helpkonnect.mobileapp;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

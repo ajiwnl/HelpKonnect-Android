@@ -1,9 +1,7 @@
-package com.helpkonnect.testpush;
+package com.helpkonnect.mobileapp;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class UserAccountManagementActivity extends AppCompatActivity {
 

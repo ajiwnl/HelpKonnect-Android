@@ -1,4 +1,4 @@
-package com.helpkonnect.testpush;
+package com.helpkonnect.mobileapp;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.helpkonnect.testpush"
+    namespace = "com.helpkonnect.mobileapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.helpkonnect.testpush"
+        applicationId = "com.helpkonnect.mobileapp"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
