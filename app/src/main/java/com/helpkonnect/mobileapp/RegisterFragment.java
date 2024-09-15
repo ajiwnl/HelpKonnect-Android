@@ -28,6 +28,8 @@ public class RegisterFragment extends Fragment {
 
     private Button signup;
     private TextView login;
+    private View loaderView;
+
     private EditText emailEditText, passwordEditText, confirmPasswordEditText, usernameEditText;
     private RadioGroup radioGroup;
     private FirebaseAuth mAuth;
@@ -37,7 +39,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
-
+        loaderView = inflater.inflate(R.layout.custom_loader, container, false);
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -92,6 +94,8 @@ public class RegisterFragment extends Fragment {
             return;
         }
 
+        showLoader(true);
+
         // Check if the username or email already exists
         checkForDuplicateUsernameAndEmail(username, email, () -> {
             // Register user with Firebase Authentication
@@ -115,10 +119,13 @@ public class RegisterFragment extends Fragment {
                                             } else {
                                                 Toast.makeText(getContext(), "Failed to send verification email: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                             }
+
+                                            showLoader(false);
                                         });
                             }
                         } else {
                             Toast.makeText(getContext(), "Registration failed please see the details: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            showLoader(false);
                         }
                     });
         });
@@ -192,6 +199,20 @@ public class RegisterFragment extends Fragment {
         return password.matches(passwordPattern);
     }
 
+    private void showLoader(boolean show) {
+        TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
+
+        if (show) {
+            // Optionally change the text dynamically
+            loadingText.setText("Registering, please wait for a while...");
+            getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } else {
+            if (loaderView.getParent() != null) {
+                ((ViewGroup) loaderView.getParent()).removeView(loaderView);
+            }
+        }
+    }
 
 
 }
