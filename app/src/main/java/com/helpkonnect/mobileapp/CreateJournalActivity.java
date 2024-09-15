@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class CreateJournal extends AppCompatActivity {
+public class CreateJournalActivity extends AppCompatActivity {
 
     private ImageView backButton,saveButton,shareButton;
     private EditText journalTitle,journalSubtitle,journalNotes;

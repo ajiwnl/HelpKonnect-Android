@@ -13,7 +13,7 @@
         android:theme="@style/Theme.HelpKonnectMobile"
         tools:targetApi="31">
         <activity
-            android:name=".CreateJournal"
+            android:name=".CreateJournalActivity"
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
