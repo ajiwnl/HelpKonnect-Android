@@ -20,13 +20,12 @@ import java.util.Locale;
 
 public class CreateJournalActivity extends AppCompatActivity {
 
-    private ImageView backButton,saveButton,shareButton;
+    private ImageView backButton,saveButton,shareButton,journalImage;
     private EditText journalTitle,journalSubtitle,journalNotes;
     private TextView journalDate;
     private final Date DateToday = new Date();
     private final SimpleDateFormat DateTodayFormat = new SimpleDateFormat("EEEE, dd MMMM, yyyy", Locale.ENGLISH);
     private final String DateTodayString = DateTodayFormat.format(DateToday);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +51,9 @@ public class CreateJournalActivity extends AppCompatActivity {
         journalDate = findViewById(R.id.journalEntryDateTextView);
         journalDate.setText(DateTodayString);
 
+        //For Journal Image Uploads
+        journalImage = findViewById(R.id.journalEntryImage);
+
         backButton.setOnClickListener(v -> {
             finish();
         });
@@ -71,6 +73,8 @@ public class CreateJournalActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         });
+
+
 
     }
 }
