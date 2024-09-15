@@ -71,12 +71,12 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginTop="20dp"
-
+            android:inputType="text"
+            android:maxLines="1"
             android:background="@drawable/edittextdesign"
             android:drawableStart="@drawable/edittextusericon"
             android:ems="10"
             android:hint="Username"
-            android:inputType="textEmailAddress"
 
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
@@ -92,7 +92,8 @@
 
             android:background="@drawable/edittextdesign"
             android:ems="10"
-            android:inputType="textPassword"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
             android:hint="Email"
             android:drawableStart="@drawable/edittextemailicon"
             android:paddingStart="10dp"
@@ -111,7 +112,8 @@
 
             android:background="@drawable/edittextdesign"
             android:ems="10"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
+            android:maxLines="1"
             android:hint="Password"
 
             android:drawableStart="@drawable/edittextpasswordicon"
@@ -132,7 +134,8 @@
             android:drawableStart="@drawable/edittextpasswordicon"
             android:ems="10"
             android:hint="Confirm Password"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
+            android:maxLines="1"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
