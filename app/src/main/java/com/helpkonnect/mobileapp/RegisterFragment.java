@@ -76,21 +76,25 @@ public class RegisterFragment extends Fragment {
         // Validate input
         if (TextUtils.isEmpty(username)) {
             usernameEditText.setError("Username is required");
+            showLoader(false);
             return;
         }
 
         if (TextUtils.isEmpty(email)) {
             emailEditText.setError("Email is required");
+            showLoader(false);
             return;
         }
 
         if (!isValidPassword(password)) {
             passwordEditText.setError("Password must be at least 6 characters long, contain upper and lower case letters, a number, and a special character.");
+            showLoader(false);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             confirmPasswordEditText.setError("Passwords do not match");
+            showLoader(false);
             return;
         }
 
@@ -176,6 +180,7 @@ public class RegisterFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         usernameEditText.setError("Username is already taken.");
+                        showLoader(false);
                     } else {
                         // Check for duplicate email
                         db.collection("credentials")
@@ -184,6 +189,7 @@ public class RegisterFragment extends Fragment {
                                 .addOnCompleteListener(emailTask -> {
                                     if (emailTask.isSuccessful() && !emailTask.getResult().isEmpty()) {
                                         emailEditText.setError("Email is already in use.");
+                                        showLoader(false);
                                     } else {
                                         // No duplicates found, proceed with registration
                                         onSuccess.run();
