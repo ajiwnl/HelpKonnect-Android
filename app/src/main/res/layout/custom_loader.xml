@@ -18,6 +18,7 @@ android:gravity="center_vertical">
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:indeterminate="true"
+    android:indeterminateTint="@color/hkcolor"
     android:visibility="visible" />
 
 
@@ -26,7 +27,7 @@ android:gravity="center_vertical">
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginStart="15dp"
-    android:text="Registering, please wait for a while..."
+    android:text="Loading...lease wait for a while..."
     android:textColor="@android:color/white"
     android:textSize="16sp" />
 
