@@ -39,7 +39,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
-        loaderView = inflater.inflate(R.layout.custom_loader, container, false);
+        loaderView = inflater.inflate(R.layout.register_loader, container, false);
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -209,8 +209,6 @@ public class RegisterFragment extends Fragment {
         TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
 
         if (show) {
-            // Optionally change the text dynamically
-            loadingText.setText("Registering, please wait for a while...");
             getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } else {
