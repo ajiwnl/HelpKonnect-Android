@@ -5,8 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,13 +23,13 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
     }
 
     public static class Journal {
-        public final int imageResId;
+        public final String imageUrl;
         public final String title;
         public final String date;
         public final String preview;
 
-        public Journal(int imageResId, String title, String date, String preview) {
-            this.imageResId = imageResId;
+        public Journal(String imageUrl, String title, String date, String preview) {
+            this.imageUrl = imageUrl;
             this.title = title;
             this.date = date;
             this.preview = preview;
@@ -50,19 +53,16 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             journalDate = itemView.findViewById(R.id.journaldate);
             journalPreview = itemView.findViewById(R.id.journalpreview);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        onItemClick.onItemClick(journals.get(position));
-                    }
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClick.onItemClick(journals.get(position));
                 }
             });
         }
 
         public void bind(Journal journal) {
-            journalImage.setImageResource(journal.imageResId);
+            Picasso.get().load(journal.imageUrl).into(journalImage);
             journalTitle.setText(journal.title);
             journalDate.setText(journal.date);
             journalPreview.setText(journal.preview);
@@ -92,3 +92,4 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
         return journals.size();
     }
 }
+
