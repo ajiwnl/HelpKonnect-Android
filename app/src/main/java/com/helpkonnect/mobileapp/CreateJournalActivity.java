@@ -106,12 +106,13 @@ public class CreateJournalActivity extends AppCompatActivity {
         String notes = journalNotes.getText().toString().trim();
 
         if (title.isEmpty() || subtitle.isEmpty() || notes.isEmpty() || selectedImageUri == null) {
-            Toast.makeText(this, "Please fill in all fields and select an image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill in all fields and select an image.", Toast.LENGTH_SHORT).show();
             showLoader(false);
             return;
         }
 
-        // Upload the journal image to Firebase Storage
+        showLoader(true);
+
         StorageReference fileRef = storageReference.child("journal_images/" + System.currentTimeMillis() + ".jpg");
         fileRef.putFile(selectedImageUri).addOnSuccessListener(taskSnapshot -> {
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -128,15 +129,26 @@ public class CreateJournalActivity extends AppCompatActivity {
                         .add(journal)
                         .addOnSuccessListener(documentReference -> {
                             Toast.makeText(this, "Journal saved successfully", Toast.LENGTH_SHORT).show();
-                            showLoader(true);
+                            showLoader(false);
+                            finish();
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(this, "Error Saving Journal", Toast.LENGTH_SHORT).show();
+                            // Clear all fields after error
+                            journalTitle.setText("");
+                            journalSubtitle.setText("");
+                            journalNotes.setText("");
+                            journalImage.setImageDrawable(null);
                             showLoader(true);
                         });
             });
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error Uploading Image", Toast.LENGTH_SHORT).show();
+            // Clear all fields after error
+            journalTitle.setText("");
+            journalSubtitle.setText("");
+            journalNotes.setText("");
+            journalImage.setImageDrawable(null);
             showLoader(false);
         });
     }
