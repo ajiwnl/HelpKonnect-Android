@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="edit"
+        android:background="@android:color/transparent"
         android:gravity="top"
         android:hint="What's on your mind?"
         android:inputType="textMultiLine"
