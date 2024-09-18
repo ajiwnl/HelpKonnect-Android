@@ -5,47 +5,47 @@
 
     <group android:checkableBehavior="single">
         <item android:id="@+id/homenav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/homemenuicon"
             android:title="Home">
 
         </item>
-        <item android:id="@+id/chatbotnav"
-            android:icon="@mipmap/ic_launcher_round"
-            android:title="Chatbot">
 
+        <item android:id="@+id/chatbotnav"
+            android:icon="@drawable/chatbotmenuicon"
+            android:title="Chatbot">
         </item>
         <item android:id="@+id/facnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/facilitiesmenuicon"
             android:title="Facilities">
 
         </item>
         <item android:id="@+id/journalnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/journalmenuicon"
             android:title="Journal">
 
         </item>
         <item android:id="@+id/locnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/locmenuicon"
             android:title="Location">
 
         </item>
         <item android:id="@+id/tracknav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/trackmenuicon"
             android:title="Tracker">
 
         </item>
         <item android:id="@+id/resnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/resourcemenuicon"
             android:title="Resources">
 
         </item>
         <item android:id="@+id/comnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/communitymenuicon"
             android:title="Community">
 
         </item>
         <item android:id="@+id/setnav"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/appmenuicon"
             android:title="Settings">
 
         </item>

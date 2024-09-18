@@ -19,12 +19,9 @@ public class UserSettingsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_user_settings, container, false);
 
         // Set up the ImageView for editing profile
-        ImageView editProfile = rootView.findViewById(R.id.editUserProfile);
 
         // Handle edit profile click
-        editProfile.setOnClickListener(v ->
-                Toast.makeText(rootView.getContext(), "Cannot Edit Yet", Toast.LENGTH_SHORT).show()
-        );
+
 
         return rootView;
     }

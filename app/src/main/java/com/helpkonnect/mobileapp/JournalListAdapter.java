@@ -25,18 +25,38 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
     public static class Journal {
         public final String imageUrl;
         public final String title;
+        public final String subtitle;
         public final String date;
         public final String preview;
 
-        public Journal(String imageUrl, String title, String date, String preview) {
+        public Journal(String imageUrl, String title, String subtitle, String date, String preview) {
             this.imageUrl = imageUrl;
             this.title = title;
+            this.subtitle = subtitle;
             this.date = date;
             this.preview = preview;
         }
 
         public String getTitle() {
             return title;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+
+        public String getDate() {
+            return date;
+
+        }
+
+        public String getNotes() {
+            return preview;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
         }
     }
 

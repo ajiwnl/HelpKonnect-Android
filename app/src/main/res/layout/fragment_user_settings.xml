@@ -11,115 +11,187 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
-            android:id="@+id/userProfile"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:padding="20dp"
+            android:elevation="8dp"
+            android:background="@drawable/background_textoutput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/userUsername"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/userProfile"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/fullnametitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe Jr."
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/userProfile"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/userProfile"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/agetitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="He has no Bio to put"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:alpha="0.60"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/userProfile"
+                app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
+
+
+            <TextView
+                android:id="@+id/gendertitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Lives in Purok Kasambagan, San Nicolas"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userProfile" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:id="@+id/profileMenu"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="User1"
-            android:textColor="@color/black"
-            android:textSize="26sp"
-            android:textStyle="bold"
+            android:layout_marginTop="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@drawable/background_textoutput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userProfile" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/userBio"
-            android:layout_width="wrap_content"
+            <ImageView
+
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/userprofileicon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingStart="10dp"
+                android:layout_weight="1"
+                android:text="Profile"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/appModeMenu"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:alpha="0.90"
-            android:text="It is what is it?"
-            android:textSize="12sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@drawable/background_textoutput"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userUsername" />
+            app:layout_constraintTop_toBottomOf="@+id/profileMenu">
 
-        <ImageView
-            android:id="@+id/editUserProfile"
-            android:layout_width="wrap_content"
+            <ImageView
+
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/darkmodeicon" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingStart="10dp"
+                android:layout_weight="1"
+                android:text="Dark Mode"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/themeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:thumb="@drawable/switchthumb"
+                android:track="@drawable/switchtrack"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/logoutMenu"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/editusericon"
-            app:layout_constraintBottom_toBottomOf="@+id/userBio"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@drawable/background_textoutput"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/userBio"
-            app:layout_constraintTop_toBottomOf="@+id/userUsername" />
-
-        <TextView
-            android:id="@+id/fullnametitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="30dp"
-            android:text="Full Name"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="0.448"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userBio" />
+            app:layout_constraintTop_toBottomOf="@+id/appModeMenu">
 
-        <TextView
-            android:id="@+id/agetitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Age"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/userfullname"
-            app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+            <ImageView
 
-        <TextView
-            android:id="@+id/gendertitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="Gender"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/useragetitle"
-            app:layout_constraintTop_toBottomOf="@+id/useragetitle" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/logouticon" />
 
-        <TextView
-            android:id="@+id/userfullname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Kenneth James Macas"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="@+id/fullnametitle"
-            app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="Logout"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/useragetitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="20"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="@+id/agetitle"
-            app:layout_constraintTop_toBottomOf="@+id/agetitle" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/userage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Male"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="@+id/gendertitle"
-            app:layout_constraintTop_toBottomOf="@+id/gendertitle" />
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

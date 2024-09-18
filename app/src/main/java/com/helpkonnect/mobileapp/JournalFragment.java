@@ -50,9 +50,28 @@ public class JournalFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         journalList = new ArrayList<>();
-        adapter = new JournalListAdapter(journalList, journal ->
-                Toast.makeText(requireContext(), "Clicked: " + journal.getTitle(), Toast.LENGTH_SHORT).show()
-        );
+
+        //remove this after testing
+        //List<JournalListAdapter.Journal> journalList = new ArrayList<>();
+        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 1", "SubTitle 1","2024-09-08", "This is a preview of the journal entry 1."));
+        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 2", "SubTitle 2","2024-09-07", "This is a preview of the journal entry 2."));
+        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 3", "SubTitle 3","2024-09-06", "This is a preview of the journal entry 3."));
+        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 4","SubTitle 4" ,"2024-09-05", "This is a preview of the journal entry 4."));
+
+        adapter = new JournalListAdapter(journalList, journal -> {
+            Intent intent = new Intent(requireContext(), CreateJournalActivity.class);
+
+            // Pass the journal details for editing
+            intent.putExtra("isNewJournal", false);  // Set to false to indicate this is an edit
+            intent.putExtra("journalTitle", journal.getTitle());
+            intent.putExtra("journalSubtitle", journal.getSubtitle());
+            intent.putExtra("journalDate", journal.getDate());
+            intent.putExtra("journalNotes", journal.getNotes());
+            intent.putExtra("journalImageUrl", journal.getImageUrl());
+
+            startActivity(intent);
+        });
+
 
         journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
         journalCollections.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -64,6 +83,7 @@ public class JournalFragment extends Fragment {
         createJournalButton = rootView.findViewById(R.id.createjournalbutton);
         createJournalButton.setOnClickListener(v -> {
             Intent toCreateJournal = new Intent(requireContext(), CreateJournalActivity.class);
+            toCreateJournal.putExtra("isNewJournal", true);
             startActivity(toCreateJournal);
         });
 
@@ -90,13 +110,14 @@ public class JournalFragment extends Fragment {
                         journalList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String title = document.getString("title");
+                            String subtitle = document.getString("subtitle");
                             String date = document.getString("dateCreated");
                             String notes = document.getString("notes");
                             String imageUrl = document.getString("imageUrl");
                             String preview = (notes != null && notes.length() > 45) ? notes.substring(0, 45) + "..." : notes;
 
 
-                            JournalListAdapter.Journal journal = new JournalListAdapter.Journal(imageUrl, title, date, preview);
+                            JournalListAdapter.Journal journal = new JournalListAdapter.Journal(imageUrl, title, subtitle, date, preview);
                             journalList.add(journal);
                         }
                         showLoader(false);

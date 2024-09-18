@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
 
     <color name="clickabletext">#940CFF</color>
     <color name="hkcolor">#FFD7D2</color>
+
+    <color name="PrimaryLight">#DD6767</color>
+    <color name="SecondaryLight">#FDBEB6</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="PrimaryDark">#4ECDC4</color>
+    <color name="SecondaryDark">#292F36</color>
 
 </resources>
