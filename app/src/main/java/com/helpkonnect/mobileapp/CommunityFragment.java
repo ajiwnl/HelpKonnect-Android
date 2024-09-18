@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommunicationFragment extends Fragment {
+public class CommunityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_communication, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_community, container, false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.communitypostrecyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -32,24 +32,7 @@ public class CommunicationFragment extends Fragment {
                 "2 hrs ago",
                 "256 Comments"
         ));
-        posts.add(new CommunityListAdapter.CommunityPost(
-                R.drawable.edittextusericon,
-                "Micheal Johnson",
-                "This is the second post hello world",
-                R.drawable.editusericon,
-                25,
-                "3 hrs ago",
-                "20 Comments"
-        ));
-        posts.add(new CommunityListAdapter.CommunityPost(
-                R.drawable.edittextusericon,
-                "Mark Denver",
-                "This is the third post hello world",
-                R.drawable.editusericon,
-                5,
-                "4 hrs ago",
-                "22 Comments"
-        ));
+
 
         // Set adapter with click listener
         CommunityListAdapter adapter = new CommunityListAdapter(posts, post ->
@@ -60,4 +43,9 @@ public class CommunicationFragment extends Fragment {
 
         return rootView;
     }
+
+    private void fetchJournals(){
+
+    }
+
 }

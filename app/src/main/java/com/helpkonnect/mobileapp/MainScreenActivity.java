@@ -73,7 +73,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new ResourcesFragment());
             } else if (id == R.id.comnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Community", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new CommunicationFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new CommunityFragment());
             } else if (id == R.id.setnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Settings", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new UserSettingsFragment());

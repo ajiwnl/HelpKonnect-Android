@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreatePostActivity">
+
+    <ImageView
+        android:id="@+id/postingBackButton"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_margin="20dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:src="@drawable/backbuttonicon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/postingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:padding="5dp"
+        android:layout_margin="20dp"
+        android:text="Post"
+        android:focusable="true"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/postingContentsEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="edit"
+        android:gravity="top"
+        android:hint="What's on your mind?"
+        android:inputType="textMultiLine"
+        android:maxLines="10"
+        android:minLines="5"
+        android:padding="15dp"
+        android:scrollHorizontally="false"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postingBackButton" />
+
+    <ImageView
+        android:id="@+id/postingAddImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/edittextdesign"
+        android:contentDescription="Add Image"
+        android:elevation="10dp"
+        android:src="@drawable/addjournalimageicon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
