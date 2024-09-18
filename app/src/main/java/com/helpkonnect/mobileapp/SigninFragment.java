@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -106,6 +107,8 @@ public class SigninFragment extends Fragment {
                                 // Get the user's unique ID (userId)
                                 String userId = mAuth.getCurrentUser().getUid();
 
+                                updateUserSession(userId, true);
+
                                 // Update the last active timestamp for this user
                                 userActivity(userId);
                                 showLoader(true);
@@ -166,27 +169,21 @@ public class SigninFragment extends Fragment {
     //For User Activity:
     private void userActivity(String userId) {
         // Get the current time
-        Date now = new Date();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm:ss a z", Locale.getDefault());
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));  // Set timezone to UTC+8
-        String formattedDate = sdf.format(now);
-
-        // Also create a timestamp to use in the document ID
-        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        String timestamp = idSdf.format(now);
+        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
 
         // Prepare Firestore instance
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Create a map to hold the lastActive field with the formatted date
+        // Create a map to hold the lastActive field with the Timestamp
         Map<String, Object> data = new HashMap<>();
-        data.put("lastActive", formattedDate);
+        data.put("lastActive", currentTime);  // Use Timestamp object directly
 
         // Create a custom document ID using the userId and timestamp
+        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String timestamp = idSdf.format(new Date());  // Use current date for document ID
         String documentId = userId + "_" + timestamp;
 
-        // Add a new document with a custom ID (userId + timestamp) to the "useractivity" collection
+        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
         db.collection("userActivity")
                 .document(documentId)  // Use the custom document ID
                 .set(data)
@@ -201,6 +198,47 @@ public class SigninFragment extends Fragment {
     }
 
 
+    //For User Session
+    private void updateUserSession(String userId, boolean isActive) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("userSessions").document(userId);
+
+        // Create a map to hold the session data
+        Map<String, Object> sessionData = new HashMap<>();
+        if (isActive) {
+            sessionData.put("isActive", true);
+            sessionData.put("sessionStart", Timestamp.now());
+            sessionData.put("sessionEnd", FieldValue.delete()); // sessionEnd is not set on sign-in
+        } else {
+            sessionData.put("isActive", false);
+            sessionData.put("sessionEnd", Timestamp.now());
+        }
+
+        // Update the document
+        docRef.set(sessionData, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Session data updated successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update session data: " + e.getMessage());
+                });
+    }
+
+
+    //For Signout
+    /*private void signOutUser() {
+    FirebaseUser user = mAuth.getCurrentUser();
+    if (user != null) {
+        String userId = user.getUid();
+        // Update the user's session in Firestore
+        updateUserSession(userId, false);
+    }
+
+    mAuth.signOut();
+    Intent intent = new Intent(getContext(), LoginActivity.class);
+    startActivity(intent);
+}
+*/
 
 
 
