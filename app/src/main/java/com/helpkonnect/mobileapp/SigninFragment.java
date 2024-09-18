@@ -2,6 +2,7 @@ package com.helpkonnect.mobileapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class SigninFragment extends Fragment {
 
@@ -89,6 +102,12 @@ public class SigninFragment extends Fragment {
                             // Check if the user's email is verified
                             if (user.isEmailVerified()) {
                                 // If email is verified, navigate to Main Screen
+
+                                // Get the user's unique ID (userId)
+                                String userId = mAuth.getCurrentUser().getUid();
+
+                                // Update the last active timestamp for this user
+                                userActivity(userId);
                                 showLoader(true);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                 startActivity(intent);
@@ -142,6 +161,48 @@ public class SigninFragment extends Fragment {
             }
         }
     }
+
+
+    //For User Activity:
+    private void userActivity(String userId) {
+        // Get the current time
+        Date now = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm:ss a z", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Manila"));  // Set timezone to UTC+8
+        String formattedDate = sdf.format(now);
+
+        // Also create a timestamp to use in the document ID
+        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String timestamp = idSdf.format(now);
+
+        // Prepare Firestore instance
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create a map to hold the lastActive field with the formatted date
+        Map<String, Object> data = new HashMap<>();
+        data.put("lastActive", formattedDate);
+
+        // Create a custom document ID using the userId and timestamp
+        String documentId = userId + "_" + timestamp;
+
+        // Add a new document with a custom ID (userId + timestamp) to the "useractivity" collection
+        db.collection("userActivity")
+                .document(documentId)  // Use the custom document ID
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully created a new activity document
+                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
+                });
+    }
+
+
+
+
 
 }
 
