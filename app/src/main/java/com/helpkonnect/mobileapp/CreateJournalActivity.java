@@ -76,36 +76,6 @@ public class CreateJournalActivity extends AppCompatActivity {
             Toast.makeText(this, "Cannot Share Yet", Toast.LENGTH_SHORT).show();
         });
 
-        //Retrieve from intent for new or edit journal
-        Intent intent = getIntent();
-        boolean isNewJournal = intent.getBooleanExtra("isNewJournal", true);
-
-        if (isNewJournal) {
-            journalTitle.setText("");
-            journalSubtitle.setText("");
-            journalNotes.setText("");
-            journalDate.setText(DateTodayString); // Set current date
-
-            shareButton.setVisibility(View.GONE);
-
-        } else {
-            // Edit existing journal
-            String title = intent.getStringExtra("journalTitle");
-            String subtitle = intent.getStringExtra("journalSubtitle");
-            String date = intent.getStringExtra("journalDate");
-            String notes = intent.getStringExtra("journalNotes");
-            String imageUrl = intent.getStringExtra("journalImageUrl");
-
-            //idk pag set sa image
-            journalTitle.setText(title != null ? title : "");
-            journalSubtitle.setText(subtitle != null ? subtitle : "");
-            journalDate.setText(date != null ? date : "");
-            journalNotes.setText(notes != null ? notes : "");
-
-
-        }
-
-
     }
 
     private void openImagePicker() {

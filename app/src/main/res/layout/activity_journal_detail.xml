@@ -7,49 +7,141 @@
     android:layout_height="match_parent"
     tools:context=".JournalDetailActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView
+        android:id="@+id/journalBackButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/backbuttonicon"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/journalBackButton">
 
-        <TextView
-            android:id="@+id/detailJournalTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Journal Title"
-            android:textStyle="bold"
-            android:textSize="20sp"/>
-
-        <TextView
-            android:id="@+id/detailJournalSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Journal Subtitle"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/detailJournalDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Journal Date"
-            android:textSize="14sp"/>
-
-        <ImageView
-            android:id="@+id/detailJournalImage"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/detailJournalNotes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Journal Notes"
-            android:layout_marginTop="8dp"/>
+            <TextView
+                android:id="@+id/detailJournalTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Journal Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/detailJournalSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Journal Subtitle"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailJournalImage" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Created on: "
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/detailJournalDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Journal Date"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView"
+                app:layout_constraintStart_toEndOf="@+id/textView"
+                app:layout_constraintTop_toTopOf="@+id/textView" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailJournalTitle" />
+
+            <ImageView
+                android:id="@+id/detailJournalImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:maxHeight="200dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
+
+            <TextView
+                android:id="@+id/detailJournalNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginStart="10dp"
+                android:text="Journal Notes"
+                android:gravity="top"
+                android:minLines="5"
+                android:maxLines="10"
+                android:textSize="14sp"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/detailJournalSubtitle" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+    <ImageView
+        android:id="@+id/removeJournalButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_margin="18dp"
+        android:padding="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/background_textoutput"
+        android:src="@drawable/removebuttonicon"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/shareJournalDetailButton" />
+
+    <ImageView
+        android:id="@+id/shareJournalDetailButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:padding="8dp"
+        android:layout_margin="18dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/edittextsendicon"
+        android:background="@drawable/background_textoutput"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

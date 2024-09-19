@@ -9,9 +9,10 @@
 
     <ImageView
         android:id="@+id/journalBackButton"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_margin="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
         android:src="@drawable/backbuttonicon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,11 +20,11 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/journalBackButton">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/journalEntryContent"
@@ -34,62 +35,76 @@
                 android:id="@+id/journalEntryTitleEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@android:color/transparent"
                 android:hint="Journal Title"
+                android:maxLines="1"
+                android:paddingStart="5dp"
+                android:paddingEnd="10dp"
                 android:textColor="@color/black"
                 android:textSize="24sp"
-                android:maxLines="1"
-                android:background="@android:color/transparent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/journalEntryDateTextView" />
 
             <TextView
                 android:id="@+id/journalEntryDateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginStart="5dp"
+                android:padding="10dp"
                 android:alpha="0.50"
                 android:text="Month Day, Year"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/journalEntryTitleEditText" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/journalEntrySubtitleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:layout_margin="10dp"
                 android:hint="Journal Subtitle"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="20sp"
                 android:maxLines="1"
+                android:paddingStart="15dp"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:background="@android:color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/journalEntryDateTextView" />
+                app:layout_constraintTop_toBottomOf="@+id/journalEntryTitleEditText" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/edittextdesign"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/journalEntrySubtitleEditText" />
 
             <EditText
                 android:id="@+id/journalEntryNotesEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="15dp"
-                android:hint="What's on your mind?"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
                 android:gravity="top"
-                android:minLines="5"
+                android:hint="What's on your mind? Add a picture to commemorate your journey"
+                android:inputType="textMultiLine"
                 android:maxLines="10"
+                android:minLines="5"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:scrollHorizontally="false"
+                android:textColor="@color/black"
                 android:textSize="14sp"
-            android:textColor="@color/black"
-            android:inputType="textMultiLine"
-            android:scrollHorizontally="false"
-            android:background="@android:color/transparent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/journalEntrySubtitleEditText" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
 
             <ImageView
@@ -116,6 +131,7 @@
         android:focusable="true"
         android:background="@drawable/background_textoutput"
         android:src="@drawable/floatingactionbuttonaddicon"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/shareJournalButton" />
 
@@ -127,9 +143,9 @@
         android:layout_margin="18dp"
         android:clickable="true"
         android:focusable="true"
-
         android:src="@drawable/edittextsendicon"
         android:background="@drawable/background_textoutput"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
