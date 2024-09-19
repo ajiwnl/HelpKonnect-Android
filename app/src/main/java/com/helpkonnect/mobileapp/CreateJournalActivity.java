@@ -152,7 +152,7 @@ public class CreateJournalActivity extends AppCompatActivity {
                 journal.put("userId", userId);
                 journal.put("title", title);
                 journal.put("subtitle", subtitle);
-                journal.put("dateCreated", DateTodayString);
+                journal.put("dateCreated",  com.google.firebase.Timestamp.now());
                 journal.put("notes", notes);
                 journal.put("imageUrl", uri.toString());
 

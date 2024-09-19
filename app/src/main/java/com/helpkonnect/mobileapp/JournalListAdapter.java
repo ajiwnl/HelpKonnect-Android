@@ -9,9 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.JournalViewHolder> {
 
@@ -26,10 +30,10 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
         public final String imageUrl;
         public final String title;
         public final String subtitle;
-        public final String date;
+        public final Timestamp date;
         public final String preview;
 
-        public Journal(String imageUrl, String title, String subtitle, String date, String preview) {
+        public Journal(String imageUrl, String title, String subtitle, Timestamp date, String preview) {
             this.imageUrl = imageUrl;
             this.title = title;
             this.subtitle = subtitle;
@@ -46,7 +50,7 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
         }
 
 
-        public String getDate() {
+        public Timestamp getDate() {
             return date;
 
         }
@@ -76,15 +80,18 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    onItemClick.onItemClick(journals.get(position));
+                    Journal journal = journals.get(position);
+                    onItemClick.onItemClick(journal);
                 }
             });
+
         }
 
         public void bind(Journal journal) {
             Picasso.get().load(journal.imageUrl).into(journalImage);
             journalTitle.setText(journal.title);
-            journalDate.setText(journal.date);
+            String formattedDate = formatDate(journal.date);
+            journalDate.setText(formattedDate);
             journalPreview.setText(journal.preview);
         }
     }
@@ -110,6 +117,17 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
     @Override
     public int getItemCount() {
         return journals.size();
+    }
+
+    private static String formatDate(Timestamp timestamp) {
+        if (timestamp != null) {
+            // Convert Timestamp to Date
+            Date date = timestamp.toDate();
+            // Format the date as needed (e.g., "dd MMMM, yyyy")
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
+            return sdf.format(date);
+        }
+        return ""; // Return empty if timestamp is null
     }
 }
 

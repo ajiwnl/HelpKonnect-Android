@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,33 +49,24 @@ public class JournalFragment extends Fragment {
         loaderView = inflater.inflate(R.layout.initial_loader, container, false);
 
         db = FirebaseFirestore.getInstance();
-
         journalList = new ArrayList<>();
 
-        //remove this after testing
-        //List<JournalListAdapter.Journal> journalList = new ArrayList<>();
-        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 1", "SubTitle 1","2024-09-08", "This is a preview of the journal entry 1."));
-        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 2", "SubTitle 2","2024-09-07", "This is a preview of the journal entry 2."));
-        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 3", "SubTitle 3","2024-09-06", "This is a preview of the journal entry 3."));
-        //journalList.add(new JournalListAdapter.Journal("R.drawable.edittextusericon", "Journal Title 4","SubTitle 4" ,"2024-09-05", "This is a preview of the journal entry 4."));
+        // RecyclerView setup
+        journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
+        journalCollections.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // Initialize adapter with click listener to navigate to JournalDetailActivity
         adapter = new JournalListAdapter(journalList, journal -> {
-            Intent intent = new Intent(requireContext(), CreateJournalActivity.class);
-
-            // Pass the journal details for editing
-            intent.putExtra("isNewJournal", false);  // Set to false to indicate this is an edit
+            // Intent to pass journal data to the detail activity
+            Intent intent = new Intent(requireContext(), JournalDetailActivity.class);
             intent.putExtra("journalTitle", journal.getTitle());
             intent.putExtra("journalSubtitle", journal.getSubtitle());
             intent.putExtra("journalDate", journal.getDate());
             intent.putExtra("journalNotes", journal.getNotes());
             intent.putExtra("journalImageUrl", journal.getImageUrl());
-
             startActivity(intent);
         });
 
-
-        journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
-        journalCollections.setLayoutManager(new LinearLayoutManager(requireContext()));
         journalCollections.setAdapter(adapter);
 
         currentDateTextView = rootView.findViewById(R.id.currentdate);
@@ -87,7 +79,7 @@ public class JournalFragment extends Fragment {
             startActivity(toCreateJournal);
         });
 
-        fetchJournals();
+        fetchJournals(); // Load the journals
 
         return rootView;
     }
@@ -101,33 +93,36 @@ public class JournalFragment extends Fragment {
         String userId = user.getUid();
 
         showLoader(true);
+
         db.collection("journals")
                 .whereEqualTo("userId", userId)
                 .orderBy("dateCreated", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w("JournalFragment", "Listen failed.", e);
+                        Toast.makeText(requireContext(), "Error getting documents: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (snapshots != null) {
                         journalList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : snapshots) {
                             String title = document.getString("title");
                             String subtitle = document.getString("subtitle");
-                            String date = document.getString("dateCreated");
+                            Timestamp date = document.getTimestamp("dateCreated");
                             String notes = document.getString("notes");
                             String imageUrl = document.getString("imageUrl");
                             String preview = (notes != null && notes.length() > 45) ? notes.substring(0, 45) + "..." : notes;
-
 
                             JournalListAdapter.Journal journal = new JournalListAdapter.Journal(imageUrl, title, subtitle, date, preview);
                             journalList.add(journal);
                         }
                         showLoader(false);
                         adapter.notifyDataSetChanged();
-                    } else {
-                        Log.d("JournalFragment", "Error getting documents: " + task.getException().getMessage());
-                        Toast.makeText(requireContext(), "Error getting documents: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
     private void showLoader(boolean show) {
         TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
@@ -141,4 +136,6 @@ public class JournalFragment extends Fragment {
             }
         }
     }
+
+
 }

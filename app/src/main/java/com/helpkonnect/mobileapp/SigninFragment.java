@@ -225,22 +225,6 @@ public class SigninFragment extends Fragment {
     }
 
 
-    //For Signout
-    /*private void signOutUser() {
-    FirebaseUser user = mAuth.getCurrentUser();
-    if (user != null) {
-        String userId = user.getUid();
-        // Update the user's session in Firestore
-        updateUserSession(userId, false);
-    }
-
-    mAuth.signOut();
-    Intent intent = new Intent(getContext(), LoginActivity.class);
-    startActivity(intent);
-}
-*/
-
-
 
 }
 
