@@ -89,7 +89,7 @@ public class UserSettingsFragment extends Fragment {
         if (isActive) {
             sessionData.put("isActive", true);
             sessionData.put("sessionStart", Timestamp.now());
-            sessionData.put("sessionEnd", FieldValue.delete()); // sessionEnd is not set on sign-in
+            sessionData.put("sessionEnd", null);// sessionEnd is not set on sign-in
         } else {
             sessionData.put("isActive", false);
             sessionData.put("sessionEnd", Timestamp.now());
