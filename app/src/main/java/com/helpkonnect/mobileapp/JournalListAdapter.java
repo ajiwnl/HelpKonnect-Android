@@ -32,13 +32,16 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
         public final String subtitle;
         public final Timestamp date;
         public final String preview;
+        public final String documentId;
+        public String fullNotes;
 
-        public Journal(String imageUrl, String title, String subtitle, Timestamp date, String preview) {
+        public Journal(String imageUrl, String title, String subtitle, Timestamp date, String preview, String documentId) {
             this.imageUrl = imageUrl;
             this.title = title;
             this.subtitle = subtitle;
             this.date = date;
             this.preview = preview;
+            this.documentId = documentId;
         }
 
         public String getTitle() {
@@ -59,9 +62,19 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             return preview;
         }
 
+        public String getFullNotes() {
+            return fullNotes;
+        }
+
+        public void setFullNotes(String fullNotes) {
+            this.fullNotes = fullNotes;
+        }
+
         public String getImageUrl() {
             return imageUrl;
         }
+
+        public String getDocumentId() {return documentId;}
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {

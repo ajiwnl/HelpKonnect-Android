@@ -62,7 +62,15 @@ public class CreateJournalActivity extends AppCompatActivity {
         journalDate = findViewById(R.id.journalEntryDateTextView);
         journalImage = findViewById(R.id.journalEntryImage);
 
-        //journalDate.setText(DateTodayString);
+        //Get the current timestamp
+        com.google.firebase.Timestamp timestamp = com.google.firebase.Timestamp.now();
+
+        // Format the timestamp into a readable date string
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+        String formattedDate = sdf.format(timestamp.toDate());
+
+        // Set the formatted date to the journalDate TextView
+        journalDate.setText(formattedDate);
 
         backButton.setOnClickListener(v -> finish());
 

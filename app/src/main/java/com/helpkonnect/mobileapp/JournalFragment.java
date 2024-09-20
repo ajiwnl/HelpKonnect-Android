@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,10 +60,12 @@ public class JournalFragment extends Fragment {
         adapter = new JournalListAdapter(journalList, journal -> {
             // Intent to pass journal data to the detail activity
             Intent intent = new Intent(requireContext(), JournalDetailActivity.class);
+            intent.putExtra("journalId", journal.getDocumentId());
             intent.putExtra("journalTitle", journal.getTitle());
             intent.putExtra("journalSubtitle", journal.getSubtitle());
             intent.putExtra("journalDate", journal.getDate());
             intent.putExtra("journalNotes", journal.getNotes());
+            intent.putExtra("journalNotes", journal.getFullNotes());
             intent.putExtra("journalImageUrl", journal.getImageUrl());
             startActivity(intent);
         });
@@ -78,6 +81,14 @@ public class JournalFragment extends Fragment {
             toCreateJournal.putExtra("isNewJournal", true);
             startActivity(toCreateJournal);
         });
+
+        /*requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing, prevent back navigation
+                Toast.makeText(requireContext(), "Back button disabled", Toast.LENGTH_SHORT).show();
+            }
+        });*/
 
         fetchJournals(); // Load the journals
 
@@ -107,6 +118,7 @@ public class JournalFragment extends Fragment {
                     if (snapshots != null) {
                         journalList.clear();
                         for (QueryDocumentSnapshot document : snapshots) {
+                            String documentId = document.getId();
                             String title = document.getString("title");
                             String subtitle = document.getString("subtitle");
                             Timestamp date = document.getTimestamp("dateCreated");
@@ -114,7 +126,9 @@ public class JournalFragment extends Fragment {
                             String imageUrl = document.getString("imageUrl");
                             String preview = (notes != null && notes.length() > 45) ? notes.substring(0, 45) + "..." : notes;
 
-                            JournalListAdapter.Journal journal = new JournalListAdapter.Journal(imageUrl, title, subtitle, date, preview);
+                            // Create Journal object with both truncated preview and full notes
+                            JournalListAdapter.Journal journal = new JournalListAdapter.Journal(imageUrl, title, subtitle, date, preview, documentId);
+                            journal.setFullNotes(notes);  // Add a new field to store full notes
                             journalList.add(journal);
                         }
                         showLoader(false);
