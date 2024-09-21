@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserProfileActivity">
+
+    <ImageView
+        android:id="@+id/journalBackButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:src="@drawable/backbuttonicon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/journalBackButton"
+        app:layout_constraintEnd_toStartOf="@+id/profileEditButton"
+        app:layout_constraintStart_toEndOf="@+id/journalBackButton"
+        app:layout_constraintTop_toTopOf="@+id/profileEditButton" />
+
+    <Button
+        android:id="@+id/profileEditButton"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="@drawable/buttondesign"
+        android:text="EDIT"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/journalBackButton">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp">
+
+            <ImageView
+                android:id="@+id/userProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/userbio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Bio"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userProfile" />
+
+            <EditText
+                android:id="@+id/userBioEditText"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:padding="10dp"
+                android:text="What can you say about yourself?"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:enabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userbio" />
+
+            <TextView
+                android:id="@+id/fullnametitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="30dp"
+                android:padding="5dp"
+                android:text="Full Name"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userBioEditText" />
+
+            <EditText
+                android:id="@+id/userfullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:padding="7dp"
+                android:hint="Avdol Suliman"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="@+id/fullnametitle"
+                app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
+
+            <TextView
+                android:id="@+id/emailtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:padding="5dp"
+                android:text="User Email"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+
+            <EditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:padding="7dp"
+                android:hint="Avdol@Suliman.com"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="@+id/emailtitle"
+                app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
+
+            <TextView
+                android:id="@+id/userAddressTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:padding="5dp"
+                android:text="Address"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+
+            <EditText
+                android:id="@+id/houseUnitEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="House/Unit No., Building Name"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userAddressTitle" />
+
+            <EditText
+                android:id="@+id/streetEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Street Name"
+                android:padding="7dp"
+                android:paddingEnd="60dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/houseUnitEditText" />
+
+            <EditText
+                android:id="@+id/barangayEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Barangay"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintBottom_toBottomOf="@+id/streetEditText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/streetEditText"
+                app:layout_constraintTop_toTopOf="@+id/streetEditText" />
+
+            <EditText
+                android:id="@+id/cityEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Town/City/Municipality"
+                android:padding="7dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/streetEditText" />
+
+            <EditText
+                android:id="@+id/provinceEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Province"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintBottom_toBottomOf="@+id/cityEditText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cityEditText"
+                app:layout_constraintTop_toTopOf="@+id/cityEditText" />
+
+            <EditText
+                android:id="@+id/postalCodeEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Postal Code"
+                android:padding="7dp"
+                android:paddingEnd="20dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cityEditText" />
+
+            <EditText
+                android:id="@+id/countryEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Country"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:enabled="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/postalCodeEditText"
+                app:layout_constraintTop_toTopOf="@+id/postalCodeEditText" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
