@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.BuildConfig;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -25,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,21 +37,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import org.json.JSONException;
-import org.json.JSONObject;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.os.Looper;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 public class JournalFragment extends Fragment {
 
     private TextView currentDateTextView;
@@ -69,13 +59,13 @@ public class JournalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Set OpenWeather API Key
-        appid = getString(R.string.OpenWeatherApiKey);
         View rootView = inflater.inflate(R.layout.fragment_journal, container, false);
         loaderView = inflater.inflate(R.layout.initial_loader, container, false);
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
 
+        //Set OpenWeather API Key
+        appid = getString(R.string.OpenWeatherApiKey);
         currentTempTextView = rootView.findViewById(R.id.currentTemp);
         currentWeatherTextView = rootView.findViewById(R.id.currentWeather);
 
