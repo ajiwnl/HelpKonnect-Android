@@ -41,7 +41,7 @@ public class JournalFragment extends Fragment {
 
     private TextView currentDateTextView;
     private View loaderView;
-    private ImageView createJournalButton;
+    private ImageView createJournalButton, forWeatherIcon;
     private RecyclerView journalCollections;
     private List<JournalListAdapter.Journal> journalList;
     private JournalListAdapter adapter;
@@ -68,6 +68,7 @@ public class JournalFragment extends Fragment {
         appid = getString(R.string.OpenWeatherApiKey);
         currentTempTextView = rootView.findViewById(R.id.currentTemp);
         currentWeatherTextView = rootView.findViewById(R.id.currentWeather);
+        forWeatherIcon = rootView.findViewById(R.id.weatherIcon);
 
         // RecyclerView setup
         journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
@@ -187,7 +188,7 @@ public class JournalFragment extends Fragment {
                 JSONObject jsonResponse = new JSONObject(response);
                 JSONObject jsonObjectMain = jsonResponse.getJSONObject("main");
                 double temp = jsonObjectMain.getDouble("temp") - 273.15; // Convert Kelvin to Celsius
-                String suggestion = getSuggestion(temp); // Get suggestion based on temperature
+                String suggestion = weatherSuggestion(temp); // Get suggestion based on temperature
 
                 // Log temperature and suggestion
                 String output = "Temp: " + df.format(temp) + " °C" + "\nSuggestion: " + suggestion;
@@ -196,6 +197,8 @@ public class JournalFragment extends Fragment {
                 // Update TextViews with temp and suggestion
                 currentTempTextView.setText(df.format(temp) + " °C");
                 currentWeatherTextView.setText(suggestion);
+
+                updateWeatherIcon(temp, forWeatherIcon);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -207,7 +210,7 @@ public class JournalFragment extends Fragment {
     }
 
 
-    private String getSuggestion(double temp) {
+    private String weatherSuggestion(double temp) {
         String[] hotSuggestions = {
                 "Stay cool and hydrated!",
                 "Maybe it's time for some ice cream!",
@@ -276,6 +279,24 @@ public class JournalFragment extends Fragment {
 
         return suggestion;
     }
+
+    private void updateWeatherIcon(double temp, ImageView weatherIcon) {
+        int iconResId = R.drawable.default_icon;
+
+        if (temp > 30) {
+            iconResId = R.drawable.sun_icon;
+        } else if (temp > 24 && temp <= 30) {
+            iconResId = R.drawable.cloudy_icon;
+        } else if (temp >= 18 && temp <= 24) {
+            iconResId = R.drawable.rain_icon;
+        } else if (temp < 18) {
+            iconResId = R.drawable.cold_icon;
+        }
+
+        // Set the image resource to the ImageView
+        weatherIcon.setImageResource(iconResId);
+    }
+
 
 
 }
