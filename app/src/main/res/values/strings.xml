@@ -15,4 +15,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <!--Open Weather API Key-->
+    <string name="apiKey">fff8c220f176a99dd4ee4e0aa4ef5063</string>
+
 </resources>
