@@ -105,6 +105,7 @@ public class SigninFragment extends Fragment {
 
                                 // Get the user's unique ID (userId)
                                 String userId = mAuth.getCurrentUser().getUid();
+                                String username = user.getDisplayName();
 
                                 updateUserSession(userId, true);
 
@@ -113,6 +114,7 @@ public class SigninFragment extends Fragment {
 
                                 showLoader(true);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                intent.putExtra("USERNAME", username);
                                 startActivity(intent);
                             } else {
                                 // If email is not verified, sign out and notify the user

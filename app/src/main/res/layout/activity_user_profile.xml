@@ -8,7 +8,7 @@
     tools:context=".UserProfileActivity">
 
     <ImageView
-        android:id="@+id/journalBackButton"
+        android:id="@+id/profileBackButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="10dp"
@@ -25,9 +25,9 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/journalBackButton"
+        app:layout_constraintBottom_toBottomOf="@+id/profileBackButton"
         app:layout_constraintEnd_toStartOf="@+id/profileEditButton"
-        app:layout_constraintStart_toEndOf="@+id/journalBackButton"
+        app:layout_constraintStart_toEndOf="@+id/profileBackButton"
         app:layout_constraintTop_toTopOf="@+id/profileEditButton" />
 
     <Button
@@ -53,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/journalBackButton">
+        app:layout_constraintTop_toBottomOf="@+id/profileBackButton">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -93,7 +93,6 @@
                 android:text="What can you say about yourself?"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userbio" />
@@ -123,7 +122,6 @@
                 android:hint="Avdol Suliman"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="@+id/fullnametitle"
                 app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
 
@@ -152,7 +150,6 @@
                 android:hint="Avdol@Suliman.com"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="@+id/emailtitle"
                 app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
 
@@ -181,7 +178,6 @@
                 android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userAddressTitle" />
 
@@ -198,7 +194,6 @@
                 android:paddingEnd="60dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/houseUnitEditText" />
 
@@ -213,7 +208,6 @@
                 android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="@+id/streetEditText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/streetEditText"
@@ -231,7 +225,6 @@
                 android:paddingEnd="20dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/streetEditText" />
 
@@ -246,7 +239,6 @@
                 android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintBottom_toBottomOf="@+id/cityEditText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cityEditText"
@@ -264,7 +256,6 @@
                 android:paddingEnd="20dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cityEditText" />
 
@@ -279,7 +270,6 @@
                 android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/postalCodeEditText"
                 app:layout_constraintTop_toTopOf="@+id/postalCodeEditText" />

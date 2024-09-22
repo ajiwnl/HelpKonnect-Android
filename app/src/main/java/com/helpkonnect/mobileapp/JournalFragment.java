@@ -33,9 +33,12 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 public class JournalFragment extends Fragment {
 
@@ -52,6 +55,8 @@ public class JournalFragment extends Fragment {
     private final SimpleDateFormat DateTodayFormat = new SimpleDateFormat("dd MMMM, yyyy", Locale.ENGLISH);
     private final String DateTodayString = DateTodayFormat.format(DateToday);
 
+    private TextView userGreetingTextView;
+
     private final String url = "https://api.openweathermap.org/data/2.5/weather";
     private String appid;
     private DecimalFormat df = new DecimalFormat("#.##");
@@ -66,9 +71,12 @@ public class JournalFragment extends Fragment {
 
         //Set OpenWeather API Key
         appid = getString(R.string.OpenWeatherApiKey);
+
         currentTempTextView = rootView.findViewById(R.id.currentTemp);
         currentWeatherTextView = rootView.findViewById(R.id.currentWeather);
         forWeatherIcon = rootView.findViewById(R.id.weatherIcon);
+        userGreetingTextView = rootView.findViewById(R.id.userGreetings);
+
 
         // RecyclerView setup
         journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
@@ -114,6 +122,8 @@ public class JournalFragment extends Fragment {
             }
         });
 
+        setRandomGreeting();
+
         fetchJournals(); // Load the journals
 
         getWeatherDetails();
@@ -128,6 +138,8 @@ public class JournalFragment extends Fragment {
             return;
         }
         String userId = user.getUid();
+
+        userActivity(userId);
 
         showLoader(true);
 
@@ -297,6 +309,70 @@ public class JournalFragment extends Fragment {
         weatherIcon.setImageResource(iconResId);
     }
 
+    //For User Activity:
+    private void userActivity(String userId) {
+        // Get the current time
+        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
 
+        // Prepare Firestore instance
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Create a map to hold the lastActive field with the Timestamp
+        Map<String, Object> data = new HashMap<>();
+        data.put("lastActive", currentTime);  // Use Timestamp object directly
+
+        // Create a custom document ID using the userId and timestamp
+        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String timestamp = idSdf.format(new Date());  // Use current date for document ID
+        String documentId = userId + "_" + timestamp;
+
+        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
+        db.collection("userActivity")
+                .document(documentId)  // Use the custom document ID
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully created a new activity document
+                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
+                });
+    }
+
+    private void setRandomGreeting() {
+        // Get the current time
+        Calendar calendar = Calendar.getInstance();
+        int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+
+        // Greeting arrays for different times of day
+        String[] morningGreetings = {
+                "Good morning!", "Rise and shine!", "Morning sunshine!", "Hope you have a great day ahead!"
+        };
+        String[] afternoonGreetings = {
+                "Good afternoon!", "Hope you're having a productive day!", "Keep up the good work!"
+        };
+        String[] eveningGreetings = {
+                "Good evening!", "Hope you had a great day!", "Relax, you've earned it!"
+        };
+
+        Random random = new Random();
+        String selectedGreeting;
+
+        // Select greeting based on the current time
+        if (hourOfDay >= 5 && hourOfDay < 12) {
+            // Morning (5 AM to 12 PM)
+            selectedGreeting = morningGreetings[random.nextInt(morningGreetings.length)];
+        } else if (hourOfDay >= 12 && hourOfDay < 18) {
+            // Afternoon (12 PM to 6 PM)
+            selectedGreeting = afternoonGreetings[random.nextInt(afternoonGreetings.length)];
+        } else {
+            // Evening (6 PM to 5 AM)
+            selectedGreeting = eveningGreetings[random.nextInt(eveningGreetings.length)];
+        }
+
+        // Set the selected greeting to the TextView
+        userGreetingTextView.setText(selectedGreeting);
+    }
 }
+
