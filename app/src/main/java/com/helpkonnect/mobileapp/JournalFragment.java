@@ -70,7 +70,7 @@ public class JournalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Set OpenWeather API Key
-        appid = getString(R.string.apiKey);
+        appid = getString(R.string.OpenWeatherApiKey);
         View rootView = inflater.inflate(R.layout.fragment_journal, container, false);
         loaderView = inflater.inflate(R.layout.initial_loader, container, false);
         db = FirebaseFirestore.getInstance();
