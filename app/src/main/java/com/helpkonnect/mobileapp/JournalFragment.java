@@ -73,14 +73,20 @@ public class JournalFragment extends Fragment {
         journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
         journalCollections.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+
+
         // Initialize adapter with click listener to navigate to JournalDetailActivity
         adapter = new JournalListAdapter(journalList, journal -> {
+            //Convert Timestamp to String
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
+            String formattedDate = sdf.format(journal.getDate().toDate());
+
             // Intent to pass journal data to the detail activity
             Intent intent = new Intent(requireContext(), JournalDetailActivity.class);
             intent.putExtra("journalId", journal.getDocumentId());
             intent.putExtra("journalTitle", journal.getTitle());
             intent.putExtra("journalSubtitle", journal.getSubtitle());
-            intent.putExtra("journalDate", journal.getDate());
+            intent.putExtra("journalDate", formattedDate);
             intent.putExtra("journalNotes", journal.getNotes());
             intent.putExtra("journalNotes", journal.getFullNotes());
             intent.putExtra("journalImageUrl", journal.getImageUrl());
