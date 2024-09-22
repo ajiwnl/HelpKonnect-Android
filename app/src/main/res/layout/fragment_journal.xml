@@ -76,6 +76,17 @@
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
+                <ImageView
+                    android:id="@+id/weatherIcon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:padding="10dp"
+                    android:layout_marginStart="100dp"
+                    android:layout_toEndOf="@+id/currentTemp"
+                    android:background="@drawable/floatingactionbutton_weatherbg"
+                    android:elevation="8dp"
+                    android:layout_below="@id/currentdate"/>
+
                 <TextView
                     android:id="@+id/currentWeather"
                     android:layout_width="wrap_content"
