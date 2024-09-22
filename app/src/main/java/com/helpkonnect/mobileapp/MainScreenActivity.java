@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -14,6 +15,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private ActionBarDrawerToggle drawerToggle;
+    private TextView profileNameTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +24,6 @@ public class MainScreenActivity extends AppCompatActivity {
         enableEdgeToEdge();
         setContentView(R.layout.activity_main);
 
-
         // Initialize FragmentManager
         androidx.fragment.app.FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -30,6 +31,15 @@ public class MainScreenActivity extends AppCompatActivity {
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Retrieve the username from the Intent
+        String username = getIntent().getStringExtra("USERNAME");
+
+        profileNameTextView = findViewById(R.id.profile_name);
+        if (username != null && !username.isEmpty()) {
+            profileNameTextView.setText(username);
+        } else {
+            profileNameTextView.setText("Username001");
+        }
         // Setup DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);

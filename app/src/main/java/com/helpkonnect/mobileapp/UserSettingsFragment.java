@@ -1,19 +1,13 @@
 package com.helpkonnect.mobileapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import android.widget.LinearLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,7 +17,6 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -33,6 +26,7 @@ import java.util.Map;
 public class UserSettingsFragment extends Fragment {
 
     private FirebaseAuth mAuth;
+    private LinearLayout profileBtn;
 
     @Nullable
     @Override
@@ -42,6 +36,12 @@ public class UserSettingsFragment extends Fragment {
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        //Navigate to Profile Settings
+        rootView.findViewById(R.id.profileMenu).setOnClickListener(v -> {
+            Intent toProfileSettings = new Intent(getActivity(), UserProfileActivity.class);
+            startActivity(toProfileSettings);
+        });
 
         // Handle logout button click
         rootView.findViewById(R.id.logoutMenu).setOnClickListener(new View.OnClickListener() {

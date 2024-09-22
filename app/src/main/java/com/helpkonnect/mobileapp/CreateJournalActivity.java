@@ -3,6 +3,7 @@ package com.helpkonnect.mobileapp;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -120,8 +122,9 @@ public class CreateJournalActivity extends AppCompatActivity {
             return;
         }
 
-        showLoader(true);
 
+        showLoader(true);
+        userActivity(userId);
         StorageReference fileRef = storageReference.child("journal_images/" + System.currentTimeMillis() + ".jpg");
         fileRef.putFile(selectedImageUri).addOnSuccessListener(taskSnapshot -> {
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -174,6 +177,38 @@ public class CreateJournalActivity extends AppCompatActivity {
                 ((ViewGroup) loaderView.getParent()).removeView(loaderView);
             }
         }
+    }
+
+
+    //For User Activity:
+    private void userActivity(String userId) {
+        // Get the current time
+        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
+
+        // Prepare Firestore instance
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create a map to hold the lastActive field with the Timestamp
+        Map<String, Object> data = new HashMap<>();
+        data.put("lastActive", currentTime);  // Use Timestamp object directly
+
+        // Create a custom document ID using the userId and timestamp
+        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String timestamp = idSdf.format(new Date());  // Use current date for document ID
+        String documentId = userId + "_" + timestamp;
+
+        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
+        db.collection("userActivity")
+                .document(documentId)  // Use the custom document ID
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully created a new activity document
+                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
+                });
     }
 
 }
