@@ -2,15 +2,16 @@ package com.helpkonnect.mobileapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,16 +23,15 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class SigninFragment extends Fragment {
 
@@ -51,7 +51,6 @@ public class SigninFragment extends Fragment {
         loaderView = inflater.inflate(R.layout.signin_loader, container, false);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
         emailEditText = rootView.findViewById(R.id.emailEditText);
         passwordEditText = rootView.findViewById(R.id.passwordEditText);
         login = rootView.findViewById(R.id.signupbutton);
@@ -111,6 +110,7 @@ public class SigninFragment extends Fragment {
 
                                 // Update the last active timestamp for this user
                                 userActivity(userId);
+
                                 showLoader(true);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                 startActivity(intent);
@@ -223,10 +223,4 @@ public class SigninFragment extends Fragment {
                     Log.e("Firestore", "Failed to update session data: " + e.getMessage());
                 });
     }
-
-
-
 }
-
-//for push
-
