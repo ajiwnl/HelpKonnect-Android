@@ -58,7 +58,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp">
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp">
 
             <ImageView
                 android:id="@+id/userProfile"
@@ -90,7 +91,7 @@
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
                 android:padding="10dp"
-                android:text="What can you say about yourself?"
+                android:hint=" What can you say about yourself?"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -98,13 +99,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/userbio" />
 
             <TextView
-                android:id="@+id/fullnametitle"
+                android:id="@+id/firstnametextview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="30dp"
                 android:padding="5dp"
-                android:text="Full Name"
+                android:text="First Name"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -119,25 +120,54 @@
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
                 android:padding="7dp"
-                android:hint="Avdol Suliman"
+                android:hint="Avdol"
+                android:inputType="textPersonName"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/fullnametitle"
-                app:layout_constraintTop_toBottomOf="@+id/fullnametitle" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/firstnametextview" />
+
+            <TextView
+                android:id="@+id/lastnametextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Last Name"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+
+            <EditText
+                android:id="@+id/lastnameedittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Avdol"
+                android:inputType="textPersonName"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lastnametextview" />
+
 
             <TextView
                 android:id="@+id/emailtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
                 android:padding="5dp"
                 android:text="User Email"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+                app:layout_constraintTop_toBottomOf="@+id/lastnameedittext" />
 
             <EditText
                 android:id="@+id/emailEditText"
@@ -147,6 +177,7 @@
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
                 android:padding="7dp"
+                android:inputType="textEmailAddress"
                 android:hint="Avdol@Suliman.com"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -154,18 +185,47 @@
                 app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
 
             <TextView
+                android:id="@+id/profilepasswordtextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:padding="5dp"
+                android:text="Password"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+
+            <EditText
+                android:id="@+id/profilepasswordedittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="***********"
+                android:inputType="textPassword"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
+
+            <TextView
                 android:id="@+id/userAddressTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
                 android:padding="5dp"
                 android:text="Address"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+                app:layout_constraintTop_toBottomOf="@+id/profilepasswordedittext" />
 
             <EditText
                 android:id="@+id/houseUnitEditText"
@@ -254,6 +314,7 @@
                 android:hint="Postal Code"
                 android:padding="7dp"
                 android:paddingEnd="20dp"
+                android:inputType="textPostalAddress"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
