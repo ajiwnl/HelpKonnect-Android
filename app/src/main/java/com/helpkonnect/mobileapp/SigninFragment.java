@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -101,58 +102,62 @@ public class SigninFragment extends Fragment {
                         if (user != null) {
                             // Check if the user's email is verified
                             if (user.isEmailVerified()) {
-                                // If email is verified, navigate to Main Screen
+                                String userId = user.getUid();
 
-                                // Get the user's unique ID (userId)
-                                String userId = mAuth.getCurrentUser().getUid();
-                                String username = user.getDisplayName();
+                                // Fetch the username from Firestore
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                DocumentReference userDoc = db.collection("credentials").document(userId);
+                                userDoc.get().addOnCompleteListener(userTask -> {
+                                    if (userTask.isSuccessful()) {
+                                        DocumentSnapshot document = userTask.getResult();
+                                        if (document.exists()) {
+                                            // Get the username from the document
+                                            String username = document.getString("username");
 
-                                updateUserSession(userId, true);
+                                            updateUserSession(userId, true);
+                                            userActivity(userId);
 
-                                // Update the last active timestamp for this user
-                                userActivity(userId);
+                                            // Navigate to MainScreenActivity with the username
+                                            showLoader(true);
+                                            Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                            intent.putExtra("USERNAME", username); // Pass username to the next activity
+                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(getContext(), "Failed to fetch user data: " + userTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-                                showLoader(true);
-                                Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                intent.putExtra("USERNAME", username);
-                                startActivity(intent);
                             } else {
-                                // If email is not verified, sign out and notify the user
-                                mAuth.signOut();  // Sign out the user
+                                mAuth.signOut();
                                 showLoader(false);
                                 Toast.makeText(getContext(), "Please verify your email before logging in.", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }else {
-                        // Get the exception that occurred during sign-in
+                    } else {
+                        // Handle sign-in failures
                         Exception exception = task.getException();
                         if (exception instanceof FirebaseAuthInvalidUserException) {
-                            // This exception means the email does not exist in Firebase
                             Toast.makeText(getContext(), "User does not exist, please try again.", Toast.LENGTH_SHORT).show();
                         } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-                            // Handle credential errors
                             FirebaseAuthInvalidCredentialsException credentialException = (FirebaseAuthInvalidCredentialsException) exception;
                             String errorCode = credentialException.getErrorCode();
-
-                            // Check the specific error code to handle wrong password first
                             if (errorCode.equals("ERROR_WRONG_PASSWORD")) {
-                                // Email exists but the password is incorrect
                                 Toast.makeText(getContext(), "Wrong password, please try again.", Toast.LENGTH_SHORT).show();
                             } else if (errorCode.equals("ERROR_INVALID_EMAIL")) {
-                                // Invalid email format entered
                                 Toast.makeText(getContext(), "Invalid email format, please try again.", Toast.LENGTH_SHORT).show();
                             } else {
-                                // Handle any other credential errors
                                 Toast.makeText(getContext(), "Invalid email or password.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Handle any other types of exceptions
                             Toast.makeText(getContext(), "Sign in failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
-
                 });
     }
+
 
     private void showLoader(boolean show) {
         TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
