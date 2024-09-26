@@ -1,49 +1,74 @@
 package com.helpkonnect.mobileapp;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private ImageView journalBackButton, userProfile;
-    private Button profileEditButton;
-    private EditText userBioEditText, userfullname, emailEditText, houseUnitEditText, streetEditText, barangayEditText, cityEditText, provinceEditText, postalCodeEditText, countryEditText;
+    private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
+    private FirebaseFirestore firestore;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_user_profile);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Initialize views
+        userFirstNameTextView = findViewById(R.id.userfirstname);
+        userEmailTextView = findViewById(R.id.useremail);
+        userNameTextView = findViewById(R.id.username);
+        userLastNameTextView = findViewById(R.id.userlastname);
+        userBioTextView = findViewById(R.id.userbio);
+        userAddressTextView = findViewById(R.id.useraddress);
+
+        // Initialize Firebase Auth and Firestore
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            loadUserData(userId);
+        } else {
+            Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadUserData(String userId) {
+        DocumentReference userDocRef = firestore.collection("credentials").document(userId);
+        userDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Retrieve the user data
+                String firstName = documentSnapshot.getString("firstName");
+                String lastName = documentSnapshot.getString("lastName");
+                String username = documentSnapshot.getString("username");
+                String email = documentSnapshot.getString("email");
+                String bio = documentSnapshot.getString("bio");
+                String address = documentSnapshot.getString("address");
+
+                // Display the data in the corresponding TextViews
+                userFirstNameTextView.setText(firstName);
+                userLastNameTextView.setText(lastName);
+                userNameTextView.setText(username);
+                userEmailTextView.setText(email);
+                userBioTextView.setText(bio);
+                userAddressTextView.setText(address);
+            } else {
+                Toast.makeText(UserProfileActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(UserProfileActivity.this, "Failed to load user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
-
-
-        journalBackButton = findViewById(R.id.journalBackButton);
-        profileEditButton = findViewById(R.id.profileEditButton);
-
-        userProfile = findViewById(R.id.userProfile);
-        userBioEditText = findViewById(R.id.userBioEditText);
-        userfullname = findViewById(R.id.userfullname);
-        emailEditText = findViewById(R.id.emailEditText);
-
-        houseUnitEditText = findViewById(R.id.houseUnitEditText);
-        streetEditText = findViewById(R.id.streetEditText);
-        barangayEditText = findViewById(R.id.barangayEditText);
-        cityEditText = findViewById(R.id.cityEditText);
-        provinceEditText = findViewById(R.id.provinceEditText);
-        postalCodeEditText = findViewById(R.id.postalCodeEditText);
-        countryEditText = findViewById(R.id.countryEditText);
     }
 }

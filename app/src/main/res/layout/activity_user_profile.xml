@@ -63,15 +63,17 @@
 
             <ImageView
                 android:id="@+id/userProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="20dp"
+                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
+                android:src="@drawable/userprofileicon"/>
 
             <TextView
-                android:id="@+id/userbio"
+                android:id="@+id/userbiotitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -83,44 +85,44 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userProfile" />
 
-            <EditText
-                android:id="@+id/userBioEditText"
+            <TextView
+                android:id="@+id/userbio"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
                 android:padding="10dp"
-                android:hint=" What can you say about yourself?"
+                android:hint="No information given."
                 android:textAlignment="center"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userbio" />
+                app:layout_constraintTop_toBottomOf="@+id/userbiotitle" />
 
             <TextView
                 android:id="@+id/firstnametextview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="15dp"
                 android:padding="5dp"
                 android:text="First Name"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userBioEditText" />
+                app:layout_constraintTop_toBottomOf="@+id/userbio" />
 
-            <EditText
-                android:id="@+id/userfullname"
+            <TextView
+                android:id="@+id/userfirstname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
                 android:padding="7dp"
-                android:hint="Avdol"
+                android:hint="First Name"
                 android:inputType="textPersonName"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -138,16 +140,16 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userfullname" />
+                app:layout_constraintTop_toBottomOf="@+id/userfirstname" />
 
-            <EditText
-                android:id="@+id/lastnameedittext"
+            <TextView
+                android:id="@+id/userlastname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
-                android:hint="Avdol"
+                android:hint="Last Name"
                 android:inputType="textPersonName"
                 android:padding="7dp"
                 android:textColor="@color/black"
@@ -155,6 +157,33 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/lastnametextview" />
 
+            <TextView
+                android:id="@+id/usernametextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="5dp"
+                android:text="Username"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userlastname" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
+                android:hint="Username"
+                android:inputType="textPersonName"
+                android:padding="7dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/usernametextview" />
 
             <TextView
                 android:id="@+id/emailtitle"
@@ -167,10 +196,10 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lastnameedittext" />
+                app:layout_constraintTop_toBottomOf="@+id/username" />
 
-            <EditText
-                android:id="@+id/emailEditText"
+            <TextView
+                android:id="@+id/useremail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -178,7 +207,7 @@
                 android:background="@drawable/edittextdesign"
                 android:padding="7dp"
                 android:inputType="textEmailAddress"
-                android:hint="Avdol@Suliman.com"
+                android:hint="user@email.com"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@+id/emailtitle"
@@ -196,9 +225,9 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+                app:layout_constraintTop_toBottomOf="@+id/useremail" />
 
-            <EditText
+            <TextView
                 android:id="@+id/profilepasswordedittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -227,113 +256,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilepasswordedittext" />
 
-            <EditText
-                android:id="@+id/houseUnitEditText"
+            <TextView
+                android:id="@+id/useraddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
-                android:hint="House/Unit No., Building Name"
+                android:hint="House/Unit No., Building Name, Brgy, City..."
                 android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userAddressTitle" />
-
-            <EditText
-                android:id="@+id/streetEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Street Name"
-                android:padding="7dp"
-                android:paddingEnd="60dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/houseUnitEditText" />
-
-            <EditText
-                android:id="@+id/barangayEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Barangay"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/streetEditText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/streetEditText"
-                app:layout_constraintTop_toTopOf="@+id/streetEditText" />
-
-            <EditText
-                android:id="@+id/cityEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Town/City/Municipality"
-                android:padding="7dp"
-                android:paddingEnd="20dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/streetEditText" />
-
-            <EditText
-                android:id="@+id/provinceEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Province"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/cityEditText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cityEditText"
-                app:layout_constraintTop_toTopOf="@+id/cityEditText" />
-
-            <EditText
-                android:id="@+id/postalCodeEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Postal Code"
-                android:padding="7dp"
-                android:paddingEnd="20dp"
-                android:inputType="textPostalAddress"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cityEditText" />
-
-            <EditText
-                android:id="@+id/countryEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="Country"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/postalCodeEditText"
-                app:layout_constraintTop_toTopOf="@+id/postalCodeEditText" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
