@@ -1,59 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserProfileActivity">
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/profileBackButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:src="@drawable/backbuttonicon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/profileBackButton"
-        app:layout_constraintEnd_toStartOf="@+id/profileEditButton"
-        app:layout_constraintStart_toEndOf="@+id/profileBackButton"
-        app:layout_constraintTop_toTopOf="@+id/profileEditButton" />
-
-    <Button
-        android:id="@+id/profileEditButton"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:background="@drawable/buttondesign"
-        android:text="EDIT"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="10dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/saveButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileBackButton">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -67,10 +30,10 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
+                android:src="@drawable/userprofileicon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/userprofileicon"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/userbiotitle"
@@ -85,15 +48,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userProfile" />
 
-            <TextView
+            <EditText
                 android:id="@+id/userbio"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="80dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:maxHeight="90dp"
-                android:padding="10dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="No information given."
+                android:padding="10dp"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -114,15 +77,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userbio" />
 
-            <TextView
+            <EditText
                 android:id="@+id/userfirstname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:padding="7dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="First Name"
                 android:inputType="textPersonName"
+                android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -141,12 +105,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userfirstname" />
 
-            <TextView
+            <EditText
                 android:id="@+id/userlastname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="Last Name"
                 android:inputType="textPersonName"
                 android:padding="7dp"
@@ -168,12 +133,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userlastname" />
 
-            <TextView
+            <EditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="Username"
                 android:inputType="textPersonName"
                 android:padding="7dp"
@@ -195,15 +161,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/username" />
 
-            <TextView
+            <EditText
                 android:id="@+id/useremail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:padding="7dp"
-                android:inputType="textEmailAddress"
+                android:background="@drawable/edittextdesign"
                 android:hint="user@email.com"
+                android:inputType="textEmailAddress"
+                android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@+id/emailtitle"
@@ -223,12 +190,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/useremail" />
 
-            <TextView
+            <EditText
                 android:id="@+id/profilepasswordedittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="***********"
                 android:inputType="textPassword"
                 android:padding="7dp"
@@ -251,12 +219,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilepasswordedittext" />
 
-            <TextView
+            <EditText
                 android:id="@+id/useraddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
+                android:background="@drawable/edittextdesign"
                 android:hint="House/Unit No., Building Name, Brgy, City..."
                 android:padding="7dp"
                 android:textColor="@color/black"
@@ -268,5 +237,22 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttondesign"
+        android:text="Save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttondesign"
+        android:text="Cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,17 @@
 package com.helpkonnect.mobileapp;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,6 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class UserProfileActivity extends AppCompatActivity {
 
     private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
+    private Button editProfileButton;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -31,6 +39,8 @@ public class UserProfileActivity extends AppCompatActivity {
         userLastNameTextView = findViewById(R.id.userlastname);
         userBioTextView = findViewById(R.id.userbio);
         userAddressTextView = findViewById(R.id.useraddress);
+        editProfileButton = findViewById(R.id.profileEditButton);
+
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
@@ -43,6 +53,20 @@ public class UserProfileActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show();
         }
+
+        editProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEditProfileFragment();
+            }
+        });
+
+    }
+
+    private void showEditProfileFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        EditProfileDialogFragment editProfileFragment = new EditProfileDialogFragment();
+        editProfileFragment.show(fragmentManager, "EditProfile");
     }
 
     private void loadUserData(String userId) {
@@ -71,4 +95,6 @@ public class UserProfileActivity extends AppCompatActivity {
             Toast.makeText(UserProfileActivity.this, "Failed to load user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
+
 }
