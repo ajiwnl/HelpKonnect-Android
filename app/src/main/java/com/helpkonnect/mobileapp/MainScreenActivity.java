@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.OnBackPressedDispatcher;
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 public class MainScreenActivity extends AppCompatActivity {
 
@@ -16,6 +18,8 @@ public class MainScreenActivity extends AppCompatActivity {
     private NavigationView navView;
     private ActionBarDrawerToggle drawerToggle;
     private TextView profileNameTextView;
+
+    private ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,27 @@ public class MainScreenActivity extends AppCompatActivity {
 
         // Retrieve the username from the Intent
         String username = getIntent().getStringExtra("USERNAME");
-
+        String imageUrl = getIntent().getStringExtra("IMAGE_URL");
         profileNameTextView = findViewById(R.id.profile_name);
+        profileImageView = findViewById(R.id.profile_image);
+
         if (username != null && !username.isEmpty()) {
             profileNameTextView.setText(username);
         } else {
             profileNameTextView.setText("Username001");
         }
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            // Load the imageUrl into the ImageView using Picasso
+            Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.userprofileicon) // Fallback image while loading
+                    .error(R.drawable.userprofileicon) // Fallback image if there's an error
+                    .into(profileImageView);
+        } else {
+            profileImageView.setImageResource(R.drawable.userprofileicon); // Default icon
+        }
+
         // Setup DrawerLayout and NavigationView
         drawerLayout = findViewById(R.id.drawer_layout);
         navView = findViewById(R.id.nav_view);
@@ -96,6 +114,9 @@ public class MainScreenActivity extends AppCompatActivity {
 
     }
 
+    private void enableEdgeToEdge() {
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -105,9 +126,5 @@ public class MainScreenActivity extends AppCompatActivity {
             OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
             dispatcher.onBackPressed();
         }
-    }
-
-    private void enableEdgeToEdge() {
-        // You will need to implement this method for enabling edge-to-edge.
     }
 }
