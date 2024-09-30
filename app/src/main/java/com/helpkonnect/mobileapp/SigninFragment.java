@@ -113,6 +113,7 @@ public class SigninFragment extends Fragment {
                                         if (document.exists()) {
                                             // Get the username from the document
                                             String username = document.getString("username");
+                                            String imageUrl = document.getString("imageUrl");
 
                                             updateUserSession(userId, true);
                                             userActivity(userId);
@@ -120,7 +121,8 @@ public class SigninFragment extends Fragment {
                                             // Navigate to MainScreenActivity with the username
                                             showLoader(true);
                                             Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                            intent.putExtra("USERNAME", username); // Pass username to the next activity
+                                            intent.putExtra("USERNAME", username);
+                                            intent.putExtra("IMAGE_URL", imageUrl);
                                             startActivity(intent);
                                         } else {
                                             Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
