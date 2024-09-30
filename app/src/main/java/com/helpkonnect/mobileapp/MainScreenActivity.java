@@ -1,5 +1,6 @@
 package com.helpkonnect.mobileapp;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +21,9 @@ public class MainScreenActivity extends AppCompatActivity {
     private TextView profileNameTextView;
 
     private ImageView profileImageView;
+
+   private int strokeColor = Color.BLACK;
+    private int strokeWidth = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class MainScreenActivity extends AppCompatActivity {
             // Load the imageUrl into the ImageView using Picasso
             Picasso.get()
                     .load(imageUrl)
+                    .transform(new CircleTransform(strokeWidth, strokeColor))
                     .placeholder(R.drawable.userprofileicon) // Fallback image while loading
                     .error(R.drawable.userprofileicon) // Fallback image if there's an error
                     .into(profileImageView);

@@ -66,8 +66,20 @@ public class UserProfileActivity extends AppCompatActivity {
     private void showEditProfileFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         EditProfileDialogFragment editProfileFragment = new EditProfileDialogFragment();
+
+        // Pass user data to the fragment
+        Bundle bundle = new Bundle();
+        bundle.putString("firstName", userFirstNameTextView.getText().toString());
+        bundle.putString("lastName", userLastNameTextView.getText().toString());
+        bundle.putString("username", userNameTextView.getText().toString());
+        bundle.putString("email", userEmailTextView.getText().toString());
+        bundle.putString("bio", userBioTextView.getText().toString());
+        bundle.putString("address", userAddressTextView.getText().toString());
+        editProfileFragment.setArguments(bundle);
+
         editProfileFragment.show(fragmentManager, "EditProfile");
     }
+
 
     private void loadUserData(String userId) {
         DocumentReference userDocRef = firestore.collection("credentials").document(userId);
