@@ -145,8 +145,8 @@ public class RegisterFragment extends Fragment {
         user.put("email", email);
         user.put("role", role);
         user.put("dateCreated", formattedDate);
-        user.put("firstName", " ");
-        user.put("lastName", " ");
+        user.put("firstName", "");
+        user.put("lastName", "");
         user.put("bio", "No information given");
         user.put("imageUrl", "https://csassets.nintendo.com/noaext/image/private/f_auto/q_auto/t_KA_default/icon-menu-user-737373?_a=DATC1RAAZAA0");
 

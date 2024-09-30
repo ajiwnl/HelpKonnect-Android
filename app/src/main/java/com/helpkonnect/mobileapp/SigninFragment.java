@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.DecimalFormat;
@@ -43,6 +44,8 @@ public class SigninFragment extends Fragment {
     private FirebaseAuth mAuth;
     private EditText emailEditText;
     private EditText passwordEditText;
+
+    private ListenerRegistration listenerRegistration;
 
     @Nullable
     @Override
@@ -74,6 +77,7 @@ public class SigninFragment extends Fragment {
         });
 
         return rootView;
+
     }
 
     // Sign in the user
@@ -107,28 +111,28 @@ public class SigninFragment extends Fragment {
                                 // Fetch the username from Firestore
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 DocumentReference userDoc = db.collection("credentials").document(userId);
-                                userDoc.get().addOnCompleteListener(userTask -> {
-                                    if (userTask.isSuccessful()) {
-                                        DocumentSnapshot document = userTask.getResult();
-                                        if (document.exists()) {
-                                            // Get the username from the document
-                                            String username = document.getString("username");
-                                            String imageUrl = document.getString("imageUrl");
+                                listenerRegistration = userDoc.addSnapshotListener((documentSnapshot, e) -> {
+                                    if (e != null) {
+                                        Toast.makeText(getContext(), "Failed to fetch user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
 
-                                            updateUserSession(userId, true);
-                                            userActivity(userId);
+                                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                                        // Get the username and imageUrl from the document
+                                        String username = documentSnapshot.getString("username");
+                                        String imageUrl = documentSnapshot.getString("imageUrl");
 
-                                            // Navigate to MainScreenActivity with the username
-                                            showLoader(true);
-                                            Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                            intent.putExtra("USERNAME", username);
-                                            intent.putExtra("IMAGE_URL", imageUrl);
-                                            startActivity(intent);
-                                        } else {
-                                            Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
-                                        }
+                                        updateUserSession(userId, true);
+                                        userActivity(userId);
+
+                                        // Navigate to MainScreenActivity with the username
+                                        showLoader(true);
+                                        Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                        intent.putExtra("USERNAME", username);
+                                        intent.putExtra("IMAGE_URL", imageUrl);
+                                        startActivity(intent);
                                     } else {
-                                        Toast.makeText(getContext(), "Failed to fetch user data: " + userTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
                                     }
                                 });
 
@@ -158,6 +162,16 @@ public class SigninFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Remove the listener when the fragment is stopped
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+            listenerRegistration = null; // Optional: clear the reference to avoid potential memory leaks
+        }
     }
 
 
@@ -232,4 +246,6 @@ public class SigninFragment extends Fragment {
                     Log.e("Firestore", "Failed to update session data: " + e.getMessage());
                 });
     }
+
+
 }
