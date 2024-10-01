@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,26 +52,25 @@ public class CommunityFragment extends Fragment {
                     // Handle imageUrls properly to avoid null pointer exceptions
                     List<String> imageUrls = (List<String>) document.get("imageUrls");
                     if (imageUrls == null) {
-                        imageUrls = new ArrayList<>(); // Initialize as empty list if it's null
+                        imageUrls = new ArrayList<>();
                     }
 
-                    String time = document.getTimestamp("time").toDate().toString(); // Convert to readable format
+                    String time = document.getTimestamp("time").toDate().toString();
                     String userId = document.getString("userId");
                     String userProfile = document.getString("userProfile");
                     String username = document.getString("username");
 
-                    // Add the post to the list
                     posts.add(new CommunityListAdapter.CommunityPost(
-                            userProfile, // URL of the user profile image
-                            username,   // Username
-                            caption,    // Post caption
-                            imageUrls,  // List of image URLs
-                            heart,      // Number of likes (hearts)
-                            time,       // Timestamp of the post
-                            "256 Comments" // Placeholder for comments (you can replace this with actual comments if needed)
+                            userProfile,
+                            username,
+                            caption,
+                            imageUrls,
+                            heart,
+                            time,
+                            "256 Comments" //Placeholder
                     ));
                 }
-                adapter.notifyDataSetChanged(); // Notify the adapter of data changes
+                adapter.notifyDataSetChanged();
             } else {
                 Log.w("CommunityFragment", "Error getting documents.", task.getException());
             }

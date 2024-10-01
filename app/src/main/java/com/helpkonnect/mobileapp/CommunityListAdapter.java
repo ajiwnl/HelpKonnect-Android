@@ -17,29 +17,26 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
     private List<CommunityPost> posts;
     private OnItemClickListener onItemClick;
 
-    // Modify CommunityPost to store URLs
     public static class CommunityPost {
         private String userProfileImageUrl;
         private String userPostName;
         private String userPostDescription;
-        private List<String> imageUrls;  // List of image URLs
+        private List<String> imageUrls;
         private int userPostLikes;
         private String userPostDate;
         private String postComment;
 
-        // Constructor
         public CommunityPost(String userProfileImageUrl, String userPostName, String userPostDescription,
                              List<String> imageUrls, int userPostLikes, String userPostDate, String postComment) {
             this.userProfileImageUrl = userProfileImageUrl;
             this.userPostName = userPostName;
             this.userPostDescription = userPostDescription;
-            this.imageUrls = imageUrls; // Initialize the image URLs
+            this.imageUrls = imageUrls;
             this.userPostLikes = userPostLikes;
             this.userPostDate = userPostDate;
             this.postComment = postComment;
         }
 
-        // Getters
         public String getUserProfileImageUrl() { return userProfileImageUrl; }
         public String getUserPostName() { return userPostName; }
         public String getUserPostDescription() { return userPostDescription; }
@@ -55,13 +52,11 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
     }
 
 
-    // Constructor
     public CommunityListAdapter(List<CommunityPost> posts, OnItemClickListener onItemClick) {
         this.posts = posts;
         this.onItemClick = onItemClick;
     }
 
-    // ViewHolder class
     public class CommunityViewHolder extends RecyclerView.ViewHolder {
         public ImageView userProfileImage;
         public TextView userPostName;
@@ -102,45 +97,39 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
     public void onBindViewHolder(CommunityViewHolder holder, int position) {
         CommunityPost post = posts.get(position);
 
-        // Set the user profile data
         holder.userPostName.setText(post.getUserPostName());
         holder.userPostDescription.setText(post.getUserPostDescription());
         holder.userPostLikes.setText(String.valueOf(post.getUserPostLikes()));
         holder.userPostDate.setText(post.getUserPostDate());
         holder.postComment.setText(post.getPostComment());
 
-        // Load the profile image using Glide (or you can use a circular crop if needed)
         Glide.with(holder.itemView.getContext())
                 .load(post.getUserProfileImageUrl())
-                .circleCrop()  // Assuming you want circular profile images
+                .circleCrop()
                 .into(holder.userProfileImage);
 
-        // Clear the image container before adding images
         holder.imageContainer.removeAllViews();
 
-        // Load the post images dynamically
         List<String> imageUrls = post.getImageUrls();
         if (imageUrls != null) {
-            holder.imageContainer.removeAllViews(); // Clear previous images if any
+            holder.imageContainer.removeAllViews();
 
             for (String imageUrl : imageUrls) {
                 if (!imageUrl.isEmpty()) {
                     ImageView imageView = new ImageView(holder.itemView.getContext());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            holder.itemView.getContext().getResources().getDisplayMetrics().widthPixels, // Full screen width
+                            holder.itemView.getContext().getResources().getDisplayMetrics().widthPixels,
                             400 // Fixed height for each image
                     );
-                    layoutParams.setMargins(8, 8, 8, 8); // Margins around the image
+                    layoutParams.setMargins(8, 8, 8, 8);
                     imageView.setLayoutParams(layoutParams);
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // Adjust image to crop and fill the view
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-                    // Load the image with Glide
                     Glide.with(holder.itemView.getContext())
                             .load(imageUrl)
-                            .placeholder(R.drawable.userprofileicon) // Optional placeholder
+                            .placeholder(R.drawable.userprofileicon)
                             .into(imageView);
 
-                    // Add the ImageView to the container
                     holder.imageContainer.addView(imageView);
                 }
             }
