@@ -25,7 +25,7 @@
             android:paddingBottom="20dp">
 
             <ImageView
-                android:id="@+id/userProfile"
+                android:id="@+id/userProfilePic"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="20dp"
@@ -46,7 +46,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userProfile" />
+                app:layout_constraintTop_toBottomOf="@+id/userProfilePic" />
 
             <EditText
                 android:id="@+id/userbio"
@@ -55,9 +55,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/edittextdesign"
-                android:hint="No information given."
                 android:padding="10dp"
-                android:textAlignment="center"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -149,64 +147,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/usernametextview" />
 
             <TextView
-                android:id="@+id/emailtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:padding="5dp"
-                android:text="User Email"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/username" />
-
-            <EditText
-                android:id="@+id/useremail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="user@email.com"
-                android:inputType="textEmailAddress"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/emailtitle"
-                app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
-
-            <TextView
-                android:id="@+id/profilepasswordtextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:padding="5dp"
-                android:text="Password"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/useremail" />
-
-            <EditText
-                android:id="@+id/profilepasswordedittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="***********"
-                android:inputType="textPassword"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
-
-            <TextView
                 android:id="@+id/userAddressTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,21 +157,46 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepasswordedittext" />
+                app:layout_constraintTop_toBottomOf="@+id/username" />
 
-            <EditText
-                android:id="@+id/useraddress"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="@drawable/edittextdesign"
-                android:hint="House/Unit No., Building Name, Brgy, City..."
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userAddressTitle" />
+                app:layout_constraintTop_toBottomOf="@+id/userAddressTitle">
+
+                <EditText
+                    android:id="@+id/useraddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/edittextdesign"
+                    android:hint="House/Unit No., Building Name, Brgy, City..."
+                    android:padding="7dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toStartOf="@+id/addressButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <Button
+                    android:id="@+id/addressButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="Map"
+                    android:background="@drawable/buttondesign"
+                    app:layout_constraintTop_toTopOf="@+id/useraddress"
+                    app:layout_constraintBottom_toBottomOf="@+id/useraddress"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
