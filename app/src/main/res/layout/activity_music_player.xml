@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/musicplayerbg"
+    android:alpha="0.95"
+    tools:context=".MusicPlayerActivity">
+
+
+    <ImageButton
+        android:id="@+id/MusicBackButton"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_arrow_back_34"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/MusicTitleDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@color/mpcolortranspa"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="10dp"
+        android:singleLine="true"
+        android:text="Music Title - Scrolling Sample Music"
+        android:textColor="@color/PrimaryLight"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MusicBackButton" />
+
+
+
+    <ImageView
+        android:id="@+id/MusicImageDisplay"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/help_konnect_logo"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@color/mpcolortranspa"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MusicTitleDisplay" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/MusicTimeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/mpcolortranspa"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <SeekBar
+                android:id="@+id/MusicSeekerBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/MusicCurrentTimeDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="0:00"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/MusicSeekerBar" />
+
+            <TextView
+                android:id="@+id/MusicTotalTimeDisplay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="1:00"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/MusicSeekerBar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ImageButton
+            android:id="@+id/MusicPreviousButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+
+            android:layout_margin="10dp"
+            android:elevation="8dp"
+            android:src="@drawable/ic_skip_previous"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@+id/MusicPausePlayButton"
+            app:layout_constraintEnd_toStartOf="@+id/MusicPausePlayButton"
+            app:layout_constraintTop_toTopOf="@+id/MusicPausePlayButton" />
+
+        <ImageButton
+            android:id="@+id/MusicPausePlayButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="10dp"
+            android:elevation="8dp"
+            android:src="@drawable/ic_pause_circle_outline"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/MusicTimeContainer" />
+
+        <ImageButton
+            android:id="@+id/MusicNextButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="10dp"
+            android:elevation="8dp"
+            android:src="@drawable/ic_skip_next"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@+id/MusicPausePlayButton"
+            app:layout_constraintStart_toEndOf="@+id/MusicPausePlayButton"
+            app:layout_constraintTop_toTopOf="@+id/MusicPausePlayButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
