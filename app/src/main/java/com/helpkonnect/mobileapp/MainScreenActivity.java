@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 public class MainScreenActivity extends AppCompatActivity {
@@ -21,6 +25,10 @@ public class MainScreenActivity extends AppCompatActivity {
     private TextView profileNameTextView;
 
     private ImageView profileImageView;
+
+    private FirebaseFirestore firestore;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
    private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
@@ -39,28 +47,18 @@ public class MainScreenActivity extends AppCompatActivity {
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Retrieve the username from the Intent
-        String username = getIntent().getStringExtra("USERNAME");
-        String imageUrl = getIntent().getStringExtra("IMAGE_URL");
+
         profileNameTextView = findViewById(R.id.profile_name);
         profileImageView = findViewById(R.id.profile_image);
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        String userId = currentUser.getUid();
 
-        if (username != null && !username.isEmpty()) {
-            profileNameTextView.setText(username);
+        if (currentUser != null) {
+            loadUserData(userId);
         } else {
-            profileNameTextView.setText("Username001");
-        }
-
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            // Load the imageUrl into the ImageView using Picasso
-            Picasso.get()
-                    .load(imageUrl)
-                    .transform(new CircleTransform(strokeWidth, strokeColor))
-                    .placeholder(R.drawable.userprofileicon)
-                    .error(R.drawable.userprofileicon)
-                    .into(profileImageView);
-        } else {
-            profileImageView.setImageResource(R.drawable.userprofileicon); // Default icon
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
         }
 
         // Setup DrawerLayout and NavigationView
@@ -131,5 +129,34 @@ public class MainScreenActivity extends AppCompatActivity {
             OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
             dispatcher.onBackPressed();
         }
+    }
+
+    private void loadUserData(String userId) {
+        DocumentReference userDocRef = firestore.collection("credentials").document(userId);
+
+        // Add Firestore real-time listener
+        userDocRef.addSnapshotListener((documentSnapshot, e) -> {
+            if (e != null) {
+                Toast.makeText(MainScreenActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                String username = documentSnapshot.getString("username");
+                String imageUrl = documentSnapshot.getString("imageUrl");
+
+                // Update TextViews with real-time data
+                profileNameTextView.setText(username);
+                // Load the profile image using Picasso
+                if (imageUrl != null && !imageUrl.isEmpty()) {
+                    Picasso.get().load(imageUrl).transform(new CircleTransform(strokeWidth, strokeColor)).placeholder(R.drawable.userprofileicon) // Use a placeholder image
+                            .into(profileImageView);
+                } else {
+                    profileImageView.setImageResource(R.drawable.userprofileicon); // Default profile picture if no URL
+                }
+            } else {
+                Toast.makeText(MainScreenActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
