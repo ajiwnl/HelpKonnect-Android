@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.Timestamp;
@@ -41,6 +43,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 showEditProfileFragment();
             }
         });
+
+
 
     }
 
@@ -146,7 +151,10 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 // Load the profile image using Picasso
                 if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Picasso.get().load(imageUrl).transform(new CircleTransform(strokeWidth, strokeColor)).placeholder(R.drawable.userprofileicon) // Use a placeholder image
+                    Picasso.get().
+                            load(imageUrl).
+                            transform(new CircleTransform(strokeWidth, strokeColor)).
+                            placeholder(R.drawable.userprofileicon)
                             .into(imgProfile);
                 } else {
                     imgProfile.setImageResource(R.drawable.userprofileicon); // Default profile picture if no URL

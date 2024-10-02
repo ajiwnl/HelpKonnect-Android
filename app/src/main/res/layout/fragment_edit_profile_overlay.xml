@@ -26,10 +26,11 @@
 
             <ImageView
                 android:id="@+id/userProfilePic"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
+                android:clickable="true"
                 android:src="@drawable/userprofileicon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
