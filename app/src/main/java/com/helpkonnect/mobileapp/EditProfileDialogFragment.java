@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 import androidx.annotation.NonNull;
@@ -42,6 +43,8 @@ public class EditProfileDialogFragment extends DialogFragment {
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
 
+    private View loaderView;
+
     public EditProfileDialogFragment() {
     }
 
@@ -49,6 +52,7 @@ public class EditProfileDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile_overlay, container, false);
+         loaderView = inflater.inflate(R.layout.update_loader, container, false);
         // Initialize Firebase
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -168,6 +172,7 @@ public class EditProfileDialogFragment extends DialogFragment {
     private void saveUserProfile() {
         String userId = mAuth.getCurrentUser().getUid();
 
+        showLoader(true);
         // Update user data in Firestore
         firestore.collection("credentials").document(userId)
                 .update(
@@ -182,8 +187,22 @@ public class EditProfileDialogFragment extends DialogFragment {
                     dismiss();
                 })
                 .addOnFailureListener(e -> {
+                    showLoader(false);
                     Toast.makeText(getContext(), "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void showLoader(boolean show) {
+        TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
+
+        if (show) {
+            getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } else {
+            if (loaderView.getParent() != null) {
+                ((ViewGroup) loaderView.getParent()).removeView(loaderView);
+            }
+        }
     }
 }
 

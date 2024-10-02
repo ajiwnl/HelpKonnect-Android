@@ -107,34 +107,11 @@ public class SigninFragment extends Fragment {
                             // Check if the user's email is verified
                             if (user.isEmailVerified()) {
                                 String userId = user.getUid();
-
-                                // Fetch the username from Firestore
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                DocumentReference userDoc = db.collection("credentials").document(userId);
-                                listenerRegistration = userDoc.addSnapshotListener((documentSnapshot, e) -> {
-                                    if (e != null) {
-                                        Toast.makeText(getContext(), "Failed to fetch user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        return;
-                                    }
-
-                                    if (documentSnapshot != null && documentSnapshot.exists()) {
-                                        // Get the username and imageUrl from the document
-                                        String username = documentSnapshot.getString("username");
-                                        String imageUrl = documentSnapshot.getString("imageUrl");
-
-                                        updateUserSession(userId, true);
-                                        userActivity(userId);
-
-                                        // Navigate to MainScreenActivity with the username
-                                        showLoader(true);
-                                        Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                        intent.putExtra("USERNAME", username);
-                                        intent.putExtra("IMAGE_URL", imageUrl);
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(getContext(), "User data not found.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                updateUserSession(userId, true);
+                                userActivity(userId);
+                                showLoader(true);
+                                Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                startActivity(intent);
 
                             } else {
                                 mAuth.signOut();
