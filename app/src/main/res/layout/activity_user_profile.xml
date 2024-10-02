@@ -209,6 +209,16 @@
                 app:layout_constraintStart_toStartOf="@+id/emailtitle"
                 app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
 
+            <Button
+                android:id="@+id/changeEmailButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Change Email"
+                android:textColor="@color/black"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
+
             <TextView
                 android:id="@+id/profilepasswordtextview"
                 android:layout_width="wrap_content"
@@ -224,7 +234,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/useremail" />
 
             <TextView
-                android:id="@+id/profilepasswordedittext"
+                android:id="@+id/profilepassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -238,6 +248,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
 
+            <Button
+                android:id="@+id/updatePasswordButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Password"
+                android:textColor="@color/black"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
+
             <TextView
                 android:id="@+id/userAddressTitle"
                 android:layout_width="wrap_content"
@@ -249,7 +269,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepasswordedittext" />
+                app:layout_constraintTop_toBottomOf="@+id/profilepassword" />
 
             <TextView
                 android:id="@+id/useraddress"
