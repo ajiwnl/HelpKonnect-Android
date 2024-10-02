@@ -1,44 +1,78 @@
 package com.helpkonnect.mobileapp;
 
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
-
+import android.Manifest;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class EditProfileDialogFragment extends DialogFragment {
 
-    private Button saveButton, cancelButton;
+    private Button saveButton, cancelButton, getAddBtn;
+
+    private ImageView userProfilePhoto;
     private EditText userFirstNameEditText, userLastNameEditText, usernameEditText, userBioEditText, userAddressEditText;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
+
+    private int strokeColor = Color.BLACK;
+    private int strokeWidth = 1;
+
+    public EditProfileDialogFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile_overlay, container, false);
-        saveButton = view.findViewById(R.id.saveButton);
-        cancelButton = view.findViewById(R.id.cancelButton);
-
         // Initialize Firebase
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Initialize EditTexts
+        // Initialize edit texts, buttons, and others
+        saveButton = view.findViewById(R.id.saveButton);
+        cancelButton = view.findViewById(R.id.cancelButton);
         userFirstNameEditText = view.findViewById(R.id.userfirstname);
         userLastNameEditText = view.findViewById(R.id.userlastname);
         usernameEditText = view.findViewById(R.id.username);
         userBioEditText = view.findViewById(R.id.userbio);
         userAddressEditText = view.findViewById(R.id.useraddress);
+        getAddBtn = view.findViewById(R.id.addressButton);
+        userProfilePhoto = view.findViewById(R.id.userProfilePic);
+
+
+        //Get address
+        getAddBtn.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                fetchCurrentLocation();
+            }
+        });
 
         // Get user data from bundle
         Bundle bundle = getArguments();
@@ -48,6 +82,16 @@ public class EditProfileDialogFragment extends DialogFragment {
             usernameEditText.setText(bundle.getString("username"));
             userBioEditText.setText(bundle.getString("bio"));
             userAddressEditText.setText(bundle.getString("address"));
+
+            String imageUrl = bundle.getString("imageUrl");
+
+            Picasso.get()
+                    .load(imageUrl)
+                    .transform(new CircleTransform(strokeWidth, strokeColor))
+                    .placeholder(R.drawable.userprofileicon)
+                    .error(R.drawable.userprofileicon)
+                    .into(userProfilePhoto);
+
         }
 
         // Save button click listener
@@ -57,8 +101,60 @@ public class EditProfileDialogFragment extends DialogFragment {
 
         cancelButton.setOnClickListener(v -> dismiss());
 
+
+
         return view;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fetchCurrentLocation();
+            } else {
+                Toast.makeText(getContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void fetchCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request location permission if not granted
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            try {
+                FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+
+                fusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(location -> {
+                            if (location != null) {
+                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                                try {
+                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                                    if (!addresses.isEmpty()) {
+                                        Address address = addresses.get(0);
+                                        String addressLine = address.getAddressLine(0);
+                                        userAddressEditText.setText(addressLine); // Update EditText with address
+                                    }
+                                } catch (IOException e) {
+                                    Toast.makeText(getContext(), "Failed to get address", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(getContext(), "Unable to fetch location", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Failed to fetch location: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+
+            } catch (SecurityException e) {
+                // Handle the SecurityException if it occurs
+                Toast.makeText(getContext(), "Location permission not granted", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public void onStart() {

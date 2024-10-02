@@ -56,8 +56,8 @@ public class MainScreenActivity extends AppCompatActivity {
             Picasso.get()
                     .load(imageUrl)
                     .transform(new CircleTransform(strokeWidth, strokeColor))
-                    .placeholder(R.drawable.userprofileicon) // Fallback image while loading
-                    .error(R.drawable.userprofileicon) // Fallback image if there's an error
+                    .placeholder(R.drawable.userprofileicon)
+                    .error(R.drawable.userprofileicon)
                     .into(profileImageView);
         } else {
             profileImageView.setImageResource(R.drawable.userprofileicon); // Default icon
