@@ -63,6 +63,7 @@ public class CommunityFragment extends Fragment {
                     String userId = document.getString("userId");
                     String userProfile = document.getString("userProfile");
                     String username = document.getString("username");
+                    String postId = document.getId();
 
                     posts.add(new CommunityListAdapter.CommunityPost(
                             userProfile,
@@ -71,7 +72,8 @@ public class CommunityFragment extends Fragment {
                             imageUrls,
                             heart,
                             time,
-                            "256 Comments" //Placeholder
+                            "256 Comments",
+                            postId
                     ));
                 }
                 adapter.notifyDataSetChanged();

@@ -28,8 +28,10 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         private String userPostDate;
         private String postComment;
 
+        private String postId;
+
         public CommunityPost(String userProfileImageUrl, String userPostName, String userPostDescription,
-                             List<String> imageUrls, int userPostLikes, String userPostDate, String postComment) {
+                             List<String> imageUrls, int userPostLikes, String userPostDate, String postComment, String postId) {
             this.userProfileImageUrl = userProfileImageUrl;
             this.userPostName = userPostName;
             this.userPostDescription = userPostDescription;
@@ -37,6 +39,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             this.userPostLikes = userPostLikes;
             this.userPostDate = userPostDate;
             this.postComment = postComment;
+            this.postId = postId;
         }
 
         public String getUserProfileImageUrl() { return userProfileImageUrl; }
@@ -47,6 +50,8 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         public int getUserPostLikes() { return userPostLikes; }
         public String getUserPostDate() { return userPostDate; }
         public String getPostComment() { return postComment; }
+
+        public String getPostId() {return postId;}
     }
 
     public interface OnItemClickListener {
