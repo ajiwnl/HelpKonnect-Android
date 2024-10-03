@@ -29,7 +29,7 @@ public class MyApp extends Application {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
-        config.locale = locale;
+        config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
         Log.d("MyApp", "Locale set to: " + lang);
     }

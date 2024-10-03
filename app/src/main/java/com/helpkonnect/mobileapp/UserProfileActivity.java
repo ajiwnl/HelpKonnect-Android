@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -83,11 +84,9 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(UserProfileActivity.this, UpdateEmailActivity.class);
                 startActivity(intent);
-                finish();  // Ends UserProfileActivity
-
+                finish();
             }
         });
-
 
     }
 
