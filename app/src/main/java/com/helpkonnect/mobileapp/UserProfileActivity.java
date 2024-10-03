@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,7 +39,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
 
     private ImageView imgProfile;
-    private Button editProfileButton;
+    private Button editProfileButton, changeEmail;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -59,6 +62,7 @@ public class UserProfileActivity extends AppCompatActivity {
         userAddressTextView = findViewById(R.id.useraddress);
         editProfileButton = findViewById(R.id.profileEditButton);
         imgProfile = findViewById(R.id.userProfile);
+        changeEmail = findViewById(R.id.changeEmailBtn);
 
 
         // Initialize Firebase Auth and Firestore
@@ -81,6 +85,13 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Set OnClickListener for the changeEmail button
+//        changeEmail.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showUpdateEmailDialog(); // Show password verification dialog
+//            }
+//        });
 
 
     }
@@ -119,7 +130,6 @@ public class UserProfileActivity extends AppCompatActivity {
             });
         }
     }
-
 
     private void loadUserData(String userId) {
         DocumentReference userDocRef = firestore.collection("credentials").document(userId);
