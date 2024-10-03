@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+
+import java.io.Serializable;
 import java.util.List;
 
 public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdapter.CommunityViewHolder> {
@@ -17,7 +19,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
     private List<CommunityPost> posts;
     private OnItemClickListener onItemClick;
 
-    public static class CommunityPost {
+    public static class CommunityPost implements Serializable {
         private String userProfileImageUrl;
         private String userPostName;
         private String userPostDescription;
@@ -119,7 +121,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
                     ImageView imageView = new ImageView(holder.itemView.getContext());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                             holder.itemView.getContext().getResources().getDisplayMetrics().widthPixels,
-                            400 // Fixed height for each image
+                            400
                     );
                     layoutParams.setMargins(8, 8, 8, 8);
                     imageView.setLayoutParams(layoutParams);
