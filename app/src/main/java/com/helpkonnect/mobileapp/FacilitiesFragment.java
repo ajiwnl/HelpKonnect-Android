@@ -29,10 +29,22 @@ public class FacilitiesFragment extends Fragment {
         RecyclerView nearbyRecyclerView = rootView.findViewById(R.id.nearbyRecyclerView);
         nearbyRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        FacilityAdapter adapter = new FacilityAdapter(facilities, facility ->
-                Toast.makeText(requireContext(), "Clicked: " + facility.getTitle(), Toast.LENGTH_SHORT).show());
+        // Update the adapter with the click listener
+        FacilityAdapter adapter = new FacilityAdapter(facilities, facility -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("logo", facility.getImage());
+            bundle.putString("name", facility.getTitle());
+            bundle.putString("location", facility.getLocation());
+            bundle.putFloat("rating", facility.getRating());
+
+            FacilityDetailsFragment detailsFragment = new FacilityDetailsFragment();
+            detailsFragment.setArguments(bundle);
+
+            FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.fragmentContent, detailsFragment);
+        });
 
         nearbyRecyclerView.setAdapter(adapter);
+
 
         // Setup RecyclerView for Events
         RecyclerView eventsOffered = rootView.findViewById(R.id.eventsRecyclerView);
@@ -49,6 +61,10 @@ public class FacilitiesFragment extends Fragment {
 
         eventsOffered.setAdapter(eventsOfferedAdapter);
 
+
+
         return rootView;
     }
+
+
 }
