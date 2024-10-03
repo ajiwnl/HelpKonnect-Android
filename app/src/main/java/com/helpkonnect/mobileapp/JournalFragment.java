@@ -69,8 +69,8 @@ public class JournalFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
 
-        //Set OpenWeather API Key
-        appid = getString(R.string.OpenWeatherApiKey);
+        // Fetch the OpenWeather API Key
+        fetchWeatherApiKey();
 
         currentTempTextView = rootView.findViewById(R.id.currentTemp);
         currentWeatherTextView = rootView.findViewById(R.id.currentWeather);
@@ -130,6 +130,26 @@ public class JournalFragment extends Fragment {
         return rootView;
     }
 
+    private void fetchWeatherApiKey() {
+        String apiKeyUrl = "https://helpkonnect.vercel.app/api/weatherKey";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, apiKeyUrl,
+                response -> {
+                    Log.d("JournalFragment", "API Key Response: " + response); // Log the response
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        appid = jsonResponse.getString("apiKey");
+                        // Now you can use the appid to fetch weather details
+                        getWeatherDetails();
+                    } catch (JSONException e) {
+                        Log.e("JournalFragment", "JSON parsing error: " + e.getMessage());
+                    }
+                },
+                error -> Log.e("JournalFragment", "Error fetching API key: " + error.toString()));
+
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        requestQueue.add(stringRequest);
+    }
 
     private void fetchJournals() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -375,4 +395,3 @@ public class JournalFragment extends Fragment {
         userGreetingTextView.setText(selectedGreeting);
     }
 }
-
