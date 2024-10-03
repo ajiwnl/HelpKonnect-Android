@@ -23,15 +23,20 @@ public class CommunityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_community, container, false);
 
         RecyclerView recyclerView = rootView.findViewById(R.id.communitypostrecyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new CommunityListAdapter(posts, post ->
-                Toast.makeText(requireContext(), "Clicked on " + post.getUserPostName(), Toast.LENGTH_SHORT).show()
-        );
+        adapter = new CommunityListAdapter(posts, post -> {
+            SelectedPostFragment selectedPostFragment = SelectedPostFragment.newInstance(post);
+
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, selectedPostFragment)
+                .addToBackStack(null)
+                .commit();
+        });
         recyclerView.setAdapter(adapter);
 
         fetchCommunityPosts();
@@ -44,12 +49,11 @@ public class CommunityFragment extends Fragment {
 
         communityRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                posts.clear(); // Clear the list to prevent duplication
+                posts.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String caption = document.getString("caption");
                     int heart = document.getLong("heart").intValue();
 
-                    // Handle imageUrls properly to avoid null pointer exceptions
                     List<String> imageUrls = (List<String>) document.get("imageUrls");
                     if (imageUrls == null) {
                         imageUrls = new ArrayList<>();
