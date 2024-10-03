@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="New Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:enabled="false"/>
 
     <Button
         android:id="@+id/updateEmailButton"
