@@ -9,7 +9,7 @@ This the Mobile Application of Help-Konnect Application for the General Users th
 
 - [@ajiwnl](https://www.github.com/ajiwnl)
 - [@UnusualRuWei](https://www.github.com/UnusualRuWei)
-- [@asoliken1](https://www.github.com/soliken1)
+- [@soliken1](https://www.github.com/soliken1)
 
 ## Tech Stack 
 Other tech stacks will be added project is still on-going
