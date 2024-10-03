@@ -16,5 +16,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--Open Weather API Key-->
     <string name="OpenWeatherApiKey">fff8c220f176a99dd4ee4e0aa4ef5063</string>
+    <string name="username">Username</string>
+    <string name="caption">Caption</string>
+    <string name="_0">0</string>
+    <string name="todo">TODO</string>
+    <string name="time">Time</string>
 
 </resources>
