@@ -195,29 +195,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/username" />
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/emailcontainer"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailtitle">
+
             <TextView
                 android:id="@+id/useremail"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:padding="7dp"
-                android:inputType="textEmailAddress"
+                android:layout_marginEnd="8dp"
                 android:hint="user@email.com"
+                android:padding="7dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/emailtitle"
-                app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintEnd_toStartOf="@+id/changeEmailBtn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <Button
-                android:id="@+id/changeEmailButton"
+                android:id="@+id/changeEmailBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Change Email"
-                android:textColor="@color/black"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailtitle" />
+                android:layout_height="0dp"
+                android:text="Update Email"
+                android:background="@drawable/buttondesign"
+                app:layout_constraintTop_toTopOf="@+id/useremail"
+                app:layout_constraintBottom_toBottomOf="@+id/useremail"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/profilepasswordtextview"
@@ -231,32 +249,50 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/useremail" />
+                app:layout_constraintTop_toBottomOf="@+id/emailcontainer" />
 
-            <TextView
-                android:id="@+id/profilepassword"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/passwordcontainer"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="***********"
-                android:inputType="textPassword"
-                android:padding="7dp"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
+                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview">
 
-            <Button
-                android:id="@+id/updatePasswordButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Update Password"
-                android:textColor="@color/black"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepasswordtextview" />
+                <TextView
+                    android:id="@+id/profilepassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:hint="***********"
+                    android:padding="7dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toStartOf="@+id/changePassBtn"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <Button
+                    android:id="@+id/changePassBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="Update Password"
+                    android:background="@drawable/buttondesign"
+                    app:layout_constraintTop_toTopOf="@+id/profilepassword"
+                    app:layout_constraintBottom_toBottomOf="@+id/profilepassword"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
             <TextView
                 android:id="@+id/userAddressTitle"
@@ -269,7 +305,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profilepassword" />
+                app:layout_constraintTop_toBottomOf="@+id/passwordcontainer" />
 
             <TextView
                 android:id="@+id/useraddress"
