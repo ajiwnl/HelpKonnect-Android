@@ -27,7 +27,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/categorycontainer1"
+                android:id="@+id/MusicPlayer"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_margin="20dp"
@@ -39,14 +39,15 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/forgotpasswordicon"
+                    android:background="@drawable/musicplayerbg"
                     android:scaleType="center"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="Experience"
+                    android:text="Play Music To Relax Your Mind"
+                    android:textColor="@color/white"
                     android:layout_gravity="bottom"/>
 
             </androidx.cardview.widget.CardView>
@@ -61,7 +62,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/categorycontainer1" />
+                app:layout_constraintTop_toBottomOf="@+id/MusicPlayer" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/categorycontainer2"
