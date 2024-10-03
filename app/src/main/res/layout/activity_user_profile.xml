@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity">
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/profileBackButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
     <ImageView
         android:id="@+id/profileBackButton"
         android:layout_width="40dp"
@@ -231,9 +243,6 @@
                 app:layout_constraintTop_toTopOf="@+id/useremail"
                 app:layout_constraintBottom_toBottomOf="@+id/useremail"
                 app:layout_constraintEnd_toEndOf="parent" />
-
-
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

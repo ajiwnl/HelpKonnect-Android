@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.firebase.common)
     implementation(libs.volley)
     implementation(libs.play.services.location)
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.playintegrity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
