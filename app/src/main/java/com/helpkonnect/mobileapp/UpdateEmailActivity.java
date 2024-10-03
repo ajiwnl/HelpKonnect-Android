@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,7 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class UpdateEmailActivity extends AppCompatActivity {
-
+    private View loaderView;
     private FirebaseAuth currentUser;
     private FirebaseFirestore firestore;
 
@@ -22,7 +24,8 @@ public class UpdateEmailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_email);
-
+        // Initialize loaderView by inflating the loader layout
+        loaderView = getLayoutInflater().inflate(R.layout.update_cred_loader, null);
         currentUser = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance(); // Initialize Firestore
 
@@ -88,10 +91,11 @@ public class UpdateEmailActivity extends AppCompatActivity {
         String email = currentUser.getCurrentUser().getEmail();
         if (email != null) {
             com.google.firebase.auth.AuthCredential credential = EmailAuthProvider.getCredential(email, password);
-            findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+            setLoaderText("Verifying your account for a while...");
+            showLoader(true);
             currentUser.getCurrentUser().reauthenticate(credential)
                     .addOnCompleteListener(task -> {
-                        findViewById(R.id.progressbar).setVisibility(View.GONE);
+                        showLoader(false);
                         if (task.isSuccessful()) {
                             findViewById(R.id.layoutPassword).setVisibility(View.GONE);
                             findViewById(R.id.layoutUpdateEmail).setVisibility(View.VISIBLE);
@@ -112,14 +116,15 @@ public class UpdateEmailActivity extends AppCompatActivity {
     }
 
     private void checkIfEmailExists(String newEmail) {
-        findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
+        setLoaderText("Checking if email exists...");
+        showLoader(true);
 
         // Query Firestore to check if email already exists in the 'credentials' collection
         firestore.collection("credentials")
                 .whereEqualTo("email", newEmail)
                 .get()
                 .addOnCompleteListener(task -> {
-                    findViewById(R.id.progressbar).setVisibility(View.GONE);
+                   showLoader(false);
 
                     if (task.isSuccessful()) {
                         QuerySnapshot querySnapshot = task.getResult();
@@ -139,11 +144,10 @@ public class UpdateEmailActivity extends AppCompatActivity {
     }
 
     private void sendVerificationEmail(String newEmail) {
-        findViewById(R.id.progressbar).setVisibility(View.VISIBLE);
-
+       showLoader(true);
         currentUser.getCurrentUser().verifyBeforeUpdateEmail(newEmail)
                 .addOnCompleteListener(task -> {
-                    findViewById(R.id.progressbar).setVisibility(View.GONE);
+                    showLoader(false);
                     if (task.isSuccessful()) {
                         Toast.makeText(UpdateEmailActivity.this, "Verification email sent. Please verify and log back in.", Toast.LENGTH_LONG).show();
                         updateEmailInFirestore(newEmail);
@@ -179,8 +183,35 @@ public class UpdateEmailActivity extends AppCompatActivity {
     private void navigateToLogin() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragmentContent, new SigninFragment());
+        transaction.setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+        );
         transaction.addToBackStack(null);
         transaction.commit();
         finish();
     }
+
+    private void showLoader(boolean show) {
+        TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
+
+        if (show) {
+            addContentView(loaderView, new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        } else {
+            if (loaderView.getParent() != null) {
+                ((ViewGroup) loaderView.getParent()).removeView(loaderView);
+            }
+        }
+    }
+
+    private void setLoaderText(String text) {
+        if (loaderView != null) {
+            TextView loadingText = loaderView.findViewById(R.id.loadingText);
+            if (loadingText != null) {
+                loadingText.setText(text);
+            }
+        }
+    }
+
 }

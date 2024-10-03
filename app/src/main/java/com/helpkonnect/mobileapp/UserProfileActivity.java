@@ -32,7 +32,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
 
     private ImageView imgProfile;
-    private Button editProfileButton, changeEmail;
+    private Button editProfileButton, changeEmail, changePassword;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -56,6 +56,7 @@ public class UserProfileActivity extends AppCompatActivity {
         editProfileButton = findViewById(R.id.profileEditButton);
         imgProfile = findViewById(R.id.userProfile);
         changeEmail = findViewById(R.id.changeEmailBtn);
+        changePassword = findViewById(R.id.changePassBtn);
 
 
         // Initialize Firebase Auth and Firestore
@@ -83,6 +84,16 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(UserProfileActivity.this, UpdateEmailActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        // Set OnClickListener for the changePassword button
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserProfileActivity.this, ChangePasswordActivity.class);
                 startActivity(intent);
                 finish();
             }
