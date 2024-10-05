@@ -19,6 +19,9 @@
         android:theme="@style/Theme.HelpKonnectMobile"
         tools:targetApi="31">
         <activity
+            android:name=".SelfCareMaterialsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".ChangePasswordActivity"
             android:exported="false" />
         <activity

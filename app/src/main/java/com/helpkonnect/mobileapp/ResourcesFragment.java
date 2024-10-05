@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 public class ResourcesFragment extends Fragment {
 
-    CardView musicPlayerContainer;
+    CardView musicPlayerContainer,selfcareContainer;
 
     @Nullable
     @Override
@@ -22,12 +22,17 @@ public class ResourcesFragment extends Fragment {
 
 
         musicPlayerContainer = rootView.findViewById(R.id.MusicPlayer);
+        selfcareContainer = rootView.findViewById(R.id.SelfCare);
 
         musicPlayerContainer.setOnClickListener( v -> {
             Intent toMusicPlayer = new Intent(requireContext(), MusicPlayerActivity.class);
             startActivity(toMusicPlayer);
         });
 
+        selfcareContainer.setOnClickListener( v -> {
+            Intent toSelfCare = new Intent(requireContext(), SelfCareMaterialsActivity.class);
+            startActivity(toSelfCare);
+        });
         return rootView;
     }
 }

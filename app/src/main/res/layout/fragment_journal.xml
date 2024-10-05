@@ -80,12 +80,12 @@
                     android:id="@+id/weatherIcon"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:padding="10dp"
-                    android:layout_marginStart="100dp"
-                    android:layout_toEndOf="@+id/currentTemp"
+                    android:layout_below="@id/currentdate"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="21dp"
                     android:background="@drawable/floatingactionbutton_weatherbg"
                     android:elevation="8dp"
-                    android:layout_below="@id/currentdate"/>
+                    android:padding="10dp" />
 
                 <TextView
                     android:id="@+id/currentWeather"
