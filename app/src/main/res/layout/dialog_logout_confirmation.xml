@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="@color/hkcolor"
+    android:background="@drawable/layout_roundcorners"
+    android:backgroundTint="@color/hkcolor"
     android:gravity="center">
 
 <TextView
@@ -13,7 +14,7 @@ android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:text="Are you sure you want to log out?"
 android:textSize="18sp"
-android:textColor="@android:color/white"
+android:textColor="@android:color/black"
 android:gravity="center"
 android:paddingBottom="20dp" />
 
@@ -28,8 +29,8 @@ android:gravity="center">
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="No"
-    android:backgroundTint="#F44336"
-android:textColor="@android:color/white"
+    android:backgroundTint="@color/PrimaryDark"
+android:textColor="@android:color/black"
 android:layout_margin="10dp" />
 
 <Button
@@ -37,8 +38,8 @@ android:layout_margin="10dp" />
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="Yes"
-    android:backgroundTint="#2196F3"
-android:textColor="@android:color/white"
+    android:backgroundTint="@color/PrimaryLight"
+android:textColor="@android:color/black"
 android:layout_margin="10dp" />
 
 </LinearLayout>

@@ -99,6 +99,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="New Email"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittextdesign"
+                android:padding="7dp"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"/>
 
@@ -106,8 +109,9 @@
                 android:layout_marginTop="15dp"
                 android:layout_gravity="center_horizontal"
                 android:textAllCaps="false"
-                android:text="Update"
+                android:text="UPDATE"
                 android:id="@+id/button_update"
+                android:background="@drawable/buttondesign"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"/>
 
