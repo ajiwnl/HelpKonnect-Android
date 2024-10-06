@@ -5,15 +5,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
+import android.content.Intent;
 
 public class CommunityFragment extends Fragment {
 
@@ -38,6 +42,13 @@ public class CommunityFragment extends Fragment {
                 .commit();
         });
         recyclerView.setAdapter(adapter);
+
+        // Set OnClickListener for the create post ImageView
+        ImageView createPostImageView = rootView.findViewById(R.id.createpost);
+        createPostImageView.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), CreatePostActivity.class);
+            startActivity(intent);
+        });
 
         fetchCommunityPosts();
 
