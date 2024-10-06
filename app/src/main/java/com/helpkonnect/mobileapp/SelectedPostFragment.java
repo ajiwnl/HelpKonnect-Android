@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SelectedPostFragment extends Fragment {
 
@@ -36,6 +46,9 @@ public class SelectedPostFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private ListenerRegistration commentsListener;
+    private RequestQueue requestQueue;
+    private String filterKey;
+    private String filterHost;
 
     public static SelectedPostFragment newInstance(CommunityListAdapter.CommunityPost post) {
         SelectedPostFragment fragment = new SelectedPostFragment();
@@ -53,6 +66,66 @@ public class SelectedPostFragment extends Fragment {
         }
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        // Initialize Volley request queue
+        requestQueue = Volley.newRequestQueue(requireContext());
+
+        // Fetch API keys from Vercel
+        fetchApiKeys();
+    }
+
+    private void fetchApiKeys() {
+        String url = "https://helpkonnect.vercel.app/api/filterKey";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        filterKey = jsonObject.getString("filterKey");
+                        filterHost = jsonObject.getString("filterHost");
+                    } catch (JSONException e) {
+                        Toast.makeText(getContext(), "Failed to parse API keys", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(getContext(), "Failed to fetch API keys", Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(stringRequest);
+    }
+
+    private void filterText(String text, FilterCallback callback) {
+        String url = "https://community-purgomalum.p.rapidapi.com/json?text=" + Uri.encode(text);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        boolean containsProfanity = response.getString("result").contains("***");
+                        callback.onResult(containsProfanity);
+                    } catch (JSONException e) {
+                        callback.onFailure(e);
+                    }
+                },
+                error -> callback.onFailure(error)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                if (filterKey != null && filterHost != null) {
+                    headers.put("X-RapidAPI-Key", filterKey);
+                    headers.put("X-RapidAPI-Host", filterHost);
+                } else {
+                    Toast.makeText(getContext(), "API keys not available", Toast.LENGTH_SHORT).show();
+                }
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    interface FilterCallback {
+        void onResult(boolean containsProfanity);
+        void onFailure(Exception e);
     }
 
     @Nullable
@@ -127,21 +200,35 @@ public class SelectedPostFragment extends Fragment {
     }
 
     private void postComment(String comment) {
-        String userId = mAuth.getCurrentUser().getUid();
-        Map<String, Object> commentData = new HashMap<>();
-        commentData.put("comment", comment);
-        commentData.put("postId", post.getPostId());
-        commentData.put("time", new java.util.Date());
-        commentData.put("userId", userId);
+        filterText(comment, new FilterCallback() {
+            @Override
+            public void onResult(boolean containsProfanity) {
+                if (containsProfanity) {
+                    Toast.makeText(getContext(), "Comment contains inappropriate content.", Toast.LENGTH_SHORT).show();
+                } else {
+                    String userId = mAuth.getCurrentUser().getUid();
+                    Map<String, Object> commentData = new HashMap<>();
+                    commentData.put("comment", comment);
+                    commentData.put("postId", post.getPostId());
+                    commentData.put("time", new java.util.Date());
+                    commentData.put("userId", userId);
 
-        db.collection("comments").add(commentData)
-            .addOnSuccessListener(documentReference -> {
-                Toast.makeText(getContext(), "Comment posted", Toast.LENGTH_SHORT).show();
-                // Optionally, refresh comments display here
-            })
-            .addOnFailureListener(e -> {
-                Toast.makeText(getContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
+                    db.collection("comments").add(commentData)
+                        .addOnSuccessListener(documentReference -> {
+                            Toast.makeText(getContext(), "Comment posted", Toast.LENGTH_SHORT).show();
+                            // Optionally, refresh comments display here
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(getContext(), "Failed to filter text: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadComments(LinearLayout commentsContainer) {
