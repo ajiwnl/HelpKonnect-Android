@@ -33,6 +33,7 @@ public class FacilityDetailsFragment extends Fragment {
 
         //For Switching from Comments to Professional, vice versa.
         listTitleSwitcher = rootView.findViewById(R.id.ListChanger);
+
         listTitleSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
             @Override
             public View makeView() {
@@ -93,6 +94,17 @@ public class FacilityDetailsFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
 
+        //For Facility Comment List
+
+
+        //For Create Comment
+
         return rootView;
     }
+
+    private void switchList(RecyclerView recyclerView, RecyclerView.Adapter adapter){
+
+    }
+
+
 }

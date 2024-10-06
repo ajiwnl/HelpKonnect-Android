@@ -10,49 +10,68 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <TextView
-            android:id="@+id/nearbyTextview"
-            android:layout_width="wrap_content"
+        <SearchView
+            android:id="@+id/SearchFacilities"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:text="Nearby Facilities"
+            android:layout_margin="5dp"
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/SecondaryLight"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/nearbyRecyclerView"
+        <TextView
+            android:id="@+id/SearchResultTextview"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Search Results"
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nearbyTextview"/>
+            app:layout_constraintTop_toBottomOf="@+id/SearchFacilities" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/FacilityRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="5dp"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/SearchResultTextview" />
+
+        <ProgressBar
+            android:id="@+id/LoaderNearbyFacilities"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/FacilityRecyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/FacilityRecyclerView"
+            app:layout_constraintStart_toStartOf="@+id/FacilityRecyclerView"
+            app:layout_constraintTop_toTopOf="@+id/FacilityRecyclerView" />
 
         <TextView
-            android:id="@+id/eventsTextview"
+            android:id="@+id/noFacilityTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:visibility="gone"
+            android:text="No Available Facility in the Area"
             android:textColor="@color/black"
-            android:text="Events"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nearbyRecyclerView" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/FacilityRecyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/FacilityRecyclerView"
+            app:layout_constraintStart_toStartOf="@+id/FacilityRecyclerView"
+            app:layout_constraintTop_toTopOf="@+id/FacilityRecyclerView" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/eventsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/eventsTextview" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

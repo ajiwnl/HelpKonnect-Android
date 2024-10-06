@@ -14,6 +14,8 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
     private List<Facility> facilities;
     private OnItemClickListener onItemClick;
 
+
+
     // Define the Facility class
     public static class Facility {
         private int image;
@@ -95,5 +97,11 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
     @Override
     public int getItemCount() {
         return facilities.size();
+    }
+
+    public void updateList(List<Facility> newFacilities) {
+        facilities.clear();
+        facilities.addAll(newFacilities);
+        notifyDataSetChanged();
     }
 }

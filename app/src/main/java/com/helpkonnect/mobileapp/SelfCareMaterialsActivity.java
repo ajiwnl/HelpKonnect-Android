@@ -103,7 +103,7 @@ public class SelfCareMaterialsActivity extends AppCompatActivity {
                 // Show no resources message
                 noResourcesMessage.setVisibility(View.VISIBLE);
             }
-        }, 2000); // Simulated delay for loading
+        }, 2000);
     }
 
 
