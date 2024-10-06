@@ -46,7 +46,10 @@ public class FacilitiesFragment extends Fragment {
 
         // Show loader and load facilities data
         loaderNearbyFacilities.setVisibility(View.VISIBLE);
+
         loadFacilitiesData(); //Initial Load
+
+
 
         //For clicking the searchview
         searchFacilities.setOnClickListener( v -> {
@@ -98,6 +101,7 @@ public class FacilitiesFragment extends Fragment {
         facilities.clear();
         new Handler().postDelayed(() -> {
             // Sample list of facilities change to get from firebaswe
+            facilities.clear();
             facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility A", "Sample Location 1", 4.5f, "100 - 200"));
             facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility B", "Sample Location 2", 3.8f, "300 - 400"));
             facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility C", "Sample Location 3", 4.2f, "250 - 350"));
