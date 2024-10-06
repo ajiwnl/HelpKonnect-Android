@@ -125,30 +125,8 @@ public class JournalFragment extends Fragment {
         setRandomGreeting();
 
         fetchJournals(); // Load the journals
-
-        getWeatherDetails();
+        fetchWeatherApiKey();
         return rootView;
-    }
-
-    private void fetchWeatherApiKey() {
-        String apiKeyUrl = "https://helpkonnect.vercel.app/api/weatherKey";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, apiKeyUrl,
-                response -> {
-                    Log.d("JournalFragment", "API Key Response: " + response); // Log the response
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        appid = jsonResponse.getString("apiKey");
-                        // Now you can use the appid to fetch weather details
-                        getWeatherDetails();
-                    } catch (JSONException e) {
-                        Log.e("JournalFragment", "JSON parsing error: " + e.getMessage());
-                    }
-                },
-                error -> Log.e("JournalFragment", "Error fetching API key: " + error.toString()));
-
-        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
-        requestQueue.add(stringRequest);
     }
 
     private void fetchJournals() {
@@ -209,13 +187,53 @@ public class JournalFragment extends Fragment {
         }
     }
 
-    //Open Weather API for temperature details
+    // Fetch API key from a remote server
+    private void fetchWeatherApiKey() {
+        String apiKeyUrl = "https://helpkonnect.vercel.app/api/weatherKey";
+
+        // Fetch the API key using GET request
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, apiKeyUrl,
+                response -> {
+                    Log.d("JournalFragment", "API Key Response: " + response); // Log the response
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        appid = jsonResponse.getString("apiKey"); // Assign the appid
+
+                        // Log the fetched API key for debugging
+                        Log.d("WeatherAPI", "Fetched API Key: " + appid);
+
+                        // Now that the appid is fetched, call getWeatherDetails
+                        getWeatherDetails();
+                    } catch (JSONException e) {
+                        Log.e("JournalFragment", "JSON parsing error: " + e.getMessage());
+                    }
+                },
+                error -> Log.e("JournalFragment", "Error fetching API key: " + error.toString()));
+
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        requestQueue.add(stringRequest);
+    }
+
+    // Open Weather API for temperature details
     public void getWeatherDetails() {
+        // Check if appid is valid
+        if (appid == null || appid.isEmpty()) {
+            Log.e("WeatherAPI", "API Key is null or empty!");
+            Toast.makeText(requireContext(), "API Key is missing!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String city = "Cebu City";
         String country = "Philippines";
+
+        // Construct URL using the appid
         String tempUrl = url + "?q=" + city + "," + country + "&appid=" + appid;
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, tempUrl, response -> {
+        // Log the tempUrl for debugging purposes
+        Log.d("WeatherAPI", "Temp URL: " + tempUrl);
+
+        // Use GET request instead of POST
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, tempUrl, response -> {
             try {
                 JSONObject jsonResponse = new JSONObject(response);
                 JSONObject jsonObjectMain = jsonResponse.getJSONObject("main");
@@ -240,7 +258,6 @@ public class JournalFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
         requestQueue.add(stringRequest);
     }
-
 
     private String weatherSuggestion(double temp) {
         String[] hotSuggestions = {
