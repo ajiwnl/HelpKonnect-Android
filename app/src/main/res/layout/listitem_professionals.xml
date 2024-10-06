@@ -4,6 +4,7 @@
     android:layout_height="75dp"
     android:layout_margin="5dp"
     android:background="@drawable/layout_roundcorners"
+    android:backgroundTint="@color/SecondaryLight"
     android:elevation="8dp"
     android:orientation="horizontal"
     android:padding="10dp">

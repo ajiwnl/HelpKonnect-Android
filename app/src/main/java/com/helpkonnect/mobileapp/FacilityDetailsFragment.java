@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextSwitcher;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class FacilityDetailsFragment extends Fragment {
 
+    private ImageButton backButton;
     private TextSwitcher listTitleSwitcher;
     private String[] ListTitles = {"Professionals", "Comments"};
     private String currentFacility;
@@ -33,6 +35,12 @@ public class FacilityDetailsFragment extends Fragment {
 
         //For Switching from Comments to Professional, vice versa.
         listTitleSwitcher = rootView.findViewById(R.id.ListChanger);
+        backButton = rootView.findViewById(R.id.FacilityBackButton);
+
+        backButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+
 
         listTitleSwitcher.setFactory(new ViewSwitcher.ViewFactory() {
             @Override
