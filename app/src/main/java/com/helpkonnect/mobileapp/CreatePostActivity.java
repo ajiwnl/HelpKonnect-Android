@@ -32,6 +32,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CreatePostActivity extends AppCompatActivity {
 
@@ -53,6 +65,11 @@ public class CreatePostActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 100; // Use the same request code
 
     private String uploadedImageUrl; // Variable to store the uploaded image URL
+
+    private RequestQueue requestQueue;
+
+    private String filterKey;
+    private String filterHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +104,47 @@ public class CreatePostActivity extends AppCompatActivity {
         postingAddImage.setOnClickListener(v -> {
             openImagePicker();
         });
+
+        // Initialize Volley request queue
+        requestQueue = Volley.newRequestQueue(this);
+
+        // Fetch API keys from Vercel
+        fetchApiKeys();
+    }
+
+    private void filterText(String text, FilterCallback callback) {
+        String url = "https://community-purgomalum.p.rapidapi.com/json?text=" + Uri.encode(text);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        // Check if the response contains asterisks indicating profanity
+                        boolean containsProfanity = response.getString("result").contains("***");
+                        callback.onResult(containsProfanity);
+                    } catch (JSONException e) {
+                        callback.onFailure(e);
+                    }
+                },
+                error -> callback.onFailure(error)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                if (filterKey != null && filterHost != null) {
+                    headers.put("X-RapidAPI-Key", filterKey);
+                    headers.put("X-RapidAPI-Host", filterHost);
+                }
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    interface FilterCallback {
+        void onResult(boolean containsProfanity);
+        void onFailure(Exception e);
     }
 
     private void savePost() {
@@ -99,16 +157,31 @@ public class CreatePostActivity extends AppCompatActivity {
         String userId = user.getUid();
         String postContent = postingEditText.getText().toString().trim();
 
-        if (selectedImageUri != null) {
-            try {
-                byte[] imageData = convertImageUriToByteArray(selectedImageUri);
-                uploadImageToFirebaseStorage(imageData, userId, postContent);
-            } catch (IOException e) {
-                Toast.makeText(this, "Failed to process image", Toast.LENGTH_SHORT).show();
+        filterText(postContent, new FilterCallback() {
+            @Override
+            public void onResult(boolean containsProfanity) {
+                if (containsProfanity) {
+                    postingEditText.setText("");
+                    Toast.makeText(CreatePostActivity.this, "Post contains inappropriate content.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (selectedImageUri != null) {
+                        try {
+                            byte[] imageData = convertImageUriToByteArray(selectedImageUri);
+                            uploadImageToFirebaseStorage(imageData, userId, postContent);
+                        } catch (IOException e) {
+                            Toast.makeText(CreatePostActivity.this, "Failed to process image", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        createPostInFirestore(userId, postContent, null);
+                    }
+                }
             }
-        } else {
-            createPostInFirestore(userId, postContent, null);
-        }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(CreatePostActivity.this, "Failed to filter text: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void uploadImageToFirebaseStorage(byte[] imageData, String userId, String postContent) {
@@ -222,5 +295,23 @@ public class CreatePostActivity extends AppCompatActivity {
             .addOnFailureListener(e -> {
                 Toast.makeText(this, "Error creating post: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
+    }
+
+    private void fetchApiKeys() {
+        String url = "https://helpkonnect.vercel.app/api/filterKey";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        filterKey = jsonObject.getString("filterKey");
+                        filterHost = jsonObject.getString("filterHost");
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Failed to parse API keys", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Toast.makeText(this, "Failed to fetch API keys", Toast.LENGTH_SHORT).show());
+
+        requestQueue.add(stringRequest);
     }
 }
