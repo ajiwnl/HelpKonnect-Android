@@ -20,5 +20,6 @@
     <string name="_0">0</string>
     <string name="todo">TODO</string>
     <string name="time">Time</string>
+    <string name="comment_here">Comment Here...</string>
 
 </resources>
