@@ -29,6 +29,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class SelectedPostFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void filterText(String text, FilterCallback callback) {
+    private void filterText(String text, String userId, FilterCallback callback) {
         String url = "https://community-purgomalum.p.rapidapi.com/json?text=" + Uri.encode(text);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -100,6 +101,9 @@ public class SelectedPostFragment extends Fragment {
                 response -> {
                     try {
                         boolean containsProfanity = response.getString("result").contains("***");
+                        if (containsProfanity) {
+                            saveFlaggedComment(text, userId);
+                        }
                         callback.onResult(containsProfanity);
                     } catch (JSONException e) {
                         callback.onFailure(e);
@@ -200,13 +204,13 @@ public class SelectedPostFragment extends Fragment {
     }
 
     private void postComment(String comment) {
-        filterText(comment, new FilterCallback() {
+        String userId = mAuth.getCurrentUser().getUid();
+        filterText(comment, userId, new FilterCallback() {
             @Override
             public void onResult(boolean containsProfanity) {
                 if (containsProfanity) {
                     Toast.makeText(getContext(), "Comment contains inappropriate content.", Toast.LENGTH_SHORT).show();
                 } else {
-                    String userId = mAuth.getCurrentUser().getUid();
                     Map<String, Object> commentData = new HashMap<>();
                     commentData.put("comment", comment);
                     commentData.put("postId", post.getPostId());
@@ -275,6 +279,21 @@ public class SelectedPostFragment extends Fragment {
                                 .addOnFailureListener(ex -> Log.e("SelectedPostFragment", "Error fetching user details", ex));
                     }
                 });
+    }
+
+    private void saveFlaggedComment(String comment, String userId) {
+        Map<String, Object> flaggedCommentData = new HashMap<>();
+        flaggedCommentData.put("comment", comment);
+        flaggedCommentData.put("time", new Date());
+        flaggedCommentData.put("userId", userId);
+
+        db.collection("flaggedAccounts").add(flaggedCommentData)
+            .addOnSuccessListener(documentReference -> {
+                Log.d("SelectedPostFragment", "Flagged comment saved for moderation.");
+            })
+            .addOnFailureListener(e -> {
+                Log.e("SelectedPostFragment", "Failed to save flagged comment: " + e.getMessage());
+            });
     }
 
 }
