@@ -5,19 +5,26 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
@@ -27,6 +34,8 @@ public class SelectedPostFragment extends Fragment {
 
     private CommunityListAdapter.CommunityPost post;
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private ListenerRegistration commentsListener;
 
     public static SelectedPostFragment newInstance(CommunityListAdapter.CommunityPost post) {
         SelectedPostFragment fragment = new SelectedPostFragment();
@@ -43,6 +52,7 @@ public class SelectedPostFragment extends Fragment {
             post = (CommunityListAdapter.CommunityPost) getArguments().getSerializable(ARG_POST);
         }
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Nullable
@@ -57,6 +67,19 @@ public class SelectedPostFragment extends Fragment {
         TextView timeTextView = rootView.findViewById(R.id.userpostdate);
         LinearLayout imageContainer = rootView.findViewById(R.id.imageContainer);
         LinearLayout commentsContainer = rootView.findViewById(R.id.commentsContainer);
+
+        EditText commentText = rootView.findViewById(R.id.commentText);
+        Button commentButton = rootView.findViewById(R.id.commentButton);
+
+        commentButton.setOnClickListener(v -> {
+            String comment = commentText.getText().toString().trim();
+            if (!comment.isEmpty()) {
+                postComment(comment);
+                commentText.setText(""); // Clear the input field
+            } else {
+                Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Glide.with(this)
             .load(post.getUserProfileImageUrl())
@@ -95,41 +118,76 @@ public class SelectedPostFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (commentsListener != null) {
+            commentsListener.remove();
+        }
+    }
+
+    private void postComment(String comment) {
+        String userId = mAuth.getCurrentUser().getUid();
+        Map<String, Object> commentData = new HashMap<>();
+        commentData.put("comment", comment);
+        commentData.put("postId", post.getPostId());
+        commentData.put("time", new java.util.Date());
+        commentData.put("userId", userId);
+
+        db.collection("comments").add(commentData)
+            .addOnSuccessListener(documentReference -> {
+                Toast.makeText(getContext(), "Comment posted", Toast.LENGTH_SHORT).show();
+                // Optionally, refresh comments display here
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(getContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+    }
+
     private void loadComments(LinearLayout commentsContainer) {
-        db.collection("comments")
+        commentsListener = db.collection("comments")
                 .whereEqualTo("postId", post.getPostId())
                 .orderBy("time", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String commentText = document.getString("comment");
-                            String userId = document.getString("userId");
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        Log.e("SelectedPostFragment", "Error listening for comments: ", e);
+                        return;
+                    }
 
-                            db.collection("credentials").document(userId).get()
-                                    .addOnSuccessListener(userDoc -> {
-                                        String username = userDoc.getString("facilityName");
-                                        String imageUrl = userDoc.getString("imageUrl");
+                    commentsContainer.removeAllViews(); // Clear existing comments
 
-                                        View commentView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, commentsContainer, false);
-                                        TextView commentTextView = commentView.findViewById(R.id.commentText);
-                                        TextView usernameTextView = commentView.findViewById(R.id.username);
-                                        ImageView userImageView = commentView.findViewById(R.id.userImage);
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String commentText = document.getString("comment");
+                        String userId = document.getString("userId");
 
-                                        commentTextView.setText(commentText);
-                                        usernameTextView.setText(username);
-                                        Glide.with(getContext())
-                                            .load(imageUrl)
-                                            .circleCrop()
-                                            .into(userImageView);
+                        db.collection("credentials").document(userId).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    String username;
+                                    if (userDoc.getString("facilityName") != null) {
+                                        username = userDoc.getString("facilityName");
+                                    } else {
+                                        username = userDoc.getString("username");
+                                    }
 
-                                        commentsContainer.addView(commentView);
-                                    })
-                                    .addOnFailureListener(e -> Log.e("SelectedPostFragment", "Error fetching user details", e));
-                        }
-                    } else {
-                        Log.e("SelectedPostFragment", "Error getting comments: ", task.getException());
+                                    String imageUrl = userDoc.getString("imageUrl");
+
+                                    View commentView = LayoutInflater.from(getContext()).inflate(R.layout.comment_item, commentsContainer, false);
+                                    TextView commentTextView = commentView.findViewById(R.id.commentText);
+                                    TextView usernameTextView = commentView.findViewById(R.id.username);
+                                    ImageView userImageView = commentView.findViewById(R.id.userImage);
+
+                                    commentTextView.setText(commentText);
+                                    usernameTextView.setText(username);
+                                    Glide.with(getContext())
+                                        .load(imageUrl)
+                                        .circleCrop()
+                                        .into(userImageView);
+
+                                    commentsContainer.addView(commentView);
+                                })
+                                .addOnFailureListener(ex -> Log.e("SelectedPostFragment", "Error fetching user details", ex));
                     }
                 });
     }
+
 }
