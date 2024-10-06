@@ -112,7 +112,7 @@ public class CreatePostActivity extends AppCompatActivity {
         fetchApiKeys();
     }
 
-    private void filterText(String text, FilterCallback callback) {
+    private void filterText(String text, String userId, FilterCallback callback) {
         String url = "https://community-purgomalum.p.rapidapi.com/json?text=" + Uri.encode(text);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -121,6 +121,9 @@ public class CreatePostActivity extends AppCompatActivity {
                     try {
                         // Check if the response contains asterisks indicating profanity
                         boolean containsProfanity = response.getString("result").contains("***");
+                        if (containsProfanity) {
+                            saveFlaggedComment(text, userId);
+                        }
                         callback.onResult(containsProfanity);
                     } catch (JSONException e) {
                         callback.onFailure(e);
@@ -157,7 +160,7 @@ public class CreatePostActivity extends AppCompatActivity {
         String userId = user.getUid();
         String postContent = postingEditText.getText().toString().trim();
 
-        filterText(postContent, new FilterCallback() {
+        filterText(postContent, userId, new FilterCallback() {
             @Override
             public void onResult(boolean containsProfanity) {
                 if (containsProfanity) {
@@ -313,5 +316,20 @@ public class CreatePostActivity extends AppCompatActivity {
                 error -> Toast.makeText(this, "Failed to fetch API keys", Toast.LENGTH_SHORT).show());
 
         requestQueue.add(stringRequest);
+    }
+
+    private void saveFlaggedComment(String comment, String userId) {
+        Map<String, Object> flaggedCommentData = new HashMap<>();
+        flaggedCommentData.put("comment", comment);
+        flaggedCommentData.put("time", new Date());
+        flaggedCommentData.put("userId", userId);
+
+        db.collection("flaggedAccounts").add(flaggedCommentData)
+            .addOnSuccessListener(documentReference -> {
+                Log.d("CreatePostActivity", "Flagged comment saved for moderation.");
+            })
+            .addOnFailureListener(e -> {
+                Log.e("CreatePostActivity", "Failed to save flagged comment: " + e.getMessage());
+            });
     }
 }
