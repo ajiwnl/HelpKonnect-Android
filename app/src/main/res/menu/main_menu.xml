@@ -10,10 +10,16 @@
 
         </item>
 
+        <item android:id="@+id/messagenavicon"
+            android:icon="@drawable/messageicon"
+            android:title="Messages">
+        </item>
+
         <item android:id="@+id/chatbotnav"
             android:icon="@drawable/chatbotmenuicon"
             android:title="Chatbot">
         </item>
+
         <item android:id="@+id/facnav"
             android:icon="@drawable/facilitiesmenuicon"
             android:title="Facilities">
