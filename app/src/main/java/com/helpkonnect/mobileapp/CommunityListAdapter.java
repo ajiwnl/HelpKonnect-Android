@@ -125,9 +125,32 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
 
         holder.userPostName.setText(post.getUserPostName());
         holder.userPostDescription.setText(post.getUserPostDescription());
-        holder.userPostLikes.setText(String.valueOf(post.getUserPostLikes()));
         holder.userPostDate.setText(post.getUserPostDate());
         holder.postComment.setText(post.getPostComment());
+
+        // Load the current heart count from Firestore
+        db.collection("community").document(post.getPostId()).get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    int likesCount = documentSnapshot.getLong("heart").intValue();
+                    holder.userPostLikes.setText(String.valueOf(likesCount));
+                }
+            })
+            .addOnFailureListener(e -> Log.w("CommunityFragment", "Error loading heart count", e));
+
+        // Check if the current user has liked the post
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db.collection("likes")
+            .whereEqualTo("postId", post.getPostId())
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    holder.heartIcon.setImageResource(R.drawable.hearticonfilled); // Liked icon
+                } else {
+                    holder.heartIcon.setImageResource(R.drawable.hearticon); // Unliked icon
+                }
+            });
 
         Glide.with(holder.itemView.getContext())
                 .load(post.getUserProfileImageUrl())
@@ -166,6 +189,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postId = post.getPostId();
         CollectionReference likesRef = db.collection("likes");
+        CollectionReference communityRef = db.collection("community"); // Ensure this is the correct collection
 
         likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
                 .addOnCompleteListener(task -> {
@@ -178,6 +202,10 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
                                             heartIcon.setImageResource(R.drawable.hearticon); // Update to unliked icon
                                             int likesCount = Integer.parseInt(userPostLikes.getText().toString()) - 1;
                                             userPostLikes.setText(String.valueOf(likesCount));
+
+                                            // Update the heart count in the community document
+                                            communityRef.document(postId).update("heart", likesCount)
+                                                    .addOnFailureListener(e -> Log.w("CommunityFragment", "Error updating heart count", e));
                                         })
                                         .addOnFailureListener(e -> Log.w("CommunityFragment", "Error removing like", e));
                             }
@@ -192,6 +220,10 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
                                         heartIcon.setImageResource(R.drawable.hearticonfilled); // Update to liked icon
                                         int likesCount = Integer.parseInt(userPostLikes.getText().toString()) + 1;
                                         userPostLikes.setText(String.valueOf(likesCount));
+
+                                        // Update the heart count in the community document
+                                        communityRef.document(postId).update("heart", likesCount)
+                                                .addOnFailureListener(e -> Log.w("CommunityFragment", "Error updating heart count", e));
                                     })
                                     .addOnFailureListener(e -> Log.w("CommunityFragment", "Error adding like", e));
                         }

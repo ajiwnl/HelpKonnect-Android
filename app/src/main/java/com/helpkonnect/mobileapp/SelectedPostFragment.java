@@ -154,7 +154,16 @@ public class SelectedPostFragment extends Fragment {
             userPostName.setText(post.getUserPostName());
             userPostDescription.setText(post.getUserPostDescription());
             userPostDate.setText(post.getUserPostDate());
-            heartTextView.setText(String.valueOf(post.getUserPostLikes()));
+
+            // Load the current heart count from Firestore
+            db.collection("community").document(post.getPostId()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        int likesCount = documentSnapshot.getLong("heart").intValue();
+                        heartTextView.setText(String.valueOf(likesCount));
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error loading heart count", e));
 
             Glide.with(this)
                 .load(post.getUserProfileImageUrl())
@@ -318,6 +327,7 @@ public class SelectedPostFragment extends Fragment {
         String userId = mAuth.getCurrentUser().getUid();
         String postId = post.getPostId();
         CollectionReference likesRef = db.collection("likes");
+        CollectionReference communityRef = db.collection("community"); // Assuming your posts are stored in a collection named "community"
 
         likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
             .addOnCompleteListener(task -> {
@@ -330,6 +340,10 @@ public class SelectedPostFragment extends Fragment {
                                     heartIcon.setImageResource(R.drawable.hearticon); // Update to unliked icon
                                     int likesCount = Integer.parseInt(heartTextView.getText().toString()) - 1;
                                     heartTextView.setText(String.valueOf(likesCount));
+
+                                    // Update the heart count in the community document
+                                    communityRef.document(postId).update("heart", likesCount)
+                                        .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error updating heart count", e));
                                 })
                                 .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error removing like", e));
                         }
@@ -344,6 +358,10 @@ public class SelectedPostFragment extends Fragment {
                                 heartIcon.setImageResource(R.drawable.hearticonfilled); // Update to liked icon
                                 int likesCount = Integer.parseInt(heartTextView.getText().toString()) + 1;
                                 heartTextView.setText(String.valueOf(likesCount));
+
+                                // Update the heart count in the community document
+                                communityRef.document(postId).update("heart", likesCount)
+                                    .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error updating heart count", e));
                             })
                             .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error adding like", e));
                     }
