@@ -75,18 +75,33 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+        <ImageView
+            android:id="@+id/heartIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="10dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/hearticon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageScrollView"
+            app:layout_constraintVertical_bias="1.0" />
+
         <TextView
             android:id="@+id/userpostlikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:drawableLeft="@drawable/textview_ratingicon"
-            android:text="2"
+            android:text="0"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/postComment"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/heartIcon"
             app:layout_constraintTop_toBottomOf="@+id/imageContainer"
+            app:layout_constraintVertical_bias="0.88"
             tools:ignore="NotSibling" />
 
         <TextView

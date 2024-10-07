@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -50,11 +51,13 @@ public class SelectedPostFragment extends Fragment {
     private RequestQueue requestQueue;
     private String filterKey;
     private String filterHost;
+    private ImageView heartIcon;
+    private TextView heartTextView;
 
     public static SelectedPostFragment newInstance(CommunityListAdapter.CommunityPost post) {
         SelectedPostFragment fragment = new SelectedPostFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_POST, (Serializable) post);
+        args.putSerializable(ARG_POST, post);
         fragment.setArguments(args);
         return fragment;
     }
@@ -137,58 +140,58 @@ public class SelectedPostFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_selectedpost, container, false);
 
-        ImageView userProfileImageView = rootView.findViewById(R.id.userprofileimage);
-        TextView usernameTextView = rootView.findViewById(R.id.userpostname);
-        TextView captionTextView = rootView.findViewById(R.id.userpostdescription);
-        TextView heartTextView = rootView.findViewById(R.id.userpostlikes);
-        TextView timeTextView = rootView.findViewById(R.id.userpostdate);
+        // Initialize UI elements
+        heartIcon = rootView.findViewById(R.id.heartIcon);
+        heartTextView = rootView.findViewById(R.id.userpostlikes);
+        TextView userPostName = rootView.findViewById(R.id.userpostname);
+        TextView userPostDescription = rootView.findViewById(R.id.userpostdescription);
+        TextView userPostDate = rootView.findViewById(R.id.userpostdate);
+        ImageView userProfileImage = rootView.findViewById(R.id.userprofileimage);
         LinearLayout imageContainer = rootView.findViewById(R.id.imageContainer);
-        LinearLayout commentsContainer = rootView.findViewById(R.id.commentsContainer);
 
-        EditText commentText = rootView.findViewById(R.id.commentText);
-        Button commentButton = rootView.findViewById(R.id.commentButton);
+        // Set data to UI elements
+        if (post != null) {
+            userPostName.setText(post.getUserPostName());
+            userPostDescription.setText(post.getUserPostDescription());
+            userPostDate.setText(post.getUserPostDate());
+            heartTextView.setText(String.valueOf(post.getUserPostLikes()));
 
-        commentButton.setOnClickListener(v -> {
-            String comment = commentText.getText().toString().trim();
-            if (!comment.isEmpty()) {
-                postComment(comment);
-                commentText.setText(""); // Clear the input field
-            } else {
-                Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
-            }
-        });
+            Glide.with(this)
+                .load(post.getUserProfileImageUrl())
+                .circleCrop()
+                .into(userProfileImage);
 
-        Glide.with(this)
-            .load(post.getUserProfileImageUrl())
-            .circleCrop()
-            .into(userProfileImageView);
-        usernameTextView.setText(post.getUserPostName());
-        captionTextView.setText(post.getUserPostDescription());
-        heartTextView.setText(String.valueOf(post.getUserPostLikes()));
-        timeTextView.setText(post.getUserPostDate());
+            // Load images into the container
+            List<String> imageUrls = post.getImageUrls();
+            if (imageUrls != null) {
+                imageContainer.removeAllViews();
+                for (String imageUrl : imageUrls) {
+                    if (!imageUrl.isEmpty()) {
+                        ImageView imageView = new ImageView(getContext());
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                600
+                        );
+                        layoutParams.setMargins(8, 8, 8, 8);
+                        imageView.setLayoutParams(layoutParams);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        List<String> imageUrls = post.getImageUrls();
-        if (imageUrls != null) {
-            for (String imageUrl : imageUrls) {
-                if (!imageUrl.isEmpty()) {
-                    ImageView imageView = new ImageView(getContext());
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                            getResources().getDisplayMetrics().widthPixels,
-                            600
-                    );
-                    layoutParams.setMargins(8, 8, 8, 8);
-                    imageView.setLayoutParams(layoutParams);
-                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                    Glide.with(this)
+                        Glide.with(this)
                             .load(imageUrl)
-                            .placeholder(R.drawable.userprofileicon)
                             .into(imageView);
 
-                    imageContainer.addView(imageView);
+                        imageContainer.addView(imageView);
+                    }
                 }
             }
         }
+
+        // Initialize commentsContainer
+        LinearLayout commentsContainer = rootView.findViewById(R.id.commentsContainer);
+
+        checkIfUserLikedPost();
+
+        heartIcon.setOnClickListener(v -> toggleHeartReaction());
 
         loadComments(commentsContainer);
 
@@ -293,6 +296,60 @@ public class SelectedPostFragment extends Fragment {
             })
             .addOnFailureListener(e -> {
                 Log.e("SelectedPostFragment", "Failed to save flagged comment: " + e.getMessage());
+            });
+    }
+
+    private void checkIfUserLikedPost() {
+        String userId = mAuth.getCurrentUser().getUid();
+        String postId = post.getPostId();
+        CollectionReference likesRef = db.collection("likes");
+
+        likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    heartIcon.setImageResource(R.drawable.hearticonfilled); // User has liked the post
+                } else {
+                    heartIcon.setImageResource(R.drawable.hearticon); // User has not liked the post
+                }
+            });
+    }
+
+    private void toggleHeartReaction() {
+        String userId = mAuth.getCurrentUser().getUid();
+        String postId = post.getPostId();
+        CollectionReference likesRef = db.collection("likes");
+
+        likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().isEmpty()) {
+                        // User has already liked the post, so remove the like
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            likesRef.document(document.getId()).delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    heartIcon.setImageResource(R.drawable.hearticon); // Update to unliked icon
+                                    int likesCount = Integer.parseInt(heartTextView.getText().toString()) - 1;
+                                    heartTextView.setText(String.valueOf(likesCount));
+                                })
+                                .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error removing like", e));
+                        }
+                    } else {
+                        // User has not liked the post, so add a like
+                        Map<String, Object> likeData = new HashMap<>();
+                        likeData.put("postId", postId);
+                        likeData.put("userId", userId);
+
+                        likesRef.add(likeData)
+                            .addOnSuccessListener(documentReference -> {
+                                heartIcon.setImageResource(R.drawable.hearticonfilled); // Update to liked icon
+                                int likesCount = Integer.parseInt(heartTextView.getText().toString()) + 1;
+                                heartTextView.setText(String.valueOf(likesCount));
+                            })
+                            .addOnFailureListener(e -> Log.w("SelectedPostFragment", "Error adding like", e));
+                    }
+                } else {
+                    Log.w("SelectedPostFragment", "Error checking likes", task.getException());
+                }
             });
     }
 
