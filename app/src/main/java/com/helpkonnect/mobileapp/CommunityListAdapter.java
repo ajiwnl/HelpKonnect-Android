@@ -1,5 +1,6 @@
 package com.helpkonnect.mobileapp;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +11,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdapter.CommunityViewHolder> {
 
     private List<CommunityPost> posts;
     private OnItemClickListener onItemClick;
+
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
     public static class CommunityPost implements Serializable {
         private String userProfileImageUrl;
@@ -72,6 +82,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         public TextView userPostLikes;
         public TextView userPostDate;
         public TextView postComment;
+        public ImageView heartIcon; // Add this line
 
         public CommunityViewHolder(View itemView) {
             super(itemView);
@@ -82,11 +93,19 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             userPostLikes = itemView.findViewById(R.id.userpostlikes);
             userPostDate = itemView.findViewById(R.id.userpostdate);
             postComment = itemView.findViewById(R.id.postComment);
+            heartIcon = itemView.findViewById(R.id.heartIcon); // Add this line
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick.onItemClick(posts.get(position));
+                }
+            });
+
+            heartIcon.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    onHeartClick(posts.get(position), heartIcon, userPostLikes);
                 }
             });
         }
@@ -141,6 +160,45 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
                 }
             }
         }
+    }
+
+    private void onHeartClick(CommunityListAdapter.CommunityPost post, ImageView heartIcon, TextView userPostLikes) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String postId = post.getPostId();
+        CollectionReference likesRef = db.collection("likes");
+
+        likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            // User has already liked the post, so remove the like
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                likesRef.document(document.getId()).delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            heartIcon.setImageResource(R.drawable.hearticon); // Update to unliked icon
+                                            int likesCount = Integer.parseInt(userPostLikes.getText().toString()) - 1;
+                                            userPostLikes.setText(String.valueOf(likesCount));
+                                        })
+                                        .addOnFailureListener(e -> Log.w("CommunityFragment", "Error removing like", e));
+                            }
+                        } else {
+                            // User has not liked the post, so add a like
+                            Map<String, Object> likeData = new HashMap<>();
+                            likeData.put("postId", postId);
+                            likeData.put("userId", userId);
+
+                            likesRef.add(likeData)
+                                    .addOnSuccessListener(documentReference -> {
+                                        heartIcon.setImageResource(R.drawable.hearticonfilled); // Update to liked icon
+                                        int likesCount = Integer.parseInt(userPostLikes.getText().toString()) + 1;
+                                        userPostLikes.setText(String.valueOf(likesCount));
+                                    })
+                                    .addOnFailureListener(e -> Log.w("CommunityFragment", "Error adding like", e));
+                        }
+                    } else {
+                        Log.w("CommunityFragment", "Error checking likes", task.getException());
+                    }
+                });
     }
 
 
