@@ -1,5 +1,6 @@
 package com.helpkonnect.mobileapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,53 +10,75 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.Collections;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
-import io.getstream.chat.android.models.Filters;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
-import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel;
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelBinding;
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MessageFragment extends Fragment {
 
-    private static final String TAG = "MessageFragment";
+    private RecyclerView recyclerView;
+    private UserAdapter userAdapter;
+    private List<UserList> userList;
+
+    private FirebaseUser currentUser;
+
+    private FirebaseAuth mAuth;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView called");
-
-
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);
 
-        // Find the ChannelListView
-        ChannelListView channelListView = view.findViewById(R.id.channelListView);
+        recyclerView = view.findViewById(R.id.user_list_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Instantiate the ViewModel
-        FilterObject filter = Filters.and(
-                Filters.eq("type", "messaging"),
-                Filters.in("members", Collections.singletonList("user-id"))
-        );
+        userList = new ArrayList<>();
+        userAdapter = new UserAdapter(userList);
+        recyclerView.setAdapter(userAdapter);
 
-        ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
-                .filter(filter)
-                .sort(QuerySortByField.descByName("last_updated"))
-                .limit(30)
-                .build();
-
-        ChannelListViewModel viewModel = new ViewModelProvider(this, factory).get(ChannelListViewModel.class);
-
-        // Bind the ViewModel with ChannelListView
-        ChannelListViewModelBinding.bind(viewModel, channelListView, getViewLifecycleOwner());
-
-        Log.d(TAG, "ViewModel and ChannelListView bound");
+        fetchUsersFromFirebase();
 
         return view;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void fetchUsersFromFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("credentials")
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String userId = document.getString("userId");
+                        String username = document.getString("username");
+                        String facilityName = document.getString("facilityName");
+                        String imageUrl = document.getString("imageUrl"); // Fetch image URL
+
+                        if (!userId.equals(getCurrentUserId())) {
+                            String displayName = username != null ? username : facilityName;
+                            userList.add(new UserList(userId, displayName, imageUrl));
+                        }
+                    }
+                    userAdapter.notifyDataSetChanged();
+                } else {
+                    Log.w("MessageFragment", "Error getting documents.", task.getException());
+                }
+            });
+    }
+
+    private String getCurrentUserId() {
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        assert currentUser != null;
+        return currentUser.getUid();
     }
 }

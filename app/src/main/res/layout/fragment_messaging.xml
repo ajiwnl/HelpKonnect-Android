@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".MessageFragment">
 
-    <io.getstream.chat.android.ui.feature.channels.list.ChannelListView
-        android:id="@+id/channelListView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/user_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
