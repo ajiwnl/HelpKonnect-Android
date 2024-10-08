@@ -62,4 +62,6 @@ dependencies {
     implementation ("io.getstream:stream-chat-android-client:6.5.1")
     implementation ("io.getstream:stream-chat-android-offline:6.5.1")
     implementation ("io.getstream:stream-chat-android-compose:6.5.1")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
 }
