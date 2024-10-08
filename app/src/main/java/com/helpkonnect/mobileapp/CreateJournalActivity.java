@@ -20,11 +20,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CreateJournalActivity extends AppCompatActivity {
 
@@ -36,6 +48,9 @@ public class CreateJournalActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Uri selectedImageUri;
     private StorageReference storageReference;
+    private static final String TAG = "Translation";
+    private static String API_KEY;
+    private OkHttpClient client = new OkHttpClient();  // OkHttpClient instance
 
     private final Date DateToday = new Date();
     private final SimpleDateFormat DateTodayFormat = new SimpleDateFormat("EEEE, dd MMMM, yyyy", Locale.ENGLISH);
@@ -66,6 +81,8 @@ public class CreateJournalActivity extends AppCompatActivity {
 
         //Get the current timestamp
         com.google.firebase.Timestamp timestamp = com.google.firebase.Timestamp.now();
+
+        fetchApiKey();
 
         // Format the timestamp into a readable date string
         SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
@@ -104,6 +121,46 @@ public class CreateJournalActivity extends AppCompatActivity {
         }
     }
 
+    // Method to fetch the API key
+    private void fetchApiKey() {
+        String url = "https://helpkonnect.vercel.app/api/androidRapidKey"; // URL to fetch the API key
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Failed to fetch API key: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonResponse = response.body().string(); // Read the response body first
+                Log.d(TAG, "Raw JSON response: " + jsonResponse); // Log the raw response
+
+                if (response.isSuccessful()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+                        if (jsonObject.has("androidRapidKey")) {
+                            API_KEY = jsonObject.getString("androidRapidKey"); // Extract the API key
+                            Log.d(TAG, "API Key fetched successfully: " + API_KEY);
+                        } else {
+                            Log.e(TAG, "API Key not found in the response");
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing API key response: " + e.getMessage());
+                    }
+                } else {
+                    Log.e(TAG, "Failed to fetch API key: " + response.code());
+                }
+            }
+
+        });
+    }
+
+
     private void saveJournalEntry() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
@@ -122,37 +179,42 @@ public class CreateJournalActivity extends AppCompatActivity {
             return;
         }
 
-
         showLoader(true);
         userActivity(userId);
         StorageReference fileRef = storageReference.child("journal_images/" + System.currentTimeMillis() + ".jpg");
+
+        // Upload the image and get the download URL
         fileRef.putFile(selectedImageUri).addOnSuccessListener(taskSnapshot -> {
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                // Image uploaded, now save the journal entry to Firestore
-                Map<String, Object> journal = new HashMap<>();
-                journal.put("userId", userId);
-                journal.put("title", title);
-                journal.put("subtitle", subtitle);
-                journal.put("dateCreated",  com.google.firebase.Timestamp.now());
-                journal.put("notes", notes);
-                journal.put("imageUrl", uri.toString());
+                // Translate the notes before saving the journal entry
+                translateText(notes, translatedText -> {
+                    // Image uploaded and text translated, now save the journal entry to Firestore
+                    Map<String, Object> journal = new HashMap<>();
+                    journal.put("userId", userId);
+                    journal.put("title", title);
+                    journal.put("subtitle", subtitle);
+                    journal.put("dateCreated", com.google.firebase.Timestamp.now());
+                    journal.put("notes", notes);
+                    journal.put("translated_notes", translatedText); // Save translated text
+                    journal.put("imageUrl", uri.toString());
 
-                db.collection("journals")
-                        .add(journal)
-                        .addOnSuccessListener(documentReference -> {
-                            Toast.makeText(this, "Journal saved successfully", Toast.LENGTH_SHORT).show();
-                            showLoader(false);
-                            finish();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(this, "Error Saving Journal", Toast.LENGTH_SHORT).show();
-                            // Clear all fields after error
-                            journalTitle.setText("");
-                            journalSubtitle.setText("");
-                            journalNotes.setText("");
-                            journalImage.setImageDrawable(null);
-                            showLoader(true);
-                        });
+                    db.collection("journals")
+                            .add(journal)
+                            .addOnSuccessListener(documentReference -> {
+                                Toast.makeText(this, "Journal saved successfully", Toast.LENGTH_SHORT).show();
+                                showLoader(false);
+                                finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error Saving Journal", Toast.LENGTH_SHORT).show();
+                                // Clear all fields after error
+                                journalTitle.setText("");
+                                journalSubtitle.setText("");
+                                journalNotes.setText("");
+                                journalImage.setImageDrawable(null);
+                                showLoader(true);
+                            });
+                });
             });
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error Uploading Image", Toast.LENGTH_SHORT).show();
@@ -163,6 +225,72 @@ public class CreateJournalActivity extends AppCompatActivity {
             journalImage.setImageDrawable(null);
             showLoader(false);
         });
+    }
+
+    // Modified translateText method
+    private void translateText(String text, TranslateCallback callback) {
+        String url = "https://google-api31.p.rapidapi.com/gtranslate"; // Translation endpoint
+
+        // Creating the JSON body for translation
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("text", text);
+            requestBody.put("to", "en"); // Set target language to English
+            requestBody.put("from_lang", "auto");
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating JSON body: " + e.getMessage());
+            return;
+        }
+
+        RequestBody body = RequestBody.create(requestBody.toString(), MediaType.parse("application/json"));
+
+        // Building the request
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("x-rapidapi-key", API_KEY)
+                .addHeader("x-rapidapi-host", "google-api31.p.rapidapi.com")
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        // Logging request details
+        Log.d(TAG, "Translation Request URL: " + url);
+
+        // Making the request asynchronously
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Translation request failed: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Translation request failed with status code: " + response.code());
+                    Log.e(TAG, "Response body: " + response.body().string());
+                    return;
+                }
+
+                try {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Translation response body: " + responseBody);
+
+                    // Modify this part to correctly parse the response
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    String translatedText = jsonResponse.getString("translated_text"); // Corrected to directly get "translated_text"
+
+                    Log.d(TAG, "Translated text: " + translatedText);
+                    callback.onTranslate(translatedText); // Callback with translated text
+                } catch (Exception e) {
+                    Log.e(TAG, "Error parsing translation response: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    // Callback interface for translation
+    public interface TranslateCallback {
+        void onTranslate(String translatedText);
     }
 
     private void showLoader(boolean show) {
