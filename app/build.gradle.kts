@@ -31,6 +31,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -55,4 +58,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("io.getstream:stream-chat-android-ui-components:6.5.1")
+    implementation ("io.getstream:stream-chat-android-client:6.5.1")
+    implementation ("io.getstream:stream-chat-android-offline:6.5.1")
+    implementation ("io.getstream:stream-chat-android-compose:6.5.1")
 }
