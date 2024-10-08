@@ -15,9 +15,15 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private List<UserList> userList;
+    private OnUserClickListener onUserClickListener;
 
-    public UserAdapter(List<UserList> userList) {
+    public interface OnUserClickListener {
+        void onUserClick(UserList user);
+    }
+
+    public UserAdapter(List<UserList> userList, OnUserClickListener onUserClickListener) {
         this.userList = userList;
+        this.onUserClickListener = onUserClickListener;
     }
 
     @NonNull
@@ -37,6 +43,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 .apply(RequestOptions.circleCropTransform())
                 .placeholder(R.drawable.userprofileicon)
                 .into(holder.profileImage);
+
+        holder.itemView.setOnClickListener(v -> onUserClickListener.onUserClick(user));
     }
 
     @Override

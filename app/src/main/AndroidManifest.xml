@@ -58,6 +58,8 @@
         <activity
             android:name=".MainScreenActivity"
             android:exported="false" />
+        <activity android:name=".ChatActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
