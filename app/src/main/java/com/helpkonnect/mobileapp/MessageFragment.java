@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +42,9 @@ public class MessageFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(userList);
+        userAdapter = new UserAdapter(userList, user -> {
+            openChatWithUser(user);
+        });
         recyclerView.setAdapter(userAdapter);
 
         fetchUsersFromFirebase();
@@ -60,7 +63,7 @@ public class MessageFragment extends Fragment {
                         String userId = document.getString("userId");
                         String username = document.getString("username");
                         String facilityName = document.getString("facilityName");
-                        String imageUrl = document.getString("imageUrl"); // Fetch image URL
+                        String imageUrl = document.getString("imageUrl");
 
                         if (!userId.equals(getCurrentUserId())) {
                             String displayName = username != null ? username : facilityName;
@@ -80,5 +83,11 @@ public class MessageFragment extends Fragment {
 
         assert currentUser != null;
         return currentUser.getUid();
+    }
+
+    private void openChatWithUser(UserList user) {
+        Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra("userId", user.getUserId());
+        startActivity(intent);
     }
 }
