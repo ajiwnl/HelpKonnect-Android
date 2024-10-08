@@ -18,4 +18,4 @@ Other tech stacks will be added project is still on-going
 
 ###
 
-**APIs:** [Purgomalum Text Filtering](https://www.purgomalum.com/), [Stream Chat API](https://getstream.io/chat/), [Google API](https://rapidapi.com/rphrp1985/api/google-api31)
+**APIs:** [Purgomalum Text Filtering](https://www.purgomalum.com/), [Stream Chat-Realtime Messaging](https://getstream.io/chat/), [Google API](https://rapidapi.com/rphrp1985/api/google-api31)
