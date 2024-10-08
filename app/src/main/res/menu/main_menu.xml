@@ -10,7 +10,7 @@
 
         </item>
 
-        <item android:id="@+id/messagenavicon"
+        <item android:id="@+id/messagenav"
             android:icon="@drawable/messageicon"
             android:title="Messages">
         </item>
