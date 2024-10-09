@@ -59,8 +59,7 @@ public class MainScreenActivity extends AppCompatActivity {
         profileImageView = findViewById(R.id.profile_image);
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        currentUser = null;
-        //mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
