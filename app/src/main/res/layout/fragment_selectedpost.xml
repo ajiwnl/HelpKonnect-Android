@@ -164,7 +164,8 @@
             android:layout_height="wrap_content"
             android:text="Post"
             android:textColor="@color/white"
-            android:background="@color/PrimaryLight"
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/PrimaryLight"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

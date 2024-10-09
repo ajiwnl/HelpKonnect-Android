@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -43,6 +45,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +59,8 @@ public class MainScreenActivity extends AppCompatActivity {
         profileImageView = findViewById(R.id.profile_image);
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        currentUser = mAuth.getCurrentUser();
+        currentUser = null;
+        //mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -121,8 +125,6 @@ public class MainScreenActivity extends AppCompatActivity {
         });
     }
 
-    private void enableEdgeToEdge() {
-    }
 
     @Override
     public void onBackPressed() {

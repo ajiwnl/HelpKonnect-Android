@@ -30,6 +30,7 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        style="@style/AppbgColor"
         app:headerLayout="@layout/header"
         app:menu="@menu/main_menu"/>
 
