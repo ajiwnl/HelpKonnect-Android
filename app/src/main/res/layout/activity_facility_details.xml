@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FacilityDetailsFragment">
+    tools:context=".FacilityDetailsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
 
         <ImageView
             android:id="@+id/facilityImage"
@@ -98,7 +96,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/ListTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
@@ -126,9 +124,31 @@
                 android:textSize="10sp"
                 android:textAlignment="center"
                 android:backgroundTint="@color/SecondaryLight"
-                app:layout_constraintBottom_toBottomOf="@+id/textView4"
+                app:layout_constraintBottom_toBottomOf="@+id/ListTitleTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView4" />
+                app:layout_constraintTop_toTopOf="@+id/ListTitleTextView" />
+
+            <ProgressBar
+                android:id="@+id/ListLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/FacilityListView"
+                app:layout_constraintEnd_toEndOf="@+id/FacilityListView"
+                app:layout_constraintStart_toStartOf="@+id/FacilityListView"
+                app:layout_constraintTop_toTopOf="@+id/FacilityListView"  />
+
+            <TextView
+                android:id="@+id/ListNotAvailableError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="List Not Available"
+                android:textSize="18sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/FacilityListView"
+                app:layout_constraintEnd_toEndOf="@+id/FacilityListView"
+                app:layout_constraintStart_toStartOf="@+id/FacilityListView"
+                app:layout_constraintTop_toTopOf="@+id/FacilityListView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/FacilityListView"
@@ -137,19 +157,20 @@
                 android:paddingStart="30dp"
                 android:paddingTop="10dp"
                 android:paddingEnd="30dp"
-                app:layout_constraintBottom_toTopOf="@+id/createjournalbutton"
+                app:layout_constraintBottom_toTopOf="@+id/CreateCommentButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                app:layout_constraintTop_toBottomOf="@+id/ListTitleTextView" />
 
-            <ImageView
-                android:id="@+id/createjournalbutton"
+            <ImageButton
+                android:id="@+id/CreateCommentButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/floatingactionbutton_background"
                 android:elevation="8dp"
                 android:padding="10dp"
+                android:visibility="gone"
                 android:src="@drawable/floatingactionbutton_createposticon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -163,4 +184,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+</LinearLayout>

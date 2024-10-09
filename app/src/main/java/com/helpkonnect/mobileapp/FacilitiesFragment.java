@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -117,19 +118,16 @@ public class FacilitiesFragment extends Fragment {
             } else {
                 noFacilityTextView.setVisibility(View.GONE);
                 adapter = new FacilityAdapter(facilities, facility -> {
-                    // Navigate to FacilityDetailsFragment with selected facility data
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("logo", facility.getImage());
-                    bundle.putString("name", facility.getTitle());
-                    bundle.putString("location", facility.getLocation());
-                    bundle.putFloat("rating", facility.getRating());
+                    // Navigate to FacilityDetailsActivity with selected facility data
+                    Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
+                    intent.putExtra("logo", facility.getImage());
+                    intent.putExtra("name", facility.getTitle());
+                    intent.putExtra("location", facility.getLocation());
+                    intent.putExtra("rating", facility.getRating());
 
-                    FacilityDetailsFragment detailsFragment = new FacilityDetailsFragment();
-                    detailsFragment.setArguments(bundle);
-
-                    FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.fragmentContent, detailsFragment);
+                    // Start the activity
+                    startActivity(intent);
                 });
-
                 facilityRecyclerView.setAdapter(adapter);
             }
         }, 2000);
