@@ -1,8 +1,11 @@
 package com.helpkonnect.mobileapp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -94,6 +97,19 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     Journal journal = journals.get(position);
+                    onItemClick.onItemClick(journal);
+                }
+            });
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Journal journal = journals.get(position);
+
+                    // Start slide-in animation
+                    Context context = itemView.getContext();
+                    Animation slideIn = AnimationUtils.loadAnimation(context, R.anim.journal_slide_right);
+                    itemView.startAnimation(slideIn);
+
                     onItemClick.onItemClick(journal);
                 }
             });

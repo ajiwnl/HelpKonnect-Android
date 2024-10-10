@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:padding="8dp"
     app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/CardbgColor"
+        android:background="@color/white"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -16,27 +20,26 @@
             android:id="@+id/journalimageViewholder"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:padding="7dp"
             android:layout_alignParentStart="true"
             android:layout_margin="10dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/edittextusericon"
+            android:cropToPadding="true"
+            android:src="@drawable/facilitiesmenuicon"
+            android:background="@drawable/layout_roundcorners"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/journaltitle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
             android:text="Journal Title 1"
-            android:textColor="@android:color/black"
+            style="@style/TextColor"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/journalimageViewholder"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,11 +47,11 @@
             android:id="@+id/journaldate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:text="December 08, 2024"
-            android:textColor="@android:color/darker_gray"
+            style="@style/TextColor"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -57,12 +60,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="We will pass the capstone Research"
-            android:textColor="@android:color/black"
+            style="@style/TextColor"
             android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
             app:layout_constraintStart_toEndOf="@+id/journalimageViewholder"
             app:layout_constraintTop_toBottomOf="@+id/journaltitle" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="30dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_proceed_24"
+            style="@style/ImagebgColor"
+            app:layout_constraintBottom_toBottomOf="@+id/journalimageViewholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/journalimageViewholder" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

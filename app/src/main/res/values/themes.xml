@@ -6,10 +6,11 @@
     </style>
 
     <style name="Theme.HelpKonnectMobile" parent="Base.Theme.HelpKonnectMobile" />
-    
-    <style name="AppbgColor"><item name="android:background">@color/SecondaryDark</item></style>
-    <style name="CardbgColor"><item name="android:backgroundTint">@color/PrimaryDark</item></style>
-    <style name="TextColor"><item name="android:textColor">@color/white</item></style>
-    <style name="ImagebgColor"><item name="android:tint">@color/PrimaryDark</item></style>
-    
+
+    <style name="AppbgColor"><item name="android:background">@color/white</item></style>
+    <style name="CardbgColor"><item name="android:backgroundTint">@color/SecondaryLight</item></style>
+    <style name="TextColor"><item name="android:textColor">@color/black</item></style>
+    <style name="ImagebgColor"><item name="android:tint">@color/PrimaryLight</item></style>
+
+
 </resources>

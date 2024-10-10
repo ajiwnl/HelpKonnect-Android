@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,7 +44,8 @@ import okhttp3.Response;
 
 public class CreateJournalActivity extends AppCompatActivity {
 
-    private ImageView backButton, saveButton, shareButton, journalImage;
+    private ImageView backButton, journalImage;
+    private ImageButton saveButton, shareButton, expandButton;
     private View loaderView;
     private EditText journalTitle, journalSubtitle, journalNotes;
     private TextView journalDate;
@@ -55,6 +60,9 @@ public class CreateJournalActivity extends AppCompatActivity {
     private final Date DateToday = new Date();
     private final SimpleDateFormat DateTodayFormat = new SimpleDateFormat("EEEE, dd MMMM, yyyy", Locale.ENGLISH);
     private final String DateTodayString = DateTodayFormat.format(DateToday);
+
+
+    private boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +80,27 @@ public class CreateJournalActivity extends AppCompatActivity {
         backButton = findViewById(R.id.journalBackButton);
         saveButton = findViewById(R.id.saveJournalButton);
         shareButton = findViewById(R.id.shareJournalButton);
+        expandButton = findViewById(R.id.ExpandJournalActionButton);
 
         journalTitle = findViewById(R.id.journalEntryTitleEditText);
         journalSubtitle = findViewById(R.id.journalEntrySubtitleEditText);
         journalNotes = findViewById(R.id.journalEntryNotesEditText);
         journalDate = findViewById(R.id.journalEntryDateTextView);
         journalImage = findViewById(R.id.journalEntryImage);
+
+        backButton.setOnClickListener( v -> {
+            finish();
+        });
+
+        expandButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                toggleButtons();
+            }
+        });
+
+
 
         //Get the current timestamp
         com.google.firebase.Timestamp timestamp = com.google.firebase.Timestamp.now();
@@ -103,6 +126,27 @@ public class CreateJournalActivity extends AppCompatActivity {
             Toast.makeText(this, "Cannot Share Yet", Toast.LENGTH_SHORT).show();
         });
 
+    }
+
+    private void toggleButtons() {
+        Animation animShow = AnimationUtils.loadAnimation(this, R.anim.fab_slide_up);
+        Animation animHide = AnimationUtils.loadAnimation(this, R.anim.fab_slide_down);
+        Animation animShake = AnimationUtils.loadAnimation(this, R.anim.fab_shake_up);
+
+        expandButton.startAnimation(animShake);
+
+        if (isExpanded) {
+            saveButton.startAnimation(animHide);
+            shareButton.startAnimation(animHide);
+            saveButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.GONE);
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
+            shareButton.setVisibility(View.VISIBLE);
+            saveButton.startAnimation(animShow);
+            shareButton.startAnimation(animShow);
+        }
+        isExpanded = !isExpanded;
     }
 
     private void openImagePicker() {

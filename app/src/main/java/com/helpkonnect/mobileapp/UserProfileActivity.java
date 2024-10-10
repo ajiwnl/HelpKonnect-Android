@@ -131,7 +131,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     Toast.makeText(UserProfileActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(e -> {
-                Toast.makeText(UserProfileActivity.this, "Failed to load image URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserProfileActivity.this,  e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         }
     }

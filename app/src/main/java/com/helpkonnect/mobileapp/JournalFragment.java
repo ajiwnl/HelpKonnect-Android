@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,7 +100,9 @@ public class JournalFragment extends Fragment {
             intent.putExtra("journalNotes", journal.getNotes());
             intent.putExtra("journalNotes", journal.getFullNotes());
             intent.putExtra("journalImageUrl", journal.getImageUrl());
-            startActivity(intent);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.slide_in_right, R.anim.slide_out_left);
+            startActivity(intent, options.toBundle());
+
         });
 
         journalCollections.setAdapter(adapter);
@@ -113,6 +116,7 @@ public class JournalFragment extends Fragment {
             toCreateJournal.putExtra("isNewJournal", true);
             startActivity(toCreateJournal);
         });
+
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -139,7 +143,7 @@ public class JournalFragment extends Fragment {
 
         userActivity(userId);
 
-        showLoader(true);
+        //FshowLoader(true);
 
         db.collection("journals")
                 .whereEqualTo("userId", userId)
@@ -411,4 +415,5 @@ public class JournalFragment extends Fragment {
         // Set the selected greeting to the TextView
         userGreetingTextView.setText(selectedGreeting);
     }
+
 }

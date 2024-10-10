@@ -52,10 +52,10 @@ public class UserSettingsFragment extends Fragment {
 
     private ConstraintLayout profileLayout;
 
-    private SwitchCompat themeSwitch;
-    boolean isDarkMode;
-    SharedPreferences preferences;
-    SharedPreferences.Editor edit;
+    //private SwitchCompat themeSwitch;
+    //boolean isDarkMode;
+    //SharedPreferences preferences;
+    //SharedPreferences.Editor edit;
 
 
     @Nullable
@@ -107,26 +107,26 @@ public class UserSettingsFragment extends Fragment {
         });
 
 
-        //For theme change
-        themeSwitch = rootView.findViewById(R.id.themeSwitch);
-
-        preferences = getActivity().getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
-        isDarkMode = preferences.getBoolean("isDarkMode", false);
-        themeSwitch.setChecked(isDarkMode);
-
-        applyTheme(isDarkMode); // Apply the current theme to views
-
-        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("isDarkMode", isChecked);
-                editor.apply();
-
-                applyTheme(isChecked);
-            }
-        });
+        //For theme change (Shelved/Uselses)
+//        themeSwitch = rootView.findViewById(R.id.themeSwitch);
+//
+//        preferences = getActivity().getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
+//        isDarkMode = preferences.getBoolean("isDarkMode", false);
+//        themeSwitch.setChecked(isDarkMode);
+//
+//        applyTheme(isDarkMode); // Apply the current theme to views
+//
+//        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putBoolean("isDarkMode", isChecked);
+//                editor.apply();
+//
+//                applyTheme(isChecked);
+//            }
+//        });
 
         return rootView;
     }

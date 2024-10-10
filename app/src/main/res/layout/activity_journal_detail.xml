@@ -87,11 +87,12 @@
 
             <ImageView
                 android:id="@+id/detailJournalImage"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginTop="10dp"
                 android:maxHeight="300dp"
-                android:scaleType="centerCrop"
+                android:maxWidth="350dp"
+                android:scaleType="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -119,33 +120,44 @@
     </ScrollView>
 
 
-    <ImageView
-        android:id="@+id/removeJournalButton"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+    <ImageButton
+        android:id="@+id/expandJournalButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_margin="18dp"
-        android:padding="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="@drawable/background_textoutput"
-        android:src="@drawable/removebuttonicon"
         android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/shareJournalDetailButton" />
-
-    <ImageView
-        android:id="@+id/shareJournalDetailButton"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:padding="8dp"
-        android:layout_margin="18dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/edittextsendicon"
         android:background="@drawable/background_textoutput"
-        android:elevation="10dp"
+        android:src="@drawable/floatingactionbuttonaddicon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/removeJournalButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="18dp"
+        android:background="@drawable/background_textoutput"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:src="@drawable/removebuttonicon"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/expandJournalButton"
+        app:layout_constraintEnd_toEndOf="parent" /> <!-- Initially hidden -->
+
+    <ImageButton
+        android:id="@+id/shareJournalDetailButton"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="18dp"
+        android:background="@drawable/background_textoutput"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:focusable="true"
+        android:src="@drawable/edittextsendicon"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/removeJournalButton"
+        app:layout_constraintEnd_toEndOf="parent" /> <!-- Initially hidden -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
