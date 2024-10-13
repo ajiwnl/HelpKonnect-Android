@@ -12,22 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import com.google.firebase.auth.FirebaseAuth;
 
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordFragment extends Fragment {
 
@@ -46,23 +35,17 @@ public class ForgotPasswordFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         // Find UI elements
-        emailEditText = rootView.findViewById(R.id.passwordEditText);
+        emailEditText = rootView.findViewById(R.id.PasswordEditText);
         forgotPasswordButton = rootView.findViewById(R.id.forgotpasswordButton);
-        signupTextView = rootView.findViewById(R.id.tosignintextview);
+        signupTextView = rootView.findViewById(R.id.ToSignInTextView);
 
         // Handle Forgot Password Button
         forgotPasswordButton.setOnClickListener(v -> sendPasswordResetEmail());
 
         // Navigate to Register Fragment
         signupTextView.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(
-                    R.anim.slide_in_right,
-                    R.anim.slide_out_left
-            );
-            transaction.replace(R.id.fragmentContent, new RegisterFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
+            FragmentManager fragmentManager = requireFragmentManager();
+            FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new RegisterFragment());
         });
 
         return rootView;
@@ -87,7 +70,7 @@ public class ForgotPasswordFragment extends Fragment {
                         FragmentManager fragmentManager = requireFragmentManager();
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
                         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-                        transaction.replace(R.id.fragmentContent, new SigninFragment());
+                        transaction.replace(R.id.FragmentContent, new SigninFragment());
                         transaction.addToBackStack(null);
                         transaction.commit();
                     } else {

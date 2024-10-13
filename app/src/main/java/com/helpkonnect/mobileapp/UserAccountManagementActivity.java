@@ -13,6 +13,6 @@ public class UserAccountManagementActivity extends AppCompatActivity {
 
         // Display the SigninFragment
         androidx.fragment.app.FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new SigninFragment());
+        FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new SigninFragment());
     }
 }

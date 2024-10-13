@@ -8,10 +8,12 @@
     tools:context=".SplashActivity">
 
     <LinearLayout
+        android:id="@+id/HelpKonnectLogo"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:orientation="vertical"
         android:gravity="center"
+        android:elevation="8dp"
         android:background="@drawable/logoborder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

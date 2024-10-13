@@ -24,8 +24,12 @@ public class UpdateEmailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_email);
+
         // Initialize loaderView by inflating the loader layout
-        loaderView = getLayoutInflater().inflate(R.layout.update_cred_loader, null);
+        loaderView = getLayoutInflater().inflate(R.layout.loader_uam, null);
+        TextView updateEmailLoaderText = loaderView.findViewById(R.id.loadingText);
+        updateEmailLoaderText.setText("Updating Your Email");//Warning HArdcodedtext
+
         currentUser = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance(); // Initialize Firestore
 
@@ -182,7 +186,7 @@ public class UpdateEmailActivity extends AppCompatActivity {
 
     private void navigateToLogin() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContent, new SigninFragment());
+        transaction.replace(R.id.FragmentContent, new SigninFragment());
         transaction.setCustomAnimations(
                 R.anim.slide_in_right,
                 R.anim.slide_out_left

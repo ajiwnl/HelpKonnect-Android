@@ -60,7 +60,7 @@ public class EditProfileDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile_overlay, container, false);
-        loaderView = inflater.inflate(R.layout.update_loader, container, false);
+        loaderView = inflater.inflate(R.layout.loader_uam, container, false);
         // Initialize Firebase
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +24,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,13 +36,13 @@ import java.util.Map;
 
 public class SigninFragment extends Fragment {
 
-    private TextView forgotPasswordTextView;
-    private TextView signupTextView;
+    private ImageView formLayout;
+    private TextView forgotPasswordTextView, signupTextView;
+    private EditText emailEditText,passwordEditText;
+    private Button loginButton;
     private View loaderView;
-    private Button login;
     private FirebaseAuth mAuth;
-    private EditText emailEditText;
-    private EditText passwordEditText;
+
 
     private ListenerRegistration listenerRegistration;
 
@@ -52,28 +51,30 @@ public class SigninFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
-        loaderView = inflater.inflate(R.layout.signin_loader, container, false);
+        //Change the Text of loader to signing in
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        emailEditText = rootView.findViewById(R.id.emailEditText);
-        passwordEditText = rootView.findViewById(R.id.passwordEditText);
-        login = rootView.findViewById(R.id.signupbutton);
-        forgotPasswordTextView = rootView.findViewById(R.id.forgotpasswordtextView);
-        signupTextView = rootView.findViewById(R.id.tosignintextview);
+        //Initialize views
+        emailEditText = rootView.findViewById(R.id.EmailEditText);
+        passwordEditText = rootView.findViewById(R.id.PasswordEditText);
+        loginButton = rootView.findViewById(R.id.SignupButton);
+        forgotPasswordTextView = rootView.findViewById(R.id.ToForgotPasswordTextView);
+        signupTextView = rootView.findViewById(R.id.ToSignInTextView);
 
         // Handle login button click
-        login.setOnClickListener(v -> signInUser());
+        loginButton.setOnClickListener(v -> signInUser());
 
         // Handle forgot password click
         forgotPasswordTextView.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireFragmentManager();
-            FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new ForgotPasswordFragment());
+            FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ForgotPasswordFragment());
         });
 
         // Handle signup click
         signupTextView.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireFragmentManager();
-            FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new RegisterFragment());
+            FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new RegisterFragment());
         });
 
         return rootView;
@@ -88,16 +89,16 @@ public class SigninFragment extends Fragment {
         // Validate inputs
         if (TextUtils.isEmpty(email)) {
             emailEditText.setError("Email is required.");
-            showLoader(false);
+            showLoader(false,null);
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
             passwordEditText.setError("Password is required.");
-            showLoader(false);
+            showLoader(false,null);
             return;
         }
-
+        showLoader(true, "Signing You In");
         // Sign in with Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -109,18 +110,18 @@ public class SigninFragment extends Fragment {
                                 String userId = user.getUid();
                                 updateUserSession(userId, true);
                                 userActivity(userId);
-                                showLoader(true);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                 startActivity(intent);
-
+                                getActivity().finish();
                             } else {
                                 mAuth.signOut();
-                                showLoader(false);
+                                showLoader(false, null);
                                 Toast.makeText(getContext(), "Please verify your email before logging in.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     } else {
                         // Handle sign-in failures
+                        showLoader(false, null);
                         Exception exception = task.getException();
                         if (exception instanceof FirebaseAuthInvalidUserException) {
                             Toast.makeText(getContext(), "User does not exist, please try again.", Toast.LENGTH_SHORT).show();
@@ -152,12 +153,22 @@ public class SigninFragment extends Fragment {
     }
 
 
-    private void showLoader(boolean show) {
-        TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
+    private void showLoader(boolean show, String message) {
+        if (loaderView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            loaderView = inflater.inflate(R.layout.loader_uam, null);
+        }
+
+        TextView loadingText = loaderView.findViewById(R.id.loadingText);
+        if (message != null) {
+            loadingText.setText(message);
+        }
 
         if (show) {
-            getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            if (loaderView.getParent() == null) {
+                getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
         } else {
             if (loaderView.getParent() != null) {
                 ((ViewGroup) loaderView.getParent()).removeView(loaderView);

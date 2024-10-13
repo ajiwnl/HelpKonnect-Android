@@ -39,16 +39,22 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
-        loaderView = inflater.inflate(R.layout.register_loader, container, false);
+
+        //Change Loader TExt for creating Account
+        loaderView = inflater.inflate(R.layout.loader_uam, container, false);
+        TextView registerLoaderText = loaderView.findViewById(R.id.loadingText);
+        registerLoaderText.setText("Creating New Account");//Warning HArdcodedtext
+
+
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         // Find UI elements
-        signup = rootView.findViewById(R.id.signupbutton);
-        login = rootView.findViewById(R.id.tosignintextview);
-        emailEditText = rootView.findViewById(R.id.emailEditText);
-        passwordEditText = rootView.findViewById(R.id.passwordEditText);
+        signup = rootView.findViewById(R.id.SignupButton);
+        login = rootView.findViewById(R.id.ToSignInTextView);
+        emailEditText = rootView.findViewById(R.id.EmailEditText);
+        passwordEditText = rootView.findViewById(R.id.PasswordEditText);
         confirmPasswordEditText = rootView.findViewById(R.id.confirmpasswordEditText);
         usernameEditText = rootView.findViewById(R.id.usernameEditText);
         radioGroup = rootView.findViewById(R.id.radioGroup);
@@ -58,7 +64,7 @@ public class RegisterFragment extends Fragment {
 
         // Navigate to login fragment
         login.setOnClickListener(v -> {
-            FragmentMethods.displayFragment(requireFragmentManager(), R.id.fragmentContent, new SigninFragment());
+            FragmentMethods.displayFragment(requireFragmentManager(), R.id.FragmentContent, new SigninFragment());
         });
 
         return rootView;
@@ -162,7 +168,7 @@ public class RegisterFragment extends Fragment {
                                 R.anim.slide_in_right,
                                 R.anim.slide_out_left
                         );
-                        transaction.replace(R.id.fragmentContent, new SigninFragment());
+                        transaction.replace(R.id.FragmentContent, new SigninFragment());
                         transaction.addToBackStack(null);
                         transaction.commit();
                     } else {

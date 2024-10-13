@@ -1,6 +1,5 @@
 package com.helpkonnect.mobileapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +22,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        loaderView = getLayoutInflater().inflate(R.layout.update_cred_loader, null);
+        //Change the Text VAlue of Loader
+        loaderView = getLayoutInflater().inflate(R.layout.loader_uam, null);
+        TextView updateCredLoaderText = loaderView.findViewById(R.id.loadingText);
+        updateCredLoaderText.setText("Updating Your Password");//Warning HArdcodedtext
 
         currentUser = FirebaseAuth.getInstance();
 
@@ -125,7 +127,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         Toast.makeText(ChangePasswordActivity.this, "You have been signed out. Please log in with your new password.", Toast.LENGTH_LONG).show();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContent, new SigninFragment());
+        transaction.replace(R.id.FragmentContent, new SigninFragment());
         transaction.setCustomAnimations(
                 R.anim.slide_in_right,
                 R.anim.slide_out_left
