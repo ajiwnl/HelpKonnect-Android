@@ -27,6 +27,7 @@
         app:layout_constraintTop_toBottomOf="@+id/journalBackButton">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

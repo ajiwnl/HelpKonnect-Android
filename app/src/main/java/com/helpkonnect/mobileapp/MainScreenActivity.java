@@ -1,5 +1,7 @@
 package com.helpkonnect.mobileapp;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -19,14 +20,19 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.models.User;
@@ -82,41 +88,41 @@ public class MainScreenActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-        FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new HomepageFragment());
+        FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new HomepageFragment());
 
         navView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
             if (id == R.id.homenav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Home", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new HomepageFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new HomepageFragment());
             } else if (id == R.id.messagenav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Messages", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new MessageFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new MessageFragment());
             } else if (id == R.id.chatbotnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Chatbot", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new ChatbotFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ChatbotFragment());
             } else if (id == R.id.facnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Facilities", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new FacilitiesFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new FacilitiesFragment());
             } else if (id == R.id.journalnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Journal", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new JournalFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new JournalFragment());
             } else if (id == R.id.locnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Location", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new LocationFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new LocationFragment());
             } else if (id == R.id.tracknav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Tracker", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new TrackerFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new TrackerFragment());
             } else if (id == R.id.resnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Resources", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new ResourcesFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ResourcesFragment());
             } else if (id == R.id.comnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Community", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new CommunityFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
             } else if (id == R.id.setnav) {
                 Toast.makeText(MainScreenActivity.this, "Selected Settings", Toast.LENGTH_SHORT).show();
-                FragmentMethods.displayFragment(fragmentManager, R.id.fragmentContent, new UserSettingsFragment());
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
             }
 
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -124,15 +130,57 @@ public class MainScreenActivity extends AppCompatActivity {
         });
     }
 
-
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            signOutUser();
         }
     }
+
+    private void signOutUser() {
+        LogoutDialogFragment dialog = new LogoutDialogFragment();
+        dialog.setOnLogoutConfirmationListener(() -> {
+            if (currentUser != null) {
+                String userId = currentUser.getUid();
+                updateUserSession(userId, false); // Update session in Firestore
+            }
+            mAuth.signOut();
+            // Go back to Account Management Activity with fragment of Sign in
+            Intent intent = new Intent(MainScreenActivity.this, UserAccountManagementActivity.class);
+            startActivity(intent);
+            finish();
+        });
+        dialog.show(getSupportFragmentManager(), "LogoutConfirmationDialog");
+    }
+
+    private void updateUserSession(String userId, boolean isActive) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("userSessions").document(userId);
+
+        // Create a map to hold the session data
+        Map<String, Object> sessionData = new HashMap<>();
+        if (isActive) {
+            sessionData.put("isActive", true);
+            sessionData.put("sessionStart", Timestamp.now());
+            sessionData.put("sessionEnd", null);// sessionEnd is not set on sign-in
+        } else {
+            sessionData.put("isActive", false);
+            sessionData.put("sessionEnd", Timestamp.now());
+        }
+
+        // Update the document
+        docRef.set(sessionData, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Session data updated successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Failed to update session data: " + e.getMessage());
+                });
+    }
+
 
     private void loadUserData(String userId) {
         DocumentReference userDocRef = firestore.collection("credentials").document(userId);

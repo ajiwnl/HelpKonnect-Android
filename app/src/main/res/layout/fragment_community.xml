@@ -12,6 +12,21 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/LoaderPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/SecondaryLight"
+            android:elevation="8dp"
+            android:indeterminateTint="@color/PrimaryLight"
+            android:padding="5dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/communitypostrecyclerview"
+            app:layout_constraintEnd_toEndOf="@+id/communitypostrecyclerview"
+            app:layout_constraintStart_toStartOf="@+id/communitypostrecyclerview"
+            app:layout_constraintTop_toTopOf="@+id/communitypostrecyclerview" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/communitypostrecyclerview"
             android:layout_width="match_parent"

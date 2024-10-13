@@ -31,7 +31,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
 
-    private ImageView imgProfile;
+    private ImageView imgProfile,backButton;
     private Button editProfileButton, changeEmail, changePassword;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
@@ -57,7 +57,7 @@ public class UserProfileActivity extends AppCompatActivity {
         imgProfile = findViewById(R.id.userProfile);
         changeEmail = findViewById(R.id.changeEmailBtn);
         changePassword = findViewById(R.id.changePassBtn);
-
+        backButton.findViewById(R.id.profileBackButton);
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
@@ -71,6 +71,10 @@ public class UserProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show();
         }
 
+        backButton.setOnClickListener( v -> {
+            finish();
+        });
+
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +82,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 showEditProfileFragment();
             }
         });
+
 
         // Set OnClickListener for the changeEmail button
         changeEmail.setOnClickListener(new View.OnClickListener() {

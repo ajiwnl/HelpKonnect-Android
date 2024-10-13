@@ -116,6 +116,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardView" />
 
+
+        <ProgressBar
+            android:id="@+id/LoaderJournal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/SecondaryLight"
+            android:elevation="8dp"
+            android:indeterminateTint="@color/PrimaryLight"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/journalcollectionrecyclerview"
+            app:layout_constraintEnd_toEndOf="@+id/journalcollectionrecyclerview"
+            app:layout_constraintStart_toStartOf="@+id/journalcollectionrecyclerview"
+            app:layout_constraintTop_toTopOf="@+id/journalcollectionrecyclerview" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/journalcollectionrecyclerview"
             android:layout_width="match_parent"
@@ -123,9 +139,10 @@
             android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.473"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/journalcollectiontextview" />
-
+            app:layout_constraintTop_toBottomOf="@+id/journalcollectiontextview"
+            app:layout_constraintVertical_bias="0.2" />
 
         <ImageView
             android:id="@+id/createjournalbutton"

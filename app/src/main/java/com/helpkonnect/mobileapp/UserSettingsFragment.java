@@ -151,10 +151,10 @@ public class UserSettingsFragment extends Fragment {
             // Sign out from Firebase Auth
             mAuth.signOut();
 
-            // Replace the current fragment with SigninFragment
-            FragmentTransaction transaction = requireFragmentManager().beginTransaction();
-            transaction.replace(R.id.FragmentContent, new SigninFragment());
-            transaction.commit();
+           //Go back to Account MAnagement Activity with fragment of Sign in
+            Intent intent = new Intent(requireContext(), UserAccountManagementActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
         });
 
         // Show the dialog

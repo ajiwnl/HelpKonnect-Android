@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ import java.util.Random;
 public class JournalFragment extends Fragment {
 
     private TextView currentDateTextView;
-    private View loaderView;
+    ProgressBar loaderJournal;
     private ImageView createJournalButton, forWeatherIcon;
     private RecyclerView journalCollections;
     private List<JournalListAdapter.Journal> journalList;
@@ -66,7 +67,7 @@ public class JournalFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_journal, container, false);
-        loaderView = inflater.inflate(R.layout.initial_loader, container, false);
+        loaderJournal = rootView.findViewById(R.id.LoaderJournal);
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
 
@@ -117,15 +118,6 @@ public class JournalFragment extends Fragment {
             startActivity(toCreateJournal);
         });
 
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Do nothing, prevent back navigation
-                Toast.makeText(requireContext(), "Back button disabled", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         setRandomGreeting();
 
         fetchJournals(); // Load the journals
@@ -143,13 +135,15 @@ public class JournalFragment extends Fragment {
 
         userActivity(userId);
 
-        //FshowLoader(true);
+
 
         db.collection("journals")
                 .whereEqualTo("userId", userId)
                 .orderBy("dateCreated", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshots, e) -> {
+                    loaderJournal.setVisibility(View.GONE);
                     if (e != null) {
+
                         Log.w("JournalFragment", "Listen failed.", e);
                         Toast.makeText(requireContext(), "Error getting documents: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
@@ -171,25 +165,13 @@ public class JournalFragment extends Fragment {
                             journal.setFullNotes(notes);  // Add a new field to store full notes
                             journalList.add(journal);
                         }
-                        showLoader(false);
+
+
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
 
-
-    private void showLoader(boolean show) {
-        TextView loadingText = loaderView.findViewById(R.id.loadingText); // Get the TextView
-
-        if (show) {
-            getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        } else {
-            if (loaderView.getParent() != null) {
-                ((ViewGroup) loaderView.getParent()).removeView(loaderView);
-            }
-        }
-    }
 
     // Fetch API key from a remote server
     private void fetchWeatherApiKey() {

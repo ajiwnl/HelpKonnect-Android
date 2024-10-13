@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Intent;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,16 +31,18 @@ public class MessageFragment extends Fragment {
     private List<UserList> userList;
 
     private FirebaseUser currentUser;
-
     private FirebaseAuth mAuth;
+    private ProgressBar loaderMessage;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_messaging, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_messaging, container, false);
 
-        recyclerView = view.findViewById(R.id.user_list_recycler_view);
+        loaderMessage = rootView.findViewById(R.id.LoadUserMessages);
+        recyclerView = rootView.findViewById(R.id.user_list_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
         userList = new ArrayList<>();
         userAdapter = new UserAdapter(userList, user -> {
@@ -49,12 +52,13 @@ public class MessageFragment extends Fragment {
 
         fetchUsersFromFirebase();
 
-        return view;
+        return rootView;
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchUsersFromFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        loaderMessage.setVisibility(View.VISIBLE);
         db.collection("credentials")
             .get()
             .addOnCompleteListener(task -> {
@@ -74,6 +78,7 @@ public class MessageFragment extends Fragment {
                 } else {
                     Log.w("MessageFragment", "Error getting documents.", task.getException());
                 }
+                loaderMessage.setVisibility(View.GONE);
             });
     }
 
