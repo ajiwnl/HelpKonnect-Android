@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:id="@+id/channel_fragment_container"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="UseCompoundDrawables">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical">
 
-</FrameLayout>
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="20dp"
+            android:src="@drawable/backbuttonicon"
+            android:layout_marginHorizontal="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@string/todo" />
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/userprofileicon"
+            android:contentDescription="@string/todo" />
+
+        <TextView
+            android:id="@+id/usernameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginHorizontal="20dp"
+            android:text=""/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/channel_fragment_container"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+</LinearLayout>

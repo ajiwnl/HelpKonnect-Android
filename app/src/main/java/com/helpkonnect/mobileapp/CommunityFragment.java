@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ public class CommunityFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<CommunityListAdapter.CommunityPost> posts = new ArrayList<>();
     private CommunityListAdapter adapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +90,6 @@ public class CommunityFragment extends Fragment {
                             imageUrls,
                             heart,
                             time,
-                            "256 Comments",
                             postId
                     ));
                 }

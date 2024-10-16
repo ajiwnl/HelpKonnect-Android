@@ -53,6 +53,7 @@ public class SelectedPostFragment extends Fragment {
     private String filterHost;
     private ImageView heartIcon;
     private TextView heartTextView;
+    private Button commentButton;
 
     public static SelectedPostFragment newInstance(CommunityListAdapter.CommunityPost post) {
         SelectedPostFragment fragment = new SelectedPostFragment();
@@ -197,10 +198,17 @@ public class SelectedPostFragment extends Fragment {
 
         // Initialize commentsContainer
         LinearLayout commentsContainer = rootView.findViewById(R.id.commentsContainer);
-
         checkIfUserLikedPost();
 
         heartIcon.setOnClickListener(v -> toggleHeartReaction());
+
+        EditText postComment = rootView.findViewById(R.id.commentText);
+        commentButton = rootView.findViewById(R.id.commentButton);
+        commentButton.setOnClickListener(v -> {
+            String commentText = postComment.getText().toString();
+            Log.d("SelectedPostFragment", "Comment Button Clicked: " + commentText);
+            postComment(commentText);
+        });
 
         loadComments(commentsContainer);
 
@@ -217,6 +225,12 @@ public class SelectedPostFragment extends Fragment {
 
     private void postComment(String comment) {
         String userId = mAuth.getCurrentUser().getUid();
+
+        if (comment.isEmpty()) {
+            Toast.makeText(getContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         filterText(comment, userId, new FilterCallback() {
             @Override
             public void onResult(boolean containsProfanity) {
@@ -230,13 +244,14 @@ public class SelectedPostFragment extends Fragment {
                     commentData.put("userId", userId);
 
                     db.collection("comments").add(commentData)
-                        .addOnSuccessListener(documentReference -> {
-                            Toast.makeText(getContext(), "Comment posted", Toast.LENGTH_SHORT).show();
-                            // Optionally, refresh comments display here
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(getContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
+                            .addOnSuccessListener(documentReference -> {
+                                Toast.makeText(getContext(), "Comment posted", Toast.LENGTH_SHORT).show();
+                                EditText postComment = getView().findViewById(R.id.commentText);
+                                postComment.setText("");
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Failed to post comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 }
             }
 
@@ -246,6 +261,8 @@ public class SelectedPostFragment extends Fragment {
             }
         });
     }
+
+
 
     private void loadComments(LinearLayout commentsContainer) {
         commentsListener = db.collection("comments")
