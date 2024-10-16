@@ -97,23 +97,11 @@
             android:textColor="@android:color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/postComment"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/heartIcon"
             app:layout_constraintTop_toBottomOf="@+id/imageContainer"
             app:layout_constraintVertical_bias="0.88"
-            tools:ignore="NotSibling" />
-
-        <TextView
-            android:id="@+id/postComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="2 Comments"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageContainer"
             tools:ignore="NotSibling" />
 
         <TextView

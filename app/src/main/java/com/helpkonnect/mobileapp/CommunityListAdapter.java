@@ -36,19 +36,17 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         private List<String> imageUrls;
         private int userPostLikes;
         private String userPostDate;
-        private String postComment;
 
         private String postId;
 
         public CommunityPost(String userProfileImageUrl, String userPostName, String userPostDescription,
-                             List<String> imageUrls, int userPostLikes, String userPostDate, String postComment, String postId) {
+                             List<String> imageUrls, int userPostLikes, String userPostDate, String postId) {
             this.userProfileImageUrl = userProfileImageUrl;
             this.userPostName = userPostName;
             this.userPostDescription = userPostDescription;
             this.imageUrls = imageUrls;
             this.userPostLikes = userPostLikes;
             this.userPostDate = userPostDate;
-            this.postComment = postComment;
             this.postId = postId;
         }
 
@@ -59,7 +57,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         public List<String> getImageUrls() { return imageUrls; }
         public int getUserPostLikes() { return userPostLikes; }
         public String getUserPostDate() { return userPostDate; }
-        public String getPostComment() { return postComment; }
 
         public String getPostId() {return postId;}
     }
@@ -126,7 +123,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         holder.userPostName.setText(post.getUserPostName());
         holder.userPostDescription.setText(post.getUserPostDescription());
         holder.userPostDate.setText(post.getUserPostDate());
-        holder.postComment.setText(post.getPostComment());
 
         // Load the current heart count from Firestore
         db.collection("community").document(post.getPostId()).get()
