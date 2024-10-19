@@ -22,4 +22,9 @@
     <string name="time">Time</string>
     <string name="comment_here">Comment Here...</string>
 
+    <string name="description_journal">Unlock your thoughts and creativity—dive into your personal journal!</string>
+    <string name="description_tools">Discover the essential tools that can transform your daily routine!</string>
+    <string name="description_facility">Explore our state-of-the-art facilities designed for your ultimate experience!</string>
+    <string name="description_community">Join a vibrant community where connections flourish and ideas thrive!</string>
+
 </resources>

@@ -21,6 +21,8 @@
             android:textStyle="bold"/>
 
         <androidx.cardview.widget.CardView
+
+            android:id="@+id/GetStarted"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="8dp"
@@ -36,7 +38,8 @@
                     android:id="@+id/imageviewholder"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/editusericon" />
+                    android:src="@drawable/getstartedimg"
+                    android:scaleType="centerCrop"/>
 
                 <TextView
                     android:id="@+id/imagetitle"
@@ -45,8 +48,8 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:layout_gravity="bottom"
-                    android:background="@android:color/black"
-                    android:text="Sample Title"
+                    android:padding="10dp"
+                    android:text="Get Started >"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 
@@ -64,30 +67,264 @@
             android:textSize="16sp"
             android:textStyle="bold"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
             android:id="@+id/toolsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="GET TO KNOW"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ToJournal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:animateLayoutChanges="true">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/resourcesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/musicplayerbg">
+
+                    <TextView
+                        android:id="@+id/verticalTextJournal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/layout_roundcorners"
+                        android:backgroundTint="@color/mpcolortranspa"
+                        android:text="J\nO\nU\nR\nN\nA\nL"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textDescriptionJournal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/description_journal"
+                        android:visibility="gone"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        app:layout_constraintTop_toBottomOf="@id/verticalTextJournal"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <Button
+                        android:id="@+id/exploreButtonJournal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/buttondesign"
+                        android:text="Explore"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ToResources"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:animateLayoutChanges="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/musicplayerbg">
+
+                    <TextView
+                        android:id="@+id/verticalTextTools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="T\nO\nO\nL\nS"
+                        android:textSize="24sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:background="@drawable/layout_roundcorners"
+                        android:backgroundTint="@color/mpcolortranspa"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textDescriptionTools"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/description_tools"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/verticalTextTools"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <Button
+                        android:id="@+id/exploreButtonTools"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/buttondesign"
+                        android:text="Explore"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ToFacility"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:animateLayoutChanges="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/musicplayerbg">
+
+                    <TextView
+                        android:id="@+id/verticalTextFacility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="F\nA\nC\nI\nL\nI\nT\nY"
+                        android:textSize="24sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:background="@drawable/layout_roundcorners"
+                        android:backgroundTint="@color/mpcolortranspa"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textDescriptionFacility"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/description_facility"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/verticalTextFacility"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <Button
+                        android:id="@+id/exploreButtonFacility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/buttondesign"
+                        android:text="Explore"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ToCommunity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                android:animateLayoutChanges="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/musicplayerbg">
+
+                    <TextView
+                        android:id="@+id/verticalTextCommunity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="C\nO\nM\nM\nU\nN\nI\nT\nY"
+                        android:textSize="24sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textAlignment="center"
+                        android:background="@drawable/layout_roundcorners"
+                        android:backgroundTint="@color/mpcolortranspa"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/textDescriptionCommunity"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/description_community"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/verticalTextCommunity"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <Button
+                        android:id="@+id/exploreButtonCommunity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/buttondesign"
+                        android:text="Explore"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
 
 
     </LinearLayout>
