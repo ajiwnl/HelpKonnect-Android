@@ -33,7 +33,7 @@ public class HomepageFragment extends Fragment {
 
         getStarted = rootView.findViewById(R.id.GetStarted);
         getStarted.setOnClickListener(v -> {
-            // Your logic for Get Started button
+
         });
 
         verticalTextTools = rootView.findViewById(R.id.verticalTextTools);
@@ -56,6 +56,12 @@ public class HomepageFragment extends Fragment {
         cardFacility = rootView.findViewById(R.id.ToFacility);
         cardCommunity = rootView.findViewById(R.id.ToCommunity);
 
+        exploreButtonJournal.setOnClickListener(v -> FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.FragmentContent, new JournalFragment()));
+        exploreButtonTools.setOnClickListener(v -> FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.FragmentContent, new ResourcesFragment()));
+        exploreButtonFacility.setOnClickListener(v -> FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.FragmentContent, new FacilitiesFragment()));
+        exploreButtonCommunity.setOnClickListener(v -> FragmentMethods.displayFragment(requireActivity().getSupportFragmentManager(), R.id.FragmentContent, new CommunityFragment()));
+
+                                        cardTools.setOnClickListener(v -> toggleText(verticalTextTools, cardTools, textDescriptionTools, exploreButtonTools));
         cardJournal.setOnClickListener(v -> toggleText(verticalTextJournal, cardJournal, textDescriptionJournal, exploreButtonJournal));
         cardTools.setOnClickListener(v -> toggleText(verticalTextTools,  cardTools, textDescriptionTools, exploreButtonTools));
         cardFacility.setOnClickListener(v -> toggleText(verticalTextFacility, cardFacility, textDescriptionFacility, exploreButtonFacility));
@@ -66,22 +72,13 @@ public class HomepageFragment extends Fragment {
 
 
     private void toggleText(TextView textView,  CardView clickedCard, TextView description, Button exploreButton) {
-        // Reset text for other TextViews
         resetText(textView);
-
-        // Set the clicked TextView to display the full word
         textView.setText("");
-
-        // Reset card widths
         setCardWidth(cardTools, 0);
         setCardWidth(cardJournal, 0);
         setCardWidth(cardFacility, 0);
         setCardWidth(cardCommunity, 0);
-
-        // Expand the clicked card
-        setCardWidth(clickedCard, 175); // Ensure you're converting dp to pixels
-
-        // Update visibility for additional views
+        setCardWidth(clickedCard, 175);
         updateVisibility(textView, description, exploreButton);
     }
 

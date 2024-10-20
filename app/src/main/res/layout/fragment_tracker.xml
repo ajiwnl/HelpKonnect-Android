@@ -1,14 +1,264 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TrackerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Tracker Fragment" />
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:padding="15dp">
+
+      <TextView
+          android:id="@+id/ActivityTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:padding="10dp"
+          android:text="Title"
+          android:textStyle="bold"
+          android:textSize="16sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <TextView
+          android:id="@+id/DateTodayDisplay"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:paddingStart="10dp"
+          android:text="MON, April 1"
+          android:textSize="12sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/ActivityTitle" />
+
+      <TextView
+          android:id="@+id/EncouragementMessage"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="20dp"
+          android:text="You do good Today!"
+          android:textStyle="bold"
+          android:textSize="16sp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/DateTodayDisplay" />
+
+      <TextView
+          android:id="@+id/JourneyDescription"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:maxHeight="200dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginEnd="15dp"
+          android:text="Your Feel About this percentage Today"
+          android:textSize="12sp"
+          app:layout_constraintEnd_toStartOf="@+id/PieChartHolder"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/EncouragementMessage" />
+
+      <ProgressBar
+          android:id="@+id/pieChartLoader"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:elevation="8dp"
+          android:padding="5dp"
+          android:background="@drawable/layout_roundcorners"
+          android:backgroundTint="@color/SecondaryLight"
+          android:indeterminateTint="@color/PrimaryLight"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="@+id/PieChartHolder"
+          app:layout_constraintEnd_toEndOf="@+id/PieChartHolder"
+          app:layout_constraintStart_toStartOf="@+id/PieChartHolder"
+          app:layout_constraintTop_toTopOf="@+id/PieChartHolder" />
+
+
+
+      <androidx.cardview.widget.CardView
+          android:id="@+id/PieChartHolder"
+          android:layout_width="200dp"
+          android:layout_height="200dp"
+          android:background="@drawable/layout_roundcorners"
+          app:cardCornerRadius="12dp"
+          android:elevation="12dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/JourneyDescription">
+
+         <com.github.mikephil.charting.charts.PieChart
+             android:id="@+id/EmotionChart"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_margin="10dp" />
+
+      </androidx.cardview.widget.CardView>
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+          android:id="@+id/EmotionSurveyContainer"
+          android:layout_width="match_parent"
+          android:layout_height="90dp"
+          android:paddingTop="10dp"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/PieChartHolder">
+
+         <TextView
+             android:id="@+id/EmotionQuestion"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:maxHeight="200dp"
+             android:text="How are you feeling today?"
+             android:textSize="12sp"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/HappyEmotion"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/hkcolor"
+             android:elevation="12dp"
+             app:cardCornerRadius="12dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toStartOf="@+id/RelaxedEmotion"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/EmotionQuestion">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@mipmap/ic_mail" />
+
+         </androidx.cardview.widget.CardView>
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/RelaxedEmotion"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/hkcolor"
+             android:elevation="12dp"
+             app:cardCornerRadius="12dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toStartOf="@+id/NeutralEmotion"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toEndOf="@+id/HappyEmotion"
+             app:layout_constraintTop_toBottomOf="@+id/EmotionQuestion">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@mipmap/ic_mail" />
+
+         </androidx.cardview.widget.CardView>
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/NeutralEmotion"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/hkcolor"
+             android:elevation="12dp"
+             app:cardCornerRadius="12dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toStartOf="@+id/SadEmotion"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toEndOf="@+id/RelaxedEmotion"
+             app:layout_constraintTop_toBottomOf="@+id/EmotionQuestion">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@mipmap/ic_mail" />
+
+         </androidx.cardview.widget.CardView>
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/SadEmotion"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/hkcolor"
+             android:elevation="12dp"
+             app:cardCornerRadius="12dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toStartOf="@+id/StressedEmotion"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toEndOf="@+id/NeutralEmotion"
+             app:layout_constraintTop_toBottomOf="@+id/EmotionQuestion">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@mipmap/ic_mail" />
+
+         </androidx.cardview.widget.CardView>
+
+         <androidx.cardview.widget.CardView
+             android:id="@+id/StressedEmotion"
+             android:layout_width="40dp"
+             android:layout_height="40dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/hkcolor"
+             android:elevation="12dp"
+             app:cardCornerRadius="12dp"
+             app:layout_constraintBottom_toBottomOf="parent"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintHorizontal_bias="0.5"
+             app:layout_constraintStart_toEndOf="@+id/SadEmotion"
+             app:layout_constraintTop_toBottomOf="@+id/EmotionQuestion">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:src="@mipmap/ic_mail" />
+
+         </androidx.cardview.widget.CardView>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <ProgressBar
+          android:id="@+id/emotionListLoader"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:elevation="8dp"
+          android:padding="5dp"
+          android:background="@drawable/layout_roundcorners"
+          android:backgroundTint="@color/SecondaryLight"
+          android:indeterminateTint="@color/PrimaryLight"
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="@+id/MoodListView"
+          app:layout_constraintEnd_toEndOf="@+id/MoodListView"
+          app:layout_constraintStart_toStartOf="@+id/MoodListView"
+          app:layout_constraintTop_toTopOf="@+id/MoodListView" />
+
+      <TextView
+          android:id="@+id/NoQuestionsAnswered"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Try Answering the Question Above."
+          android:visibility="gone"
+          app:layout_constraintBottom_toBottomOf="@+id/MoodListView"
+          app:layout_constraintEnd_toEndOf="@+id/MoodListView"
+          app:layout_constraintStart_toStartOf="@+id/MoodListView"
+          app:layout_constraintTop_toBottomOf="@+id/EmotionSurveyContainer" />
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/MoodListView"
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:paddingTop="10dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/EmotionSurveyContainer"
+          tools:layout_editor_absoluteX="15dp" />
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </FrameLayout>

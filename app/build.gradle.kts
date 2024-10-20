@@ -64,4 +64,5 @@ dependencies {
     implementation ("io.getstream:stream-chat-android-compose:6.5.1")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

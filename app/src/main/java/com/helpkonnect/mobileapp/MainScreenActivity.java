@@ -94,34 +94,24 @@ public class MainScreenActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.homenav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Home", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new HomepageFragment());
             } else if (id == R.id.messagenav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Messages", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new MessageFragment());
             } else if (id == R.id.chatbotnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Chatbot", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ChatbotFragment());
             } else if (id == R.id.facnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Facilities", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new FacilitiesFragment());
             } else if (id == R.id.journalnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Journal", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new JournalFragment());
             } else if (id == R.id.locnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Location", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new LocationFragment());
             } else if (id == R.id.tracknav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Tracker", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new TrackerFragment());
             } else if (id == R.id.resnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Resources", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ResourcesFragment());
             } else if (id == R.id.comnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Community", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
             } else if (id == R.id.setnav) {
-                Toast.makeText(MainScreenActivity.this, "Selected Settings", Toast.LENGTH_SHORT).show();
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
             }
 

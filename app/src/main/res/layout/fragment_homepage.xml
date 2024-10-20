@@ -81,13 +81,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardElevation="16dp"
                 android:animateLayoutChanges="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/musicplayerbg">
+                    android:background="@drawable/journalbgcard">
 
                     <TextView
                         android:id="@+id/verticalTextJournal"
@@ -146,13 +146,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardElevation="16dp"
                 android:animateLayoutChanges="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/musicplayerbg">
+                    android:background="@drawable/toolsbgcard">
 
                     <TextView
                         android:id="@+id/verticalTextTools"
@@ -207,13 +207,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardElevation="16dp"
                 android:animateLayoutChanges="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/musicplayerbg">
+                    android:background="@drawable/facilitybg">
 
                     <TextView
                         android:id="@+id/verticalTextFacility"
@@ -269,13 +269,13 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
+                app:cardElevation="16dp"
                 android:animateLayoutChanges="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/musicplayerbg">
+                    android:background="@drawable/communitybgcard">
 
                     <TextView
                         android:id="@+id/verticalTextCommunity"
