@@ -78,6 +78,7 @@
           android:layout_width="200dp"
           android:layout_height="200dp"
           android:background="@drawable/layout_roundcorners"
+          android:backgroundTint="@color/PrimaryLight"
           app:cardCornerRadius="12dp"
           android:elevation="12dp"
           app:layout_constraintEnd_toEndOf="parent"
