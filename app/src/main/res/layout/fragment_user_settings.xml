@@ -32,56 +32,61 @@
                 android:id="@+id/userProfileImg"
                 android:layout_width="90dp"
                 android:layout_height="90dp"
+                android:src="@drawable/userprofileicon"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/fullnametextview"
+                style="@style/TextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:text="John Doe Jr."
-                style="@style/TextColor"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/userProfileImg"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/userProfileImg"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/userProfileImg" />
 
 
             <TextView
                 android:id="@+id/biotitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="He has no Bio to put"
                 style="@style/TextColor"
-                android:textSize="14sp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textAlignment="center"
+                android:padding="20dp"
+                android:background="@drawable/layout_roundcorners"
                 android:alpha="0.60"
+                android:text="He has no Bio to put"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/userProfileImg"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fullnametextview" />
 
 
             <TextView
                 android:id="@+id/addresstitle"
+                style="@style/TextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="Lives in Purok Kasambagan, San Nicolas"
-                style="@style/TextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userProfileImg" />
+                app:layout_constraintTop_toBottomOf="@+id/biotitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <LinearLayout
             android:id="@+id/profileMenu"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginStart="20dp"
@@ -108,90 +113,43 @@
                 android:layout_gravity="center"
                 android:paddingStart="10dp"
                 android:layout_weight="1"
-                android:text="Profile"
+                android:text="Edit Profile"
                 style="@style/TextColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/appModeMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            android:background="@drawable/layout_roundcorners"
-            style="@style/CardbgColor"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileMenu">
-
-            <ImageView
-
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/darkmodeicon" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingStart="10dp"
-                android:layout_weight="1"
-                android:text="Dark Mode"
-                style="@style/TextColor"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/themeSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:thumb="@drawable/switchthumb"
-                android:track="@drawable/switchtrack"
-                android:textColor="@color/black"
-                android:textSize="18sp"/>
-
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/logoutMenu"
-            android:layout_width="match_parent"
+            style="@style/CardbgColor"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/layout_roundcorners"
+            android:clickable="true"
             android:orientation="horizontal"
             android:padding="10dp"
-            android:clickable="true"
-            android:background="@drawable/layout_roundcorners"
-            style="@style/CardbgColor"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appModeMenu">
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
-
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="10dp"
+                android:backgroundTint="@color/PrimaryLight"
                 android:src="@drawable/logouticon" />
 
             <TextView
+                style="@style/TextColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:paddingStart="10dp"
                 android:text="Logout"
-                style="@style/TextColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

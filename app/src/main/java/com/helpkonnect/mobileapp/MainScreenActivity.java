@@ -185,7 +185,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 String username = documentSnapshot.getString("username");
                 String imageUrl = documentSnapshot.getString("imageUrl");
 
-                profileNameTextView.setText(username);
+                profileNameTextView.setText("Hello, " + username);
                 if (imageUrl != null && !imageUrl.isEmpty()) {
                     Picasso.get().load(imageUrl).transform(new CircleTransform(strokeWidth, strokeColor)).placeholder(R.drawable.userprofileicon)
                             .into(profileImageView);

@@ -6,53 +6,63 @@
     <group android:checkableBehavior="single">
         <item android:id="@+id/homenav"
             android:icon="@drawable/homemenuicon"
-            android:title="Home">
+            android:title="Home"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
 
         <item android:id="@+id/messagenav"
             android:icon="@drawable/messageicon"
-            android:title="Messages">
+            android:title="Messages"
+            android:iconTint="@color/PrimaryLight">
         </item>
 
         <item android:id="@+id/chatbotnav"
             android:icon="@drawable/chatbotmenuicon"
-            android:title="Chatbot">
+            android:title="Chatbot"
+            android:iconTint="@color/PrimaryLight">
         </item>
 
         <item android:id="@+id/facnav"
             android:icon="@drawable/facilitiesmenuicon"
-            android:title="Facilities">
+            android:title="Facilities"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/journalnav"
             android:icon="@drawable/journalmenuicon"
-            android:title="Journal">
+            android:title="Journal"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/locnav"
             android:icon="@drawable/locmenuicon"
-            android:title="Location">
+            android:title="Location"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/tracknav"
             android:icon="@drawable/trackmenuicon"
-            android:title="Tracker">
+            android:title="Tracker"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/resnav"
             android:icon="@drawable/resourcemenuicon"
-            android:title="Resources">
+            android:title="Resources"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/comnav"
             android:icon="@drawable/communitymenuicon"
-            android:title="Community">
+            android:title="Community"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
         <item android:id="@+id/setnav"
             android:icon="@drawable/appmenuicon"
-            android:title="Settings">
+            android:title="Settings"
+            android:iconTint="@color/PrimaryLight">
 
         </item>
     </group>
