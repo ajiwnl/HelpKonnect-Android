@@ -12,12 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -27,12 +25,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import android.view.MotionEvent;
+import android.text.InputType;
+
 
 public class SigninFragment extends Fragment {
 
@@ -43,8 +43,8 @@ public class SigninFragment extends Fragment {
     private View loaderView;
     private FirebaseAuth mAuth;
 
-
     private ListenerRegistration listenerRegistration;
+
 
     @Nullable
     @Override
@@ -61,6 +61,26 @@ public class SigninFragment extends Fragment {
         loginButton = rootView.findViewById(R.id.SignupButton);
         forgotPasswordTextView = rootView.findViewById(R.id.ToForgotPasswordTextView);
         signupTextView = rootView.findViewById(R.id.ToSignInTextView);
+
+        passwordEditText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
+                    // Toggle password visibility
+                    if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0);
+                    } else {
+                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0);
+                    }
+
+                    // Move cursor to the end of the text
+                    passwordEditText.setSelection(passwordEditText.length());
+                    return true;
+                }
+            }
+            return false;
+        });
 
         // Handle login button click
         loginButton.setOnClickListener(v -> signInUser());

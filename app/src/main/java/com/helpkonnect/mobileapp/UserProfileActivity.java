@@ -10,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,8 +28,7 @@ import java.util.Map;
 public class UserProfileActivity extends AppCompatActivity {
 
     private TextView userFirstNameTextView, userEmailTextView, userLastNameTextView, userNameTextView, userBioTextView, userAddressTextView;
-
-    private ImageView imgProfile,backButton;
+    private ImageView imgProfile, backButton;
     private Button editProfileButton, changeEmail, changePassword;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
@@ -39,7 +36,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,55 +53,35 @@ public class UserProfileActivity extends AppCompatActivity {
         imgProfile = findViewById(R.id.userProfile);
         changeEmail = findViewById(R.id.changeEmailBtn);
         changePassword = findViewById(R.id.changePassBtn);
-        backButton.findViewById(R.id.profileBackButton);
+        backButton = findViewById(R.id.profileBackButton); // Corrected initialization
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
-        String userId = currentUser.getUid();
-        if (currentUser != null) {
 
-            loadUserData(userId);
+        if (currentUser != null) {
+            loadUserData(currentUser.getUid());
         } else {
             Toast.makeText(this, "No user is signed in.", Toast.LENGTH_SHORT).show();
+            finish(); // Close activity if no user is signed in
         }
 
-        backButton.setOnClickListener( v -> {
-            finish();
+        backButton.setOnClickListener(v -> finish());
+
+        editProfileButton.setOnClickListener(v -> {
+            showEditProfileFragment();
         });
 
-        editProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userActivity(userId);
-                showEditProfileFragment();
-            }
+        changeEmail.setOnClickListener(v -> {
+            startActivity(new Intent(UserProfileActivity.this, UpdateEmailActivity.class));
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
-
-        // Set OnClickListener for the changeEmail button
-        changeEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(UserProfileActivity.this, UpdateEmailActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                finish();
-            }
+        changePassword.setOnClickListener(v -> {
+            startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
-
-        // Set OnClickListener for the changePassword button
-        changePassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(UserProfileActivity.this, ChangePasswordActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                finish();
-            }
-        });
-
     }
 
     private void showEditProfileFragment() {
@@ -121,32 +97,28 @@ public class UserProfileActivity extends AppCompatActivity {
         bundle.putString("bio", userBioTextView.getText().toString());
         bundle.putString("address", userAddressTextView.getText().toString());
 
-        // Get the current user's ID
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DocumentReference userDocRef = firestore.collection("credentials").document(userId);
 
             userDocRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
-                    // Retrieve the image URL from Firestore
                     String imageUrl = documentSnapshot.getString("imageUrl");
-                    bundle.putString("imageUrl", imageUrl); // Add imageUrl to the Bundle
-                    editProfileFragment.setArguments(bundle); // Set the arguments after fetching imageUrl
-
-                    editProfileFragment.show(fragmentManager, "EditProfile"); // Show the fragment
+                    bundle.putString("imageUrl", imageUrl);
+                    editProfileFragment.setArguments(bundle);
+                    editProfileFragment.show(fragmentManager, "EditProfile");
                 } else {
                     Toast.makeText(UserProfileActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(e -> {
-                Toast.makeText(UserProfileActivity.this,  e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("Firestore", "Error fetching user data: ", e);
+                Toast.makeText(UserProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         }
     }
 
     private void loadUserData(String userId) {
         DocumentReference userDocRef = firestore.collection("credentials").document(userId);
-
-        // Add Firestore real-time listener
         userDocRef.addSnapshotListener((documentSnapshot, e) -> {
             if (e != null) {
                 Toast.makeText(UserProfileActivity.this, "Error while loading!", Toast.LENGTH_SHORT).show();
@@ -154,32 +126,21 @@ public class UserProfileActivity extends AppCompatActivity {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                // Retrieve and display user data
-                String firstName = documentSnapshot.getString("firstName");
-                String lastName = documentSnapshot.getString("lastName");
-                String username = documentSnapshot.getString("username");
-                String email = documentSnapshot.getString("email");
-                String bio = documentSnapshot.getString("bio");
-                String address = documentSnapshot.getString("address");
+                userFirstNameTextView.setText(documentSnapshot.getString("firstName"));
+                userLastNameTextView.setText(documentSnapshot.getString("lastName"));
+                userNameTextView.setText(documentSnapshot.getString("username"));
+                userEmailTextView.setText(documentSnapshot.getString("email"));
+                userBioTextView.setText(documentSnapshot.getString("bio"));
+                userAddressTextView.setText(documentSnapshot.getString("address"));
+
                 String imageUrl = documentSnapshot.getString("imageUrl");
-
-                // Update TextViews with real-time data
-                userFirstNameTextView.setText(firstName);
-                userLastNameTextView.setText(lastName);
-                userNameTextView.setText(username);
-                userEmailTextView.setText(email);
-                userBioTextView.setText(bio);
-                userAddressTextView.setText(address);
-
-                // Load the profile image using Picasso
                 if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Picasso.get().
-                            load(imageUrl).
-                            transform(new CircleTransform(strokeWidth, strokeColor)).
-                            placeholder(R.drawable.userprofileicon)
+                    Picasso.get().load(imageUrl)
+                            .transform(new CircleTransform(strokeWidth, strokeColor))
+                            .placeholder(R.drawable.userprofileicon)
                             .into(imgProfile);
                 } else {
-                    imgProfile.setImageResource(R.drawable.userprofileicon); // Default profile picture if no URL
+                    imgProfile.setImageResource(R.drawable.userprofileicon); // Default image
                 }
             } else {
                 Toast.makeText(UserProfileActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
@@ -188,33 +149,18 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void userActivity(String userId) {
-        // Get the current time
-        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
-
-        // Prepare Firestore instance
+        Timestamp currentTime = Timestamp.now();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Create a map to hold the lastActive field with the Timestamp
         Map<String, Object> data = new HashMap<>();
-        data.put("lastActive", currentTime);  // Use Timestamp object directly
+        data.put("lastActive", currentTime);
 
-        // Create a custom document ID using the userId and timestamp
         SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        String timestamp = idSdf.format(new Date());  // Use current date for document ID
+        String timestamp = idSdf.format(new Date());
         String documentId = userId + "_" + timestamp;
 
-        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
-        db.collection("userActivity")
-                .document(documentId)  // Use the custom document ID
+        db.collection("userActivity").document(documentId)
                 .set(data)
-                .addOnSuccessListener(aVoid -> {
-                    // Successfully created a new activity document
-                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure
-                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
-                });
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "New activity recorded successfully with ID: " + documentId))
+                .addOnFailureListener(e -> Log.e("Firestore", "Failed to record activity: " + e.getMessage()));
     }
-
 }

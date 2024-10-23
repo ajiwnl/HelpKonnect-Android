@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SigninFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -50,22 +49,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/FormLayout" />
 
+
         <EditText
             android:id="@+id/PasswordEditText"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:layout_marginTop="20dp"
-
-            android:background="@drawable/edittextdesign"
+            android:layout_marginTop="16dp"
+           android:background="@drawable/edittextdesign"
+            android:drawableStart="@drawable/edittextpasswordicon"
+            android:drawableEnd="@drawable/ic_eye_off"
             android:ems="10"
+            android:hint="Password"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:hint="Password"
-            android:drawableStart="@drawable/edittextpasswordicon"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/EmailEditText" />
 
@@ -73,7 +73,7 @@
             android:id="@+id/SignupButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/buttondesign"
             android:paddingStart="50dp"
             android:paddingEnd="50dp"

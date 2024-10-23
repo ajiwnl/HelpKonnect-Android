@@ -39,7 +39,7 @@ public class UserSettingsFragment extends Fragment {
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
 
-    private LinearLayout profileBtn;
+    private LinearLayout profileMenu;
 
     private TextView userFullName, userBio, userAddress;
 
@@ -66,6 +66,7 @@ public class UserSettingsFragment extends Fragment {
         userAddress = rootView.findViewById(R.id.addresstitle);
         userProfile = rootView.findViewById(R.id.userProfileImg);
         profileLayout = rootView.findViewById(R.id.ProfileBox);
+        profileMenu = rootView.findViewById(R.id.profileMenu);
 
         // Load user data
         if (currentUser != null) {
@@ -95,8 +96,19 @@ public class UserSettingsFragment extends Fragment {
             }
         });
 
+        profileMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), UserProfileActivity.class);
+                startActivity(intent);  // Navigate to UserProfileActivity
+
+            }
+        });
+
         return rootView;
     }
+
+
 
     private void applyTheme(boolean isDarkMode) {
         if (isDarkMode) {
