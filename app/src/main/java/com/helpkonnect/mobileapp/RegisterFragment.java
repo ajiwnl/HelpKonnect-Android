@@ -178,6 +178,9 @@ public class RegisterFragment extends Fragment {
                                                 // Store additional details in Firestore
                                                 String userId = user.getUid();
                                                 storeUserDetails(username, userId, email, role);
+
+                                                // Notify user to check their email
+                                                Toast.makeText(getContext(), "Registration successful. Please verify your email.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(getContext(), "Failed to send verification email: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                             }
