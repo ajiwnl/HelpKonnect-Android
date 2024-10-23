@@ -115,8 +115,8 @@
             android:inputType="textPassword"
             android:maxLines="1"
             android:hint="Password"
-
             android:drawableStart="@drawable/edittextpasswordicon"
+            android:drawableEnd="@drawable/ic_eye_off"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
 
@@ -132,6 +132,7 @@
 
             android:background="@drawable/edittextdesign"
             android:drawableStart="@drawable/edittextpasswordicon"
+            android:drawableEnd="@drawable/ic_eye_off"
             android:ems="10"
             android:hint="Confirm Password"
             android:inputType="textPassword"
