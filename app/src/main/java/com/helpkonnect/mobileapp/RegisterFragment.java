@@ -1,5 +1,6 @@
 package com.helpkonnect.mobileapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,9 +16,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +47,9 @@ public class RegisterFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
+    private final String createUser = "https://helpkonnect.vercel.app/api/createUser";
+
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -165,9 +178,6 @@ public class RegisterFragment extends Fragment {
                                                 // Store additional details in Firestore
                                                 String userId = user.getUid();
                                                 storeUserDetails(username, userId, email, role);
-
-                                                // Notify user to check their email
-                                                Toast.makeText(getContext(), "Registration successful. Please verify your email.", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 Toast.makeText(getContext(), "Failed to send verification email: " + verificationTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                             }
@@ -204,6 +214,9 @@ public class RegisterFragment extends Fragment {
                 .set(user)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        // Make a Volley request to register the user with Stream Chat API
+                        registerUserWithStreamChat(userId, username);
+                        
                         // Navigate to SigninFragment and clear the back stack
                         FragmentTransaction transaction = requireFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(
@@ -217,6 +230,36 @@ public class RegisterFragment extends Fragment {
                         Toast.makeText(getContext(), "Registration failed please see the details: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void registerUserWithStreamChat(String userId, String username) {
+        JSONObject userObject = new JSONObject();
+        try {
+            userObject.put("id", userId);
+            userObject.put("name", username);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, createUser, userObject,
+                response -> {
+                    // Handle the response
+                    Toast.makeText(getContext(), "User registered with Stream Chat successfully.", Toast.LENGTH_SHORT).show();
+                },
+                error -> {
+                    // Handle error
+                    Toast.makeText(getContext(), "Failed to register user with Stream Chat: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);
     }
 
     // Helper function to format the date
@@ -269,6 +312,4 @@ public class RegisterFragment extends Fragment {
             }
         }
     }
-
-
 }
