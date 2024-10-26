@@ -37,6 +37,7 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
         public final String preview;
         public final String documentId;
         public String fullNotes;
+        private String translatedNotes;
 
         public Journal(String imageUrl, String title, String subtitle, Timestamp date, String preview, String documentId) {
             this.imageUrl = imageUrl;
@@ -45,6 +46,15 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             this.date = date;
             this.preview = preview;
             this.documentId = documentId;
+            this.translatedNotes = translatedNotes;
+        }
+
+        public String getTranslatedNotes() { // New getter method for translated_notes
+            return translatedNotes;
+        }
+
+        public void setTranslatedNotes(String translatedNotes) {
+            this.translatedNotes = translatedNotes;
         }
 
         public String getTitle() {

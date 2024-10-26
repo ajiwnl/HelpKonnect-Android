@@ -56,23 +56,6 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/EncouragementMessage" />
 
-      <ProgressBar
-          android:id="@+id/pieChartLoader"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:elevation="8dp"
-          android:padding="5dp"
-          android:background="@drawable/layout_roundcorners"
-          android:backgroundTint="@color/SecondaryLight"
-          android:indeterminateTint="@color/PrimaryLight"
-          android:visibility="gone"
-          app:layout_constraintBottom_toBottomOf="@+id/PieChartHolder"
-          app:layout_constraintEnd_toEndOf="@+id/PieChartHolder"
-          app:layout_constraintStart_toStartOf="@+id/PieChartHolder"
-          app:layout_constraintTop_toTopOf="@+id/PieChartHolder" />
-
-
-
       <androidx.cardview.widget.CardView
           android:id="@+id/PieChartHolder"
           android:layout_width="200dp"
@@ -223,34 +206,8 @@
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 
-      <ProgressBar
-          android:id="@+id/emotionListLoader"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:elevation="8dp"
-          android:padding="5dp"
-          android:background="@drawable/layout_roundcorners"
-          android:backgroundTint="@color/SecondaryLight"
-          android:indeterminateTint="@color/PrimaryLight"
-          android:visibility="gone"
-          app:layout_constraintBottom_toBottomOf="@+id/MoodListView"
-          app:layout_constraintEnd_toEndOf="@+id/MoodListView"
-          app:layout_constraintStart_toStartOf="@+id/MoodListView"
-          app:layout_constraintTop_toTopOf="@+id/MoodListView" />
-
-      <TextView
-          android:id="@+id/NoQuestionsAnswered"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Try Answering the Question Above."
-          android:visibility="gone"
-          app:layout_constraintBottom_toBottomOf="@+id/MoodListView"
-          app:layout_constraintEnd_toEndOf="@+id/MoodListView"
-          app:layout_constraintStart_toStartOf="@+id/MoodListView"
-          app:layout_constraintTop_toBottomOf="@+id/EmotionSurveyContainer" />
-
       <androidx.recyclerview.widget.RecyclerView
-          android:id="@+id/MoodListView"
+          android:id="@+id/JournalListView"
           android:layout_width="match_parent"
           android:layout_height="0dp"
           android:paddingTop="10dp"
@@ -260,6 +217,38 @@
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 
+   <FrameLayout
+       android:id="@+id/emotionLoader"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center"
+       android:visibility="gone">
 
+      <LinearLayout
+          android:orientation="vertical"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="#80000000"
+          android:gravity="center">
 
+         <ProgressBar
+             android:id="@+id/pieChartLoader"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:elevation="8dp"
+             android:padding="5dp"
+             android:background="@drawable/layout_roundcorners"
+             android:backgroundTint="@color/SecondaryLight"
+             android:indeterminateTint="@color/PrimaryLight" />
+
+         <TextView
+             android:id="@+id/loadingText"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Analyzing your journal"
+             android:layout_marginTop="8dp"
+             android:textColor="@android:color/black" />
+      </LinearLayout>
+   </FrameLayout>
 </FrameLayout>
