@@ -4,11 +4,43 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
         <item android:id="@+id/homenav"
             android:icon="@drawable/homemenuicon"
             android:title="Home"
             android:iconTint="@color/PrimaryLight">
 
+        </item>
+
+        <item android:id="@+id/facnav"
+            android:icon="@drawable/facilitiesmenuicon"
+            android:title="Facilities"
+            android:iconTint="@color/PrimaryLight">
+        </item>
+
+        <item android:id="@+id/locnav"
+            android:icon="@drawable/locmenuicon"
+            android:title="Location"
+            android:iconTint="@color/PrimaryLight">
+
+        </item>
+
+        <item android:id="@+id/journalnav"
+            android:icon="@drawable/journalmenuicon"
+            android:title="Journal"
+            android:iconTint="@color/PrimaryLight">
+        </item>
+
+        <item android:id="@+id/tracknav"
+            android:icon="@drawable/trackmenuicon"
+            android:title="Tracker"
+            android:iconTint="@color/PrimaryLight">
+        </item>
+
+        <item android:id="@+id/resnav"
+            android:icon="@drawable/resourcemenuicon"
+            android:title="Resources"
+            android:iconTint="@color/PrimaryLight">
         </item>
 
         <item android:id="@+id/messagenav"
@@ -23,47 +55,26 @@
             android:iconTint="@color/PrimaryLight">
         </item>
 
-        <item android:id="@+id/facnav"
-            android:icon="@drawable/facilitiesmenuicon"
-            android:title="Facilities"
-            android:iconTint="@color/PrimaryLight">
-
-        </item>
-        <item android:id="@+id/journalnav"
-            android:icon="@drawable/journalmenuicon"
-            android:title="Journal"
-            android:iconTint="@color/PrimaryLight">
-
-        </item>
-        <item android:id="@+id/locnav"
-            android:icon="@drawable/locmenuicon"
-            android:title="Location"
-            android:iconTint="@color/PrimaryLight">
-
-        </item>
-        <item android:id="@+id/tracknav"
-            android:icon="@drawable/trackmenuicon"
-            android:title="Tracker"
-            android:iconTint="@color/PrimaryLight">
-
-        </item>
-        <item android:id="@+id/resnav"
-            android:icon="@drawable/resourcemenuicon"
-            android:title="Resources"
-            android:iconTint="@color/PrimaryLight">
-
-        </item>
         <item android:id="@+id/comnav"
             android:icon="@drawable/communitymenuicon"
             android:title="Community"
             android:iconTint="@color/PrimaryLight">
 
         </item>
+
         <item android:id="@+id/setnav"
             android:icon="@drawable/appmenuicon"
             android:title="Settings"
             android:iconTint="@color/PrimaryLight">
 
         </item>
+
+        <item android:id="@+id/assonav"
+            android:icon="@drawable/ic_associated_24"
+            android:title="Associate"
+            android:iconTint="@color/PrimaryLight">
+
+        </item>
+
     </group>
 </menu>
