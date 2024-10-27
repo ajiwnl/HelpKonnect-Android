@@ -72,6 +72,9 @@ public class TrackerFragment extends Fragment {
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
+        String todayDate = dateFormatDefault.format(new Date());
+        dateDisplay.setText(todayDate);
         FirebaseUser user = mAuth.getCurrentUser();
         String userId = user.getUid();
 
