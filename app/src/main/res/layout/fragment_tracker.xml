@@ -23,7 +23,7 @@
           app:layout_constraintTop_toTopOf="parent" />
 
       <TextView
-          android:id="@+id/DateTodayDisplay"
+          android:id="@+id/DateDisplay"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:paddingStart="10dp"
@@ -66,7 +66,7 @@
           app:cardCornerRadius="12dp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/DateTodayDisplay">
+          app:layout_constraintTop_toBottomOf="@+id/DateDisplay">
 
          <com.github.mikephil.charting.charts.PieChart
              android:id="@+id/EmotionChart"

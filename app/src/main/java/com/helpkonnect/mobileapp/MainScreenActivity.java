@@ -53,7 +53,7 @@ public class MainScreenActivity extends AppCompatActivity {
     private int strokeWidth = 1;
 
     private Intent userRole = getIntent();
-    private String role = "user";
+    private String role = "professional";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
