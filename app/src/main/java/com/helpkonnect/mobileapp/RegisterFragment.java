@@ -73,17 +73,20 @@ public class RegisterFragment extends Fragment {
         confirmPasswordEditText = rootView.findViewById(R.id.confirmpasswordEditText);
         usernameEditText = rootView.findViewById(R.id.usernameEditText);
         radioGroup = rootView.findViewById(R.id.radioGroup);
+        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0); // Eye icon on (hidden)
 
         passwordEditText.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
                     // Toggle password visibility
                     if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                        // Show password
                         passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0); // Change the eye icon to "eye off"
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0);
                     } else {
+                        // Hide password
                         passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0); // Change the eye icon back to "eye on"
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0);
                     }
 
                     // Move cursor to the end of the text
@@ -96,18 +99,20 @@ public class RegisterFragment extends Fragment {
 
         confirmPasswordEditText.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
+                if (event.getRawX() >= (confirmPasswordEditText.getRight() - confirmPasswordEditText.getCompoundDrawables()[2].getBounds().width())) {
                     // Toggle password visibility
-                    if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
-                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0); // Change the eye icon to "eye off"
+                    if (confirmPasswordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                        // Show password
+                        confirmPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        confirmPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0);
                     } else {
-                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0); // Change the eye icon back to "eye on"
+                        // Hide password
+                        confirmPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        confirmPasswordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0);
                     }
 
                     // Move cursor to the end of the text
-                    passwordEditText.setSelection(passwordEditText.length());
+                    confirmPasswordEditText.setSelection(confirmPasswordEditText.length());
                     return true;
                 }
             }

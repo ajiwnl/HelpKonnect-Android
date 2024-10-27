@@ -69,6 +69,7 @@ public class SigninFragment extends Fragment {
         signupTextView = rootView.findViewById(R.id.ToSignInTextView);
         rememberMeCheckBox = rootView.findViewById(R.id.rememberMeCheckBox);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0); // Eye icon on (hidden)
 
         // Load saved email and password if "Remember Me" was checked
         if (sharedPreferences.getBoolean("rememberMe", false)) {
@@ -82,11 +83,13 @@ public class SigninFragment extends Fragment {
                 if (event.getRawX() >= (passwordEditText.getRight() - passwordEditText.getCompoundDrawables()[2].getBounds().width())) {
                     // Toggle password visibility
                     if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                        // Show password
                         passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0);
-                    } else {
-                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                         passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_on, 0);
+                    } else {
+                        // Hide password
+                        passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0);
                     }
 
                     // Move cursor to the end of the text
