@@ -17,9 +17,14 @@ import androidx.core.content.ContextCompat;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import android.content.Intent;
@@ -150,20 +155,26 @@ public class CommunityFragment extends Fragment {
     private void fetchEvents() {
         CollectionReference eventsRef = db.collection("events");
 
+        // Get the current date
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0); 
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        Timestamp currentTimestamp = new Timestamp(calendar.getTime());
+        Date currentDate = calendar.getTime();
 
-        eventsRef.whereGreaterThanOrEqualTo("date", currentTimestamp).get().addOnCompleteListener(task -> {
+        Log.d("CommunityFragment", "Current Date: " + currentDate);
+
+        eventsRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 events.clear();
                 for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d("CommunityFragment", "Fetched Document ID: " + document.getId());
+                    Log.d("CommunityFragment", "Fetched Data: " + document.getData());
+
                     String name = document.getString("name");
                     String description = document.getString("description");
-                    String date = document.getString("date");
+                    String dateString = document.getString("date");
                     String timeStart = document.getString("timeStart");
                     String timeEnd = document.getString("timeEnd");
                     String venue = document.getString("venue");
@@ -175,9 +186,21 @@ public class CommunityFragment extends Fragment {
 
                     boolean done = document.getBoolean("done") != null && document.getBoolean("done");
 
-                    Event event = new Event(name, description, date, timeStart, timeEnd, venue, facilityName, imageUrl, accommodationCount, done);
-                    events.add(event); 
+                    // Parse the string date to a Date object
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    Date eventDate = null;
+                    try {
+                        eventDate = sdf.parse(dateString); // Parse the string date
+                    } catch (ParseException e) {
+                        Log.e("CommunityFragment", "Error parsing date: " + dateString, e);
+                    }
+
+                    if (eventDate != null && !eventDate.before(currentDate)) {
+                        Event event = new Event(name, description, dateString, timeStart, timeEnd, venue, facilityName, imageUrl, accommodationCount, done);
+                        events.add(event);
+                    }
                 }
+                Log.d("CommunityFragment", "Total Events Fetched: " + events.size());
                 eventAdapter.notifyDataSetChanged();
             } else {
                 Log.w("CommunityFragment", "Error getting documents.", task.getException());

@@ -41,7 +41,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/eventsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="200dp"
             android:orientation="horizontal"
             android:scrollbars="horizontal"
             app:layout_constraintEnd_toEndOf="parent"

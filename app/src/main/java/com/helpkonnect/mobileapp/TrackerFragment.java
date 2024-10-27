@@ -63,7 +63,7 @@ public class TrackerFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
         activityTitle = rootView.findViewById(R.id.ActivityTitle);
-        dateDisplay = rootView.findViewById(R.id.DateDisplay);
+        //dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
