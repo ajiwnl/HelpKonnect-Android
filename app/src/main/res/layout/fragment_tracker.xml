@@ -23,7 +23,7 @@
           app:layout_constraintTop_toTopOf="parent" />
 
       <TextView
-          android:id="@+id/DateTodayDisplay"
+          android:id="@+id/DateDisplay"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:paddingStart="10dp"
@@ -41,7 +41,7 @@
           android:textStyle="bold"
           android:textSize="16sp"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/DateTodayDisplay" />
+          app:layout_constraintTop_toBottomOf="@+id/DateDisplay" />
 
       <TextView
           android:id="@+id/JourneyDescription"
