@@ -209,6 +209,7 @@ public class RegisterFragment extends Fragment {
         user.put("firstName", "");
         user.put("lastName", "");
         user.put("bio", "No information given");
+        user.put("associated", "");
         user.put("imageUrl", "https://csassets.nintendo.com/noaext/image/private/f_auto/q_auto/t_KA_default/icon-menu-user-737373?_a=DATC1RAAZAA0");
 
         // Save the user in Firestore
