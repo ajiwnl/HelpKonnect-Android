@@ -79,7 +79,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         public TextView userPostLikes;
         public TextView userPostDate;
         public TextView postComment;
-        public ImageView heartIcon; // Add this line
+        public ImageView heartIcon;
 
         public CommunityViewHolder(View itemView) {
             super(itemView);
@@ -90,7 +90,7 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             userPostLikes = itemView.findViewById(R.id.userpostlikes);
             userPostDate = itemView.findViewById(R.id.userpostdate);
             postComment = itemView.findViewById(R.id.postComment);
-            heartIcon = itemView.findViewById(R.id.heartIcon); // Add this line
+            heartIcon = itemView.findViewById(R.id.heartIcon);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -134,7 +134,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             })
             .addOnFailureListener(e -> Log.w("CommunityFragment", "Error loading heart count", e));
 
-        // Check if the current user has liked the post
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         db.collection("likes")
             .whereEqualTo("postId", post.getPostId())
@@ -142,9 +141,9 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             .get()
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                    holder.heartIcon.setImageResource(R.drawable.hearticonfilled); // Liked icon
+                    holder.heartIcon.setImageResource(R.drawable.hearticonfilled);
                 } else {
-                    holder.heartIcon.setImageResource(R.drawable.hearticon); // Unliked icon
+                    holder.heartIcon.setImageResource(R.drawable.hearticon);
                 }
             });
 
@@ -185,28 +184,25 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String postId = post.getPostId();
         CollectionReference likesRef = db.collection("likes");
-        CollectionReference communityRef = db.collection("community"); // Ensure this is the correct collection
+        CollectionReference communityRef = db.collection("community");
 
         likesRef.whereEqualTo("postId", postId).whereEqualTo("userId", userId).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (!task.getResult().isEmpty()) {
-                            // User has already liked the post, so remove the like
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 likesRef.document(document.getId()).delete()
                                         .addOnSuccessListener(aVoid -> {
-                                            heartIcon.setImageResource(R.drawable.hearticon); // Update to unliked icon
+                                            heartIcon.setImageResource(R.drawable.hearticon);
                                             int likesCount = Integer.parseInt(userPostLikes.getText().toString()) - 1;
                                             userPostLikes.setText(String.valueOf(likesCount));
 
-                                            // Update the heart count in the community document
                                             communityRef.document(postId).update("heart", likesCount)
                                                     .addOnFailureListener(e -> Log.w("CommunityFragment", "Error updating heart count", e));
                                         })
                                         .addOnFailureListener(e -> Log.w("CommunityFragment", "Error removing like", e));
                             }
                         } else {
-                            // User has not liked the post, so add a like
                             Map<String, Object> likeData = new HashMap<>();
                             likeData.put("postId", postId);
                             likeData.put("userId", userId);
@@ -217,7 +213,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
                                         int likesCount = Integer.parseInt(userPostLikes.getText().toString()) + 1;
                                         userPostLikes.setText(String.valueOf(likesCount));
 
-                                        // Update the heart count in the community document
                                         communityRef.document(postId).update("heart", likesCount)
                                                 .addOnFailureListener(e -> Log.w("CommunityFragment", "Error updating heart count", e));
                                     })
