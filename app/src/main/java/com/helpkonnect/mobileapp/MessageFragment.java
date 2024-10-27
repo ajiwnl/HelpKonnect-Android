@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.content.Intent;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class MessageFragment extends Fragment {
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<UserList> userList;
+    private List<UserList> filteredUserList;
 
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
@@ -43,12 +45,27 @@ public class MessageFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.user_list_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(userList, user -> {
+        filteredUserList = new ArrayList<>();
+        userAdapter = new UserAdapter(filteredUserList, user -> {
             openChatWithUser(user);
         });
         recyclerView.setAdapter(userAdapter);
+
+        // Set up the search view
+        SearchView searchUser = rootView.findViewById(R.id.searchUser);
+        searchUser.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterUsers(newText);
+                return true;
+            }
+        });
 
         fetchUsersFromFirebase();
 
@@ -71,7 +88,9 @@ public class MessageFragment extends Fragment {
 
                         if (!userId.equals(getCurrentUserId())) {
                             String displayName = username != null ? username : facilityName;
-                            userList.add(new UserList(userId, displayName, imageUrl));
+                            UserList user = new UserList(userId, displayName, imageUrl);
+                            userList.add(user);
+                            filteredUserList.add(user);
                         }
                     }
                     userAdapter.notifyDataSetChanged();
@@ -80,6 +99,21 @@ public class MessageFragment extends Fragment {
                 }
                 loaderMessage.setVisibility(View.GONE);
             });
+    }
+
+    private void filterUsers(String query) {
+        filteredUserList.clear();
+        if (query.isEmpty()) {
+            filteredUserList.addAll(userList);
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (UserList user : userList) {
+                if (user.getDisplayName().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredUserList.add(user);
+                }
+            }
+        }
+        userAdapter.notifyDataSetChanged();
     }
 
     private String getCurrentUserId() {
