@@ -40,17 +40,20 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateTodayDisplay;
+    private TextView dateDisplay, activityTitle;
     private FrameLayout emotionListLoader;
     private List<Journal> journalList;
     private FirebaseFirestore db;
-    private FirebaseAuth auth;
+    private FirebaseAuth mAuth;
     private RecyclerView journalRecyclerView;
     private JournalListAdapter adapter;
     private RequestQueue requestQueue;
@@ -59,21 +62,30 @@ public class TrackerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tracker, container, false);
-
+        mAuth = FirebaseAuth.getInstance();
         requestQueue = Volley.newRequestQueue(requireContext());
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
         emotionListLoader = rootView.findViewById(R.id.emotionLoader);
+        activityTitle = rootView.findViewById(R.id.ActivityTitle);
+        dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        FirebaseUser user = mAuth.getCurrentUser();
+        String userId = user.getUid();
+
         adapter = new JournalListAdapter(journalList, journal -> {
 
+            activityTitle.setText(journal.getTitle()); // Set the title
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
+            dateDisplay.setText(dateFormat.format(journal.getDate().toDate()));
+            userActivity(userId);
             analyzeEmotion(journal.getTranslatedNotes());
         });
         journalRecyclerView.setAdapter(adapter);
 
-        fetchJournals();  // Load the journals of the logged-in user
+        fetchJournals();
         return rootView;
     }
 
@@ -201,5 +213,34 @@ public class TrackerFragment extends Fragment {
         return Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
     }
 
+    //For User Activity:
+    private void userActivity(String userId) {
+        // Get the current time
+        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
 
+        // Prepare Firestore instance
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create a map to hold the lastActive field with the Timestamp
+        Map<String, Object> data = new HashMap<>();
+        data.put("lastActive", currentTime);  // Use Timestamp object directly
+
+        // Create a custom document ID using the userId and timestamp
+        SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+        String timestamp = idSdf.format(new Date());  // Use current date for document ID
+        String documentId = userId + "_" + timestamp;
+
+        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
+        db.collection("userActivity")
+                .document(documentId)  // Use the custom document ID
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully created a new activity document
+                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
+                });
+    }
 }

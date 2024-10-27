@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:text="Remember Me"
             android:textColor="@color/black"
-            android:backgroundTint="@color/forchkbox"
+            android:buttonTint="@color/forchkbox"
             app:layout_constraintStart_toStartOf="@+id/PasswordEditText"
             app:layout_constraintTop_toBottomOf="@+id/PasswordEditText"
             android:layout_marginTop="8dp"/>
