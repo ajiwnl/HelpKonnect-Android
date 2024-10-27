@@ -39,14 +39,27 @@
             app:layout_constraintTop_toTopOf="@+id/communitypostrecyclerview" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/eventsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchCaption"
+            android:layout_margin="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/communitypostrecyclerview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="10dp"
+            android:layout_marginBottom="160dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.578"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/searchCaption" />
+            app:layout_constraintTop_toBottomOf="@+id/eventsRecyclerView" />
 
         <ImageView
             android:id="@+id/createpost"

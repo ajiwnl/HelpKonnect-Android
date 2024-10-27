@@ -1,28 +1,28 @@
 package com.helpkonnect.mobileapp;
 
-import java.io.Serializable;
-
-public class Event implements Serializable {
+public class Event {
     private String name;
     private String description;
     private String date;
     private String timeStart;
     private String timeEnd;
     private String venue;
-    private String accommodation;
     private String facilityName;
     private String imageUrl;
+    private int accommodationCount;
+    private boolean done;
 
-    public Event(String name, String description, String date, String timeStart, String timeEnd, String venue, String accommodation, String facilityName, String imageUrl) {
+    public Event(String name, String description, String date, String timeStart, String timeEnd, String venue, String facilityName, String imageUrl, int accommodationCount, boolean done) {
         this.name = name;
         this.description = description;
         this.date = date;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.venue = venue;
-        this.accommodation = accommodation;
         this.facilityName = facilityName;
         this.imageUrl = imageUrl;
+        this.accommodationCount = accommodationCount;
+        this.done = done;
     }
 
     // Getters
@@ -32,7 +32,8 @@ public class Event implements Serializable {
     public String getTimeStart() { return timeStart; }
     public String getTimeEnd() { return timeEnd; }
     public String getVenue() { return venue; }
-    public String getAccommodation() { return accommodation; }
     public String getFacilityName() { return facilityName; }
     public String getImageUrl() { return imageUrl; }
+    public int getAccommodationCount() { return accommodationCount; }
+    public boolean isDone() { return done; }
 }
