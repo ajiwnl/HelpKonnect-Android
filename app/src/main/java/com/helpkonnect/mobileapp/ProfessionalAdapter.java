@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide; // Import Glide
 
 import java.util.List;
 
@@ -20,19 +21,19 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
     }
 
     public static class Professional {
-        private int image;
+        private String image; // Image URL
         private String name;
         private String profession;
         private String introduction;
 
-        public Professional(int image, String name, String profession, String introduction) {
+        public Professional(String image, String name, String profession, String introduction) {
             this.image = image;
             this.name = name;
             this.profession = profession;
             this.introduction = introduction;
         }
 
-        public int getImage() { return image; }
+        public String getImage() { return image; }
         public String getName() { return name; }
         public String getProfession() { return profession; }
         public String getIntroduction() { return introduction; }
@@ -43,7 +44,6 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
         public TextView therapistName;
         public TextView profession;
         public TextView introduction;
-        public ImageView arrowImage;
 
         public ProfessionalViewHolder(View itemView) {
             super(itemView);
@@ -51,7 +51,6 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
             therapistName = itemView.findViewById(R.id.therapistName);
             profession = itemView.findViewById(R.id.profession);
             introduction = itemView.findViewById(R.id.introduction);
-            arrowImage = itemView.findViewById(R.id.arrowImage);
 
             // Set click listener for the entire item view
             itemView.setOnClickListener(v -> {
@@ -79,7 +78,11 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
     @Override
     public void onBindViewHolder(@NonNull ProfessionalViewHolder holder, int position) {
         Professional professional = professionals.get(position);
-        holder.therapistImage.setImageResource(professional.getImage());
+        
+        Glide.with(holder.itemView.getContext())
+                .load(professional.getImage())
+                .into(holder.therapistImage);
+
         holder.therapistName.setText(professional.getName());
         holder.profession.setText(professional.getProfession());
         holder.introduction.setText(professional.getIntroduction());

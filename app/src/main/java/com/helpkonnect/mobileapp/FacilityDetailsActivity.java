@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -23,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class FacilityDetailsActivity extends AppCompatActivity {
 
     private TextView listTitle;
-    private ImageButton backButton,commentButton;
+    private ImageButton backButton, commentButton;
     private TextSwitcher listTitleSwitcher;
     private String[] ListTitles = {"Professionals", "Comments"};
     private String currentFacility;
@@ -36,6 +39,7 @@ public class FacilityDetailsActivity extends AppCompatActivity {
     private TextView errorTextView;
     private RecyclerView recyclerView;
     private List<CommentModel> comments = new ArrayList<>();
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +56,7 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
         backButton.setOnClickListener(v -> finish());
 
-        commentButton.setOnClickListener( v -> {
-        showCommentDialog();
-        });
-
+        commentButton.setOnClickListener(v -> showCommentDialog());
 
         listTitleSwitcher.setFactory(() -> {
             TextView textView = new TextView(this);
@@ -71,70 +72,80 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             currentIndex = (currentIndex + 1) % ListTitles.length;
             listTitleSwitcher.setText(ListTitles[currentIndex]);
             listTitle.setText(ListTitles[currentIndex]);
-            if(currentIndex == 1){
+            if (currentIndex == 1) {
                 commentButton.setVisibility(View.VISIBLE);
                 loadCommentData();
-            }else {
+            } else {
                 commentButton.setVisibility(View.GONE);
-                loadProfessionalData();
+                loadAssociatedProfessionals();
             }
-
         });
 
-        // For Facility Details Display
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            String imageUrl = args.getString("imageUrl"); // Get the image URL string
-            String name = args.getString("name");
+            String imageUrl = args.getString("imageUrl");
+            name = args.getString("name");
             String location = args.getString("location");
             float rating = args.getFloat("rating");
-            currentFacility = name;
+            currentFacility = args.getString("userId");
 
             ImageView facilityImage = findViewById(R.id.facilityImage);
             TextView facilityName = findViewById(R.id.FacilityName);
             TextView facilityLocation = findViewById(R.id.FacilityLocation);
             RatingBar facilityRatingBar = findViewById(R.id.FacilityRating);
             
-            // Set Data
-            Glide.with(this) // Use Glide to load the image from the URL
+            Glide.with(this)
                 .load(imageUrl)
-                .into(facilityImage); // Set the image view
+                .into(facilityImage);
 
             facilityName.setText(name);
             facilityLocation.setText(location);
             facilityRatingBar.setRating(rating);
         }
 
-        loadProfessionalData();
+        loadAssociatedProfessionals();
     }
 
-    private void loadProfessionalData() {
+    private void loadAssociatedProfessionals() {
         loadingIndicator.setVisibility(View.VISIBLE);
         errorTextView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
 
-        new Handler().postDelayed(() -> {
-            List<ProfessionalAdapter.Professional> professionals = new ArrayList<>();
-            //Sample Data set
-            professionals.add(new ProfessionalAdapter.Professional(R.drawable.userprofileicon, "Jane Doe", "Counselor", "Helping you find your way."));
-            professionals.add(new ProfessionalAdapter.Professional(R.drawable.userprofileicon, "John Smith", "Therapist", "Supporting mental wellness."));
-            professionals.add(new ProfessionalAdapter.Professional(R.drawable.userprofileicon, "Emily White", "Life Coach", "Empowering you to reach your goals."));
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("credentials")
+            .whereEqualTo("associated", currentFacility) // Match the associated field with the facility's userId
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    List<ProfessionalAdapter.Professional> professionals = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
 
-            if (professionals.isEmpty()) {
-                showError("Professionals list not available.");
-            } else {
-                setupProfessionalRecyclerView(professionals);
-            }
-        }, 2000);
+                        ProfessionalAdapter.Professional professional = new ProfessionalAdapter.Professional(
+                            document.getString("imageUrl"),
+                            document.getString("username"),
+                            document.getString("role"),
+                            document.getString("bio")
+                        );
+                        professionals.add(professional);
+                    }
+
+                    if (professionals.isEmpty()) {
+                        showError("No associated professionals found.");
+                    } else {
+                        setupProfessionalRecyclerView(professionals);
+                    }
+                } else {
+                    showError("Failed to load professionals: " + task.getException().getMessage());
+                }
+            });
     }
+
     private void loadCommentData() {
         loadingIndicator.setVisibility(View.VISIBLE);
         errorTextView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
 
         new Handler().postDelayed(() -> {
-            //comments.clear();
-
             if (comments.isEmpty()) {
                 showError("No Comments Yet Add One...");
             } else {
@@ -142,7 +153,6 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             }
         }, 2000);
     }
-
 
     private void setupCommentRecyclerView(List<CommentModel> comments) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -154,15 +164,15 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-
     private void setupProfessionalRecyclerView(List<ProfessionalAdapter.Professional> professionals) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ProfessionalAdapter adapter = new ProfessionalAdapter(professionals, professional -> {
             Intent intent = new Intent(FacilityDetailsActivity.this, ProfessionalDetailsActivity.class);
-            intent.putExtra("image", professional.getImage());
+            intent.putExtra("imageUrl", professional.getImage());
             intent.putExtra("name", professional.getName());
             intent.putExtra("facility", currentFacility);
+            intent.putExtra("facilityName", name);
             startActivity(intent);
         });
 
@@ -191,7 +201,6 @@ public class FacilityDetailsActivity extends AppCompatActivity {
                     String commentText = editTextComment.getText().toString();
                     boolean isAnonymous = checkBoxAnonymous.isChecked();
                     if (!commentText.isEmpty()) {
-
                         addComment(commentText, isAnonymous);
                     }
                 })
@@ -203,15 +212,12 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
     private void addComment(String commentText, boolean isAnonymous) {
         String userName = isAnonymous ? "Anonymous Client" : "User";
-        //getUserid;
         CommentModel newComment = new CommentModel(userName, commentText);
 
         comments.add(newComment);
-        if(comments.size() == 1){
+        if (comments.size() == 1) {
             setupCommentRecyclerView(comments);
         }
         recyclerView.getAdapter().notifyDataSetChanged();
     }
-
 }
-

@@ -24,14 +24,17 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         private String location;
         private float rating;
         private String priceRange;
+        private String userId;
+
 
         // Constructor
-        public Facility(String image, String title, String location, float rating, String priceRange) {
+        public Facility(String image, String title, String location, String userId, float rating, String priceRange) {
             this.image = image;
             this.title = title;
             this.location = location;
             this.rating = rating;
             this.priceRange = priceRange;
+            this.userId = userId;
         }
 
         // Getters
@@ -40,6 +43,7 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         public String getLocation() { return location; }
         public float getRating() { return rating; }
         public String getPriceRange() { return priceRange; }
+        public String getUserId() { return userId; }
     }
 
     // Define the interface for click handling

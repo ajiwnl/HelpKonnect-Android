@@ -19,6 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/RequestTextView"
         android:layout_width="match_parent"
@@ -29,16 +30,20 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/ProfessionalImage" />
+        app:layout_constraintTop_toBottomOf="@+id/AssociatedFacility"
+        tools:layout_editor_absoluteX="0dp" />
 
     <ImageView
         android:id="@+id/ProfessionalImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="10dp"
+        android:layout_marginTop="40dp"
         android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfessionalBackButton" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/ProfessionalName"
@@ -49,10 +54,10 @@
         android:textAlignment="center"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/ProfessionalImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ProfessionalImage"
-        app:layout_constraintTop_toTopOf="@+id/ProfessionalImage" />
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ProfessionalImage" />
 
     <TextView
         android:id="@+id/AssociatedFacility"
@@ -63,9 +68,8 @@
         android:textAlignment="center"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ProfessionalImage"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ProfessionalName" />
-
 
     <TextView
         android:id="@+id/SchedulesTitle"

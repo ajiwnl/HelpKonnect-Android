@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.bumptech.glide.Glide;
 
 import java.util.Calendar;
 
@@ -36,18 +37,19 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
 
         backButton.setOnClickListener(v -> finish());
 
-
-        // Set up the professional details
         if (getIntent().getExtras() != null) {
-            int imageResId = getIntent().getIntExtra("image", 0);
+            String imageUrl = getIntent().getStringExtra("imageUrl");
             String name = getIntent().getStringExtra("name");
-            String facility = getIntent().getStringExtra("facility");
-            professionalImage.setImageResource(imageResId);
+            String facility = getIntent().getStringExtra("facilityName");
+
+            Glide.with(this)
+                    .load(imageUrl) 
+                    .into(professionalImage); 
+
             professionalName.setText(name);
             associatedFacility.setText("Associated with " + facility);
         }
 
-        // Set up listeners for the EditText fields
         availableDateEditText.setOnClickListener(v -> showDatePickerDialog());
         startTimeEditText.setOnClickListener(v -> showTimePickerDialog());
     }

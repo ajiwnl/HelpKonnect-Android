@@ -36,7 +36,7 @@ public class FacilitiesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = FirebaseFirestore.getInstance(); // Initialize Firestore here
+        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -44,22 +44,18 @@ public class FacilitiesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_facilities, container, false);
 
-        // Initialize facility views
         loaderNearbyFacilities = rootView.findViewById(R.id.LoaderNearbyFacilities);
         noFacilityTextView = rootView.findViewById(R.id.noFacilityTextView);
         facilityRecyclerView = rootView.findViewById(R.id.FacilityRecyclerView);
 
-        // Initialize search views
         searchResultTextView = rootView.findViewById(R.id.SearchResultTextview);
         searchFacilities = rootView.findViewById(R.id.SearchFacilities);
 
-        // Set up RecyclerView layout manager
         facilityRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
 
-        // Show loader and load facilities data
         loaderNearbyFacilities.setVisibility(View.VISIBLE);
 
-        loadFacilitiesData(); //Initial Load
+        loadFacilitiesData();
 
 
 
@@ -70,7 +66,6 @@ public class FacilitiesFragment extends Fragment {
         });
 
 
-        // Set up SearchView listener for text submission
         searchFacilities.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -123,6 +118,7 @@ public class FacilitiesFragment extends Fragment {
                             document.getString("imageUrl"),
                             document.getString("facilityName"),
                             document.getString("facilityLocation"),
+                            document.getString("userId"),
                             0,
                             ""
                         );
@@ -137,12 +133,12 @@ public class FacilitiesFragment extends Fragment {
                     } else {
                         noFacilityTextView.setVisibility(View.GONE);
                         adapter = new FacilityAdapter(facilities, facility -> {
-                            // Navigate to FacilityDetailsActivity with selected facility data
                             Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
-                            intent.putExtra("imageUrl", facility.getImage()); // Pass the image URL string
+                            intent.putExtra("imageUrl", facility.getImage());
                             intent.putExtra("name", facility.getTitle());
                             intent.putExtra("location", facility.getLocation());
                             intent.putExtra("rating", facility.getRating());
+                            intent.putExtra("userId", facility.getUserId());
 
                             // Start the activity
                             startActivity(intent);
