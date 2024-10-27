@@ -215,39 +215,4 @@
           tools:layout_editor_absoluteX="15dp" />
 
    </androidx.constraintlayout.widget.ConstraintLayout>
-
-   <FrameLayout
-       android:id="@+id/emotionLoader"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_gravity="center"
-       android:visibility="gone">
-
-      <LinearLayout
-          android:orientation="vertical"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:background="#80000000"
-          android:gravity="center">
-
-         <ProgressBar
-             android:id="@+id/pieChartLoader"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_gravity="center"
-             android:elevation="8dp"
-             android:padding="5dp"
-             android:background="@drawable/layout_roundcorners"
-             android:backgroundTint="@color/SecondaryLight"
-             android:indeterminateTint="@color/PrimaryLight" />
-
-         <TextView
-             android:id="@+id/loadingText"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="Analyzing your journal"
-             android:layout_marginTop="8dp"
-             android:textColor="@android:color/black" />
-      </LinearLayout>
-   </FrameLayout>
 </FrameLayout>

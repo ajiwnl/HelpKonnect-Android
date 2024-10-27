@@ -1,16 +1,18 @@
 package com.helpkonnect.mobileapp;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,12 +23,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.Timestamp;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -50,13 +46,13 @@ import java.util.Random;
 public class TrackerFragment extends Fragment {
 
     private TextView dateDisplay, activityTitle;
-    private FrameLayout emotionListLoader;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private RecyclerView journalRecyclerView;
     private JournalListAdapter adapter;
     private RequestQueue requestQueue;
+    private View loaderView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +62,6 @@ public class TrackerFragment extends Fragment {
         requestQueue = Volley.newRequestQueue(requireContext());
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
-        emotionListLoader = rootView.findViewById(R.id.emotionLoader);
         activityTitle = rootView.findViewById(R.id.ActivityTitle);
         dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
@@ -137,7 +132,7 @@ public class TrackerFragment extends Fragment {
     private void analyzeEmotion(String translatedNotes) {
         if (translatedNotes != null && !translatedNotes.isEmpty()) {
             // Show the loading indicator
-            emotionListLoader.setVisibility(View.VISIBLE);
+            showLoader(true, null);
 
             String url = "http://192.168.1.5:5000/predict"; // Update with your API URL
 
@@ -154,12 +149,12 @@ public class TrackerFragment extends Fragment {
                         // Handle the response to extract emotions and update the chart
                         handleEmotionResponse(response);
                         // Hide the loading indicator
-                        emotionListLoader.setVisibility(View.GONE);
+                        showLoader(false, null);
                     },
                     error -> {
                         error.printStackTrace();
                         // Hide the loading indicator in case of error
-                        emotionListLoader.setVisibility(View.GONE);
+                        showLoader(false, null);
                         Toast.makeText(requireContext(), "Error analyzing emotions.", Toast.LENGTH_SHORT).show();
                     }
             );
@@ -245,5 +240,28 @@ public class TrackerFragment extends Fragment {
                     // Handle failure
                     Log.e("Firestore", "Failed to record activity: " + e.getMessage());
                 });
+    }
+
+    private void showLoader(boolean show, String message) {
+        if (loaderView == null) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            loaderView = inflater.inflate(R.layout.loader_tracker, null);
+        }
+
+        TextView loadingText = loaderView.findViewById(R.id.loadingText);
+        if (message != null) {
+            loadingText.setText(message);
+        }
+
+        if (show) {
+            if (loaderView.getParent() == null) {
+                getActivity().addContentView(loaderView, new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+        } else {
+            if (loaderView.getParent() != null) {
+                ((ViewGroup) loaderView.getParent()).removeView(loaderView);
+            }
+        }
     }
 }
