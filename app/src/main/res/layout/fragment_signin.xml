@@ -26,9 +26,10 @@
             android:id="@+id/FormLayout"
             android:layout_width="match_parent"
             android:layout_height="900dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="48dp"
             android:background="@drawable/smoothcornerborder"
-            app:layout_constraintTop_toBottomOf="@+id/SignInDisplayTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/SignInDisplayTextView"
+            tools:layout_editor_absoluteX="0dp" />
 
         <EditText
             android:id="@+id/EmailEditText"
@@ -69,6 +70,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/EmailEditText" />
 
+        <CheckBox
+            android:id="@+id/rememberMeCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remember Me"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/forchkbox"
+            app:layout_constraintStart_toStartOf="@+id/PasswordEditText"
+            app:layout_constraintTop_toBottomOf="@+id/PasswordEditText"
+            android:layout_marginTop="8dp"/>
+
+
         <Button
             android:id="@+id/SignupButton"
             android:layout_width="wrap_content"
@@ -81,7 +94,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/PasswordEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/rememberMeCheckBox" />
 
         <TextView
             android:id="@+id/ToForgotPasswordTextView"

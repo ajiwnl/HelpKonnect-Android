@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +33,9 @@ import java.util.Locale;
 import java.util.Map;
 import android.view.MotionEvent;
 import android.text.InputType;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 
 
 public class SigninFragment extends Fragment {
@@ -44,6 +48,8 @@ public class SigninFragment extends Fragment {
     private FirebaseAuth mAuth;
 
     private ListenerRegistration listenerRegistration;
+    private CheckBox rememberMeCheckBox;
+    private SharedPreferences sharedPreferences;
 
 
     @Nullable
@@ -61,6 +67,15 @@ public class SigninFragment extends Fragment {
         loginButton = rootView.findViewById(R.id.SignupButton);
         forgotPasswordTextView = rootView.findViewById(R.id.ToForgotPasswordTextView);
         signupTextView = rootView.findViewById(R.id.ToSignInTextView);
+        rememberMeCheckBox = rootView.findViewById(R.id.rememberMeCheckBox);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        // Load saved email and password if "Remember Me" was checked
+        if (sharedPreferences.getBoolean("rememberMe", false)) {
+            emailEditText.setText(sharedPreferences.getString("email", ""));
+            passwordEditText.setText(sharedPreferences.getString("password", ""));
+            rememberMeCheckBox.setChecked(true);
+        }
 
         passwordEditText.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -128,6 +143,20 @@ public class SigninFragment extends Fragment {
                             // Check if the user's email is verified
                             if (user.isEmailVerified()) {
                                 String userId = user.getUid();
+                                if (rememberMeCheckBox.isChecked()) {
+                                    sharedPreferences.edit()
+                                            .putBoolean("rememberMe", true)
+                                            .putString("email", email)
+                                            .putString("password", password)
+                                            .apply();
+                                } else {
+                                    // Clear saved credentials if "Remember Me" is unchecked
+                                    sharedPreferences.edit()
+                                            .remove("email")
+                                            .remove("password")
+                                            .putBoolean("rememberMe", false)
+                                            .apply();
+                                }
                                 updateUserSession(userId, true);
                                 userActivity(userId);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
