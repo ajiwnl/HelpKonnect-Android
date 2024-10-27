@@ -22,6 +22,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
+
 public class FacilityDetailsActivity extends AppCompatActivity {
 
     private TextView listTitle;
@@ -82,7 +84,7 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         // For Facility Details Display
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            int logo = args.getInt("logo");
+            String imageUrl = args.getString("imageUrl"); // Get the image URL string
             String name = args.getString("name");
             String location = args.getString("location");
             float rating = args.getFloat("rating");
@@ -92,8 +94,12 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             TextView facilityName = findViewById(R.id.FacilityName);
             TextView facilityLocation = findViewById(R.id.FacilityLocation);
             RatingBar facilityRatingBar = findViewById(R.id.FacilityRating);
+            
             // Set Data
-            facilityImage.setImageResource(logo);
+            Glide.with(this) // Use Glide to load the image from the URL
+                .load(imageUrl)
+                .into(facilityImage); // Set the image view
+
             facilityName.setText(name);
             facilityLocation.setText(location);
             facilityRatingBar.setRating(rating);

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -18,14 +19,14 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
 
     // Define the Facility class
     public static class Facility {
-        private int image;
+        private String image;
         private String title;
         private String location;
         private float rating;
         private String priceRange;
 
         // Constructor
-        public Facility(int image, String title, String location, float rating, String priceRange) {
+        public Facility(String image, String title, String location, float rating, String priceRange) {
             this.image = image;
             this.title = title;
             this.location = location;
@@ -34,7 +35,7 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         }
 
         // Getters
-        public int getImage() { return image; }
+        public String getImage() { return image; }
         public String getTitle() { return title; }
         public String getLocation() { return location; }
         public float getRating() { return rating; }
@@ -87,7 +88,9 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
     @Override
     public void onBindViewHolder(FacilityViewHolder holder, int position) {
         Facility facility = facilities.get(position);
-        holder.facilityImage.setImageResource(facility.getImage());
+        Glide.with(holder.itemView.getContext())
+                .load(facility.getImage())
+                .into(holder.facilityImage);
         holder.facilityTitle.setText(facility.getTitle());
         holder.facilityLocation.setText(facility.getLocation());
         holder.facilityRating.setText(String.valueOf(facility.getRating()));

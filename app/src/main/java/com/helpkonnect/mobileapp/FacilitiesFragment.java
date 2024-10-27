@@ -19,6 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 public class FacilitiesFragment extends Fragment {
 
     private ProgressBar loaderNearbyFacilities;
@@ -27,6 +31,13 @@ public class FacilitiesFragment extends Fragment {
     private RecyclerView facilityRecyclerView;
     private List<FacilityAdapter.Facility> facilities = new ArrayList<>();
     private FacilityAdapter adapter;
+    private FirebaseFirestore db;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = FirebaseFirestore.getInstance(); // Initialize Firestore here
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,37 +111,50 @@ public class FacilitiesFragment extends Fragment {
     private void loadFacilitiesData() {
         loaderNearbyFacilities.setVisibility(View.VISIBLE);
         facilities.clear();
-        new Handler().postDelayed(() -> {
-            // Sample list of facilities change to get from firebaswe
-            facilities.clear();
-            facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility A", "Sample Location 1", 4.5f, "100 - 200"));
-            facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility B", "Sample Location 2", 3.8f, "300 - 400"));
-            facilities.add(new FacilityAdapter.Facility(R.drawable.facilitybg, "Facility C", "Sample Location 3", 4.2f, "250 - 350"));
 
-            //For getting data from firebase
-            //getFacilityData();
+        // Fetch data from Firestore
+        db.collection("credentials")
+            .whereEqualTo("role", "facility")
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        FacilityAdapter.Facility facility = new FacilityAdapter.Facility(
+                            document.getString("imageUrl"),
+                            document.getString("facilityName"),
+                            document.getString("facilityLocation"),
+                            0,
+                            ""
+                        );
+                        facilities.add(facility);
+                    }
 
-            // Hide loader after data is displayed
-            loaderNearbyFacilities.setVisibility(View.GONE);
+                    // Hide loader after data is displayed
+                    loaderNearbyFacilities.setVisibility(View.GONE);
 
-            if (facilities.isEmpty()) {
-                noFacilityTextView.setVisibility(View.VISIBLE);
-            } else {
-                noFacilityTextView.setVisibility(View.GONE);
-                adapter = new FacilityAdapter(facilities, facility -> {
-                    // Navigate to FacilityDetailsActivity with selected facility data
-                    Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
-                    intent.putExtra("logo", facility.getImage());
-                    intent.putExtra("name", facility.getTitle());
-                    intent.putExtra("location", facility.getLocation());
-                    intent.putExtra("rating", facility.getRating());
+                    if (facilities.isEmpty()) {
+                        noFacilityTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        noFacilityTextView.setVisibility(View.GONE);
+                        adapter = new FacilityAdapter(facilities, facility -> {
+                            // Navigate to FacilityDetailsActivity with selected facility data
+                            Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
+                            intent.putExtra("imageUrl", facility.getImage()); // Pass the image URL string
+                            intent.putExtra("name", facility.getTitle());
+                            intent.putExtra("location", facility.getLocation());
+                            intent.putExtra("rating", facility.getRating());
 
-                    // Start the activity
-                    startActivity(intent);
-                });
-                facilityRecyclerView.setAdapter(adapter);
-            }
-        }, 2000);
+                            // Start the activity
+                            startActivity(intent);
+                        });
+                        facilityRecyclerView.setAdapter(adapter);
+                    }
+                } else {
+                    // Handle the error
+                    loaderNearbyFacilities.setVisibility(View.GONE);
+                    noFacilityTextView.setVisibility(View.VISIBLE);
+                }
+            });
     }
 
     //Filter results and display from fetched data
@@ -153,5 +177,6 @@ public class FacilitiesFragment extends Fragment {
     }
 
 }
+
 
 
