@@ -12,5 +12,6 @@
     <color name="PrimaryDark">#4ECDC4</color>
     <color name="SecondaryDark">#292F36</color>
     <color name="mpcolortranspa">#5C000000</color>
+    <color name="forchkbox">#3B91CD</color>
 
 </resources>
