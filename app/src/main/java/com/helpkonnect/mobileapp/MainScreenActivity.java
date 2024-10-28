@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,8 @@ public class MainScreenActivity extends AppCompatActivity {
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
 
+    private Intent userRole = getIntent();
+    private String role = "professional";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,25 @@ public class MainScreenActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
+        navView = findViewById(R.id.nav_view);
+
+
+        //Get user Role
+        //userRole.getStringExtra("userRole");
+        Menu menu = navView.getMenu();
+        //Only Displays Menu for 2 roles
+        if ("professional".equals(role)) {
+
+            menu.findItem(R.id.homenav).setVisible(false);
+            menu.findItem(R.id.journalnav).setVisible(false);
+            menu.findItem(R.id.tracknav).setVisible(false);
+            menu.findItem(R.id.chatbotnav).setVisible(false);
+            menu.findItem(R.id.resnav).setVisible(false);
+            menu.findItem(R.id.setnav).setVisible(false);
+        } else if ("user".equals(role)) {
+
+            menu.findItem(R.id.assonav).setVisible(false);
+        }
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -77,7 +99,7 @@ public class MainScreenActivity extends AppCompatActivity {
         }
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        navView = findViewById(R.id.nav_view);
+
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -113,6 +135,8 @@ public class MainScreenActivity extends AppCompatActivity {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
             } else if (id == R.id.setnav) {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
+            }   else if (id == R.id.assonav) {
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new AssociateFragment());
             }
 
             drawerLayout.closeDrawer(GravityCompat.START);

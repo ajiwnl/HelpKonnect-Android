@@ -163,8 +163,10 @@ public class SigninFragment extends Fragment {
                                 updateUserSession(userId, true);
                                 userActivity(userId);
                                 Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                //intent.putExtra("userRole", role); pass on role data to mainscreen
                                 startActivity(intent);
                                 getActivity().finish();
+
                             } else {
                                 mAuth.signOut();
                                 showLoader(false, null);
