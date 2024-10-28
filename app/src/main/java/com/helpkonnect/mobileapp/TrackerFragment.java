@@ -29,12 +29,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpkonnect.mobileapp.JournalListAdapter.Journal;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,13 +47,15 @@ import java.util.Random;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, activityTitle;
+    private TextView dateDisplay, activityTitle, predictEmotionTxtView, getPredictEmotionTxtView;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private RecyclerView journalRecyclerView;
     private JournalListAdapter adapter;
     private RequestQueue requestQueue;
+
+    private PieChart pieChart;
     private View loaderView;
     @Nullable
     @Override
@@ -65,7 +69,10 @@ public class TrackerFragment extends Fragment {
         activityTitle = rootView.findViewById(R.id.ActivityTitle);
         dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
+        predictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
+        pieChart = rootView.findViewById(R.id.EmotionChart);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        getPredictEmotionTxtView = rootView.findViewById(R.id.emotionPercentage);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
@@ -129,7 +136,7 @@ public class TrackerFragment extends Fragment {
                 });
     }
 
-    private void analyzeEmotion(String translatedNotes) {
+   private void analyzeEmotion(String translatedNotes) {
         if (translatedNotes != null && !translatedNotes.isEmpty()) {
             // Show the loading indicator
             showLoader(true, null);
@@ -165,11 +172,11 @@ public class TrackerFragment extends Fragment {
         }
     }
 
+
     private void handleEmotionResponse(JSONObject response) {
         try {
-            String predictedEmotion = response.getString("predicted_emotion");
-
-            PieChart pieChart = getView().findViewById(R.id.EmotionChart);
+            String  predictedEmotion = response.getString("predicted_emotion");
+            predictEmotionTxtView.setText("Predicted Emotion: " + predictedEmotion);
 
             // Get top emotions
             JSONArray top4Emotions = response.getJSONArray("top_4_emotions");
@@ -183,7 +190,7 @@ public class TrackerFragment extends Fragment {
 
                 // Highlight the predicted emotion
                 if (emotionName.equals(predictedEmotion)) {
-                    entries.add(new PieEntry(probability, emotionName + " (Predicted)"));
+                    entries.add(new PieEntry(probability, emotionName));
                 } else {
                     entries.add(new PieEntry(probability, emotionName));
                 }
@@ -197,6 +204,12 @@ public class TrackerFragment extends Fragment {
             dataSet.setColors(colors); // Use the random colors
             PieData pieData = new PieData(dataSet);
 
+            pieData.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return value + "%";
+                }
+            });
             pieChart.setData(pieData);
             pieChart.getDescription().setEnabled(false);
             pieChart.invalidate(); // Refresh the chart
