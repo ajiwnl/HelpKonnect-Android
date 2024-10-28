@@ -27,13 +27,12 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:paddingStart="10dp"
-          android:text="MON, April 1"
           android:textSize="12sp"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/ActivityTitle" />
 
       <TextView
-          android:id="@+id/EncouragementMessage"
+          android:id="@+id/predictedEmotion"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="10dp"
@@ -44,7 +43,7 @@
           app:layout_constraintTop_toBottomOf="@+id/PieChartHolder" />
 
       <TextView
-          android:id="@+id/JourneyDescription"
+          android:id="@+id/emotionPercentage"
           android:layout_width="0dp"
           android:layout_height="100dp"
           android:layout_marginTop="10dp"
@@ -53,7 +52,7 @@
           android:textSize="12sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/EncouragementMessage" />
+          app:layout_constraintTop_toBottomOf="@+id/predictedEmotion" />
 
       <androidx.cardview.widget.CardView
           android:id="@+id/PieChartHolder"
@@ -65,6 +64,7 @@
           android:elevation="12dp"
           app:cardCornerRadius="12dp"
           app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="@+id/emotionPercentage">
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/DateDisplay">
 
