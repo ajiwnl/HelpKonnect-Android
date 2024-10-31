@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
 
+    <color name="participatedGray">#D3D3D3</color>
+    <color name="participateDefault">#FF6200EE</color>
 
     <color name="clickabletext">#940CFF</color>
     <color name="hkcolor">#FFD7D2</color>
