@@ -73,7 +73,7 @@ public class ManageResourcesActivity extends AppCompatActivity {
                     resourceList.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Resource resource = document.toObject(Resource.class);
-                        if (resource.getTime() != null) {
+                        if (resource.isApproved() && resource.getTime() != null) {
                             resourceList.add(resource);
                         }
                     }
@@ -82,4 +82,5 @@ public class ManageResourcesActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.e("FirestoreError", e.getMessage()));
     }
+
 }

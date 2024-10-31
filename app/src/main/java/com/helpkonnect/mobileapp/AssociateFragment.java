@@ -14,6 +14,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,9 +49,10 @@ public class AssociateFragment extends Fragment {
             intent.putExtra("facilityName", facilityName.getText());
             startActivity(intent);
         });
-
+        
         events.setOnClickListener(v -> {
-
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
         });
 
         checkUserAssociation();
