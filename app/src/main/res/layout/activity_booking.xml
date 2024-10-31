@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BookingActivity">
+
+    <ImageView
+        android:id="@+id/BookingBackButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/backbuttonicon"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/LoadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@color/SecondaryLight"
+        android:elevation="8dp"
+        android:indeterminateTint="@color/PrimaryLight"
+        android:padding="5dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/BookingListTextView"
+        app:layout_constraintEnd_toEndOf="@+id/BookingListTextView"
+        app:layout_constraintStart_toStartOf="@+id/BookingListTextView"
+        app:layout_constraintTop_toTopOf="@+id/BookingListTextView" />
+
+    <TextView
+        android:id="@+id/BookingErrorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Booking History Found"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/BookingListTextView"
+        app:layout_constraintEnd_toEndOf="@+id/BookingListTextView"
+        app:layout_constraintStart_toStartOf="@+id/BookingListTextView"
+        app:layout_constraintTop_toTopOf="@+id/BookingListTextView"/>
+
+
+    <TextView
+        android:id="@+id/BookingListTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Booking History"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BookingBackButton" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/BookingListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BookingListTextView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

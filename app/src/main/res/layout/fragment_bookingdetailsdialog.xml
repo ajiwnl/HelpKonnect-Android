@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/mpcolortranspa"
+    app:cardCornerRadius="16dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/hkcolor"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/DetailsDismissButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/floatingactionbutton_background"
+            android:elevation="8dp"
+            android:src="@drawable/stream_ui_ic_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/BookingTitleTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Booking Title/Booked Service"
+            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/BookingDateTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Booking Date"
+            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingTitleTextView" />
+
+        <TextView
+            android:id="@+id/BookingDetailsTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Booking Details/Description"
+            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingDateTextView" />
+
+        <TextView
+            android:id="@+id/BookingStartTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Booking StartTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingDetailsTextView" />
+
+        <TextView
+            android:id="@+id/BookingDurationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Booking Duration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingStartTimeTextView" />
+
+        <TextView
+            android:id="@+id/BookingPriceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Booking Price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingDurationTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>

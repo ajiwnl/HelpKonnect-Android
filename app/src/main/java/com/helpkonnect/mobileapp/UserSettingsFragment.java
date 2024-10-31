@@ -87,6 +87,11 @@ public class UserSettingsFragment extends Fragment {
             }
         });
 
+        rootView.findViewById(R.id.ProfileBooking).setOnClickListener( v ->{
+            Intent toBookingCollection = new Intent(getActivity(), BookingActivity.class);
+            startActivity(toBookingCollection);
+        });
+
         profileLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,17 +113,6 @@ public class UserSettingsFragment extends Fragment {
         return rootView;
     }
 
-
-
-    private void applyTheme(boolean isDarkMode) {
-        if (isDarkMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-        }
-    }
 
     // Method to handle sign out
     private void signOutUser() {

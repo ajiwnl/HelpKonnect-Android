@@ -21,9 +21,11 @@
         android:theme="@style/Theme.HelpKonnectMobile"
         tools:targetApi="31">
         <activity
+            android:name=".BookingActivity"
+            android:exported="false"/>
+        <activity
             android:name=".ManageResourcesActivity"
-            android:exported="false" >
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".ProfessionalDetailsActivity"
             android:exported="false" />
