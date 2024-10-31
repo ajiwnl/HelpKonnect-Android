@@ -8,27 +8,61 @@
     android:layout_height="match_parent"
     tools:context=".ManageResourcesActivity">
 
+    <ImageView
+        android:id="@+id/UploadResourceBackButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/backbuttonicon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/UploadTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:text="Uploaded Resources"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/UploadResourceBackButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/UploadResourceBackButton" />
 
+    <ProgressBar
+        android:id="@+id/LoadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@color/SecondaryLight"
+        android:elevation="8dp"
+        android:indeterminateTint="@color/PrimaryLight"
+        android:padding="5dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ResourceListView"
+        app:layout_constraintEnd_toEndOf="@+id/ResourceListView"
+        app:layout_constraintStart_toStartOf="@+id/ResourceListView"
+        app:layout_constraintTop_toTopOf="@+id/ResourceListView" />
+
+    <TextView
+        android:id="@+id/ResourceErrorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Resources Found"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ResourceListView"
+        app:layout_constraintEnd_toEndOf="@+id/ResourceListView"
+        app:layout_constraintStart_toStartOf="@+id/ResourceListView"
+        app:layout_constraintTop_toTopOf="@+id/ResourceListView"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ResourceListView"
         android:layout_width="match_parent"
-        android:paddingTop="20dp"
         android:layout_height="0dp"
+        android:paddingTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/UploadTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/UploadResourceBackButton" />
 
     <ImageView
         android:id="@+id/UploadResourceButton"
