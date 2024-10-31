@@ -117,7 +117,6 @@ public class AddResourceFragment extends DialogFragment {
     }
 
     private void uploadFile(String resourceName, String resourceDesc) {
-        // Define where to upload the file in Firebase Storage
         StorageReference fileRef = storageReference.child("resources/" + System.currentTimeMillis() + "_" + resourceName);
 
         fileRef.putFile(fileUri)
@@ -132,10 +131,9 @@ public class AddResourceFragment extends DialogFragment {
     }
 
     private void saveResourceDetails(String name, String description, String fileURL) {
-        // Create a map of resource details
         Map<String, Object> resource = new HashMap<>();
-        resource.put("approved", false); // Initially set to false
-        resource.put("type", "E-book (pdf)"); // Initially set to Book
+        resource.put("approved", false);
+        resource.put("type", "E-book (pdf)");
         resource.put("name", name);
         resource.put("description", description);
         resource.put("fileURL", fileURL);

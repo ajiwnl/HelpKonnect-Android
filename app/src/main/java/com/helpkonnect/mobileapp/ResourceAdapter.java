@@ -1,6 +1,8 @@
 package com.helpkonnect.mobileapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +56,12 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.Resour
         } else {
             holder.resourceTime.setText("No Date Available");
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            String fileURL = resource.getFileURL();
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fileURL));
+            context.startActivity(browserIntent);
+        });
     }
 
     @Override
