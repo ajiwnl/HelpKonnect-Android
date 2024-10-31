@@ -35,10 +35,12 @@ import android.view.MotionEvent;
 import android.text.InputType;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 
 
 public class SigninFragment extends Fragment {
+    private static final String TAG = "LoginProcess";
 
     private ImageView formLayout;
     private TextView forgotPasswordTextView, signupTextView;
@@ -146,27 +148,54 @@ public class SigninFragment extends Fragment {
                             // Check if the user's email is verified
                             if (user.isEmailVerified()) {
                                 String userId = user.getUid();
-                                if (rememberMeCheckBox.isChecked()) {
-                                    sharedPreferences.edit()
-                                            .putBoolean("rememberMe", true)
-                                            .putString("email", email)
-                                            .putString("password", password)
-                                            .apply();
-                                } else {
-                                    // Clear saved credentials if "Remember Me" is unchecked
-                                    sharedPreferences.edit()
-                                            .remove("email")
-                                            .remove("password")
-                                            .putBoolean("rememberMe", false)
-                                            .apply();
-                                }
-                                updateUserSession(userId, true);
-                                userActivity(userId);
-                                Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                //intent.putExtra("userRole", role); pass on role data to mainscreen
-                                startActivity(intent);
-                                getActivity().finish();
+                                Log.d(TAG, "User ID fetched: " + userId);
 
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                // Query Firestore to get the role based on the userId
+                                db.collection("credentials")
+                                        .whereEqualTo("userId", userId)
+                                        .get()
+                                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                                            Log.d(TAG, "Query snapshot size: " + queryDocumentSnapshots.size());
+
+                                            if (!queryDocumentSnapshots.isEmpty()) {
+                                                // Assuming each user has only one document with their userId
+                                                String role = queryDocumentSnapshots.getDocuments().get(0).getString("role");
+                                                Log.d(TAG, "Role fetched for user: " + role);
+
+                                                // Save credentials if "Remember Me" is checked
+                                                if (rememberMeCheckBox.isChecked()) {
+                                                    sharedPreferences.edit()
+                                                            .putBoolean("rememberMe", true)
+                                                            .putString("email", email)
+                                                            .putString("password", password)
+                                                            .apply();
+                                                } else {
+                                                    // Clear saved credentials if "Remember Me" is unchecked
+                                                    sharedPreferences.edit()
+                                                            .remove("email")
+                                                            .remove("password")
+                                                            .putBoolean("rememberMe", false)
+                                                            .apply();
+                                                }
+
+                                                updateUserSession(userId, true);
+                                                userActivity(userId);
+
+                                                Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                                intent.putExtra("userRole", role);
+                                                startActivity(intent);
+                                                getActivity().finish();
+                                            } else {
+                                                Log.d(TAG, "No document found with userId: " + userId);
+                                                Toast.makeText(getContext(), "User role not found.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Error fetching user role.", e);
+                                            Toast.makeText(getContext(), "Error fetching user role.", Toast.LENGTH_SHORT).show();
+                                        });
                             } else {
                                 mAuth.signOut();
                                 showLoader(false, null);
