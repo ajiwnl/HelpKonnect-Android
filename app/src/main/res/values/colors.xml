@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
 
+    <color name="participatedGray">#D3D3D3</color>
+    <color name="participateDefault">#FF6200EE</color>
 
     <color name="clickabletext">#940CFF</color>
     <color name="hkcolor">#FFD7D2</color>
@@ -13,5 +15,6 @@
     <color name="SecondaryDark">#292F36</color>
     <color name="mpcolortranspa">#5C000000</color>
     <color name="forchkbox">#3B91CD</color>
+    <color name="blue">#007BFF</color>
 
 </resources>

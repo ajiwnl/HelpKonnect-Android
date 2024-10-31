@@ -27,5 +27,9 @@
     <string name="description_facility">Explore our state-of-the-art facilities designed for your ultimate experience!</string>
     <string name="description_community">Join a vibrant community where connections flourish and ideas thrive!</string>
     <string name="event_image">Event Image</string>
+    <string name="participate">Participate</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="send">Send</string>
+    <string name="not_partnered">You are not yet partnered. Apply on Facility</string>
 
 </resources>

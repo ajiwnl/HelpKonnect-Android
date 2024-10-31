@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.models.User;
@@ -52,9 +53,6 @@ public class MainScreenActivity extends AppCompatActivity {
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
 
-    private Intent userRole = getIntent();
-    private String role = "professional";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,21 +69,19 @@ public class MainScreenActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         navView = findViewById(R.id.nav_view);
 
+        Intent intent = getIntent();
+        String userRole = intent.getStringExtra("userRole");
 
-        //Get user Role
-        //userRole.getStringExtra("userRole");
         Menu menu = navView.getMenu();
         //Only Displays Menu for 2 roles
-        if ("professional".equals(role)) {
-
+        if (Objects.equals(userRole, "Professional")) {
             menu.findItem(R.id.homenav).setVisible(false);
             menu.findItem(R.id.journalnav).setVisible(false);
             menu.findItem(R.id.tracknav).setVisible(false);
             menu.findItem(R.id.chatbotnav).setVisible(false);
             menu.findItem(R.id.resnav).setVisible(false);
             menu.findItem(R.id.setnav).setVisible(false);
-        } else if ("user".equals(role)) {
-
+        } else if (Objects.equals(userRole,"User")) {
             menu.findItem(R.id.assonav).setVisible(false);
         }
 

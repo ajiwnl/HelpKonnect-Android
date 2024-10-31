@@ -181,16 +181,14 @@ public class CommunityFragment extends Fragment {
                     String facilityName = document.getString("facilityName");
                     String imageUrl = document.getString("imageUrl");
 
-                    Long accommodationCountLong = document.getLong("accommodationCount");
-                    int accommodationCount = (accommodationCountLong != null) ? accommodationCountLong.intValue() : 0;
+                    int accommodationCount = document.contains("accommodationCount") ? document.getLong("accommodationCount").intValue() : 0;
 
                     boolean done = document.getBoolean("done") != null && document.getBoolean("done");
 
-                    // Parse the string date to a Date object
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                     Date eventDate = null;
                     try {
-                        eventDate = sdf.parse(dateString); // Parse the string date
+                        eventDate = sdf.parse(dateString);
                     } catch (ParseException e) {
                         Log.e("CommunityFragment", "Error parsing date: " + dateString, e);
                     }
