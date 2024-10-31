@@ -53,7 +53,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messageDisplayList"
             android:layout_width="match_parent"
@@ -71,18 +70,28 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <EditText
+                android:id="@+id/messageInput"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
                 android:background="@drawable/smoothcornerborder"
                 android:drawableEnd="@drawable/edittextsendicon"
-                android:hint="Write a message"
+                android:hint="@string/write_a_message"
                 android:paddingStart="30dp"
                 android:paddingEnd="10dp" />
 
+            <Button
+                android:id="@+id/sendButton"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:background="@android:color/transparent"
+                android:padding="0dp"
+                android:textSize="12sp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+
         </RelativeLayout>
-            
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </FrameLayout>
