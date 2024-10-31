@@ -28,5 +28,7 @@
     <string name="description_community">Join a vibrant community where connections flourish and ideas thrive!</string>
     <string name="event_image">Event Image</string>
     <string name="participate">Participate</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="send">Send</string>
 
 </resources>
