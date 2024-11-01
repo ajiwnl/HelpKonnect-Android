@@ -67,7 +67,7 @@ public class TrackerFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
         activityTitle = rootView.findViewById(R.id.ActivityTitle);
-        //dateDisplay = rootView.findViewById(R.id.DateDisplay);
+        dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
         predictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
         pieChart = rootView.findViewById(R.id.EmotionChart);
@@ -176,7 +176,10 @@ public class TrackerFragment extends Fragment {
     private void handleEmotionResponse(JSONObject response) {
         try {
             String  predictedEmotion = response.getString("predicted_emotion");
-            predictEmotionTxtView.setText("Predicted Emotion: " + predictedEmotion);
+
+            // Update the TextView with concatenated string
+            predictEmotionTxtView.setText("Highest Predicted Emotion: " + predictedEmotion);
+
 
             // Get top emotions
             JSONArray top4Emotions = response.getJSONArray("top_4_emotions");
@@ -200,7 +203,7 @@ public class TrackerFragment extends Fragment {
             }
 
             // Create dataset and update chart
-            PieDataSet dataSet = new PieDataSet(entries, "Top 4 Emotions");
+            PieDataSet dataSet = new PieDataSet(entries,"");
             dataSet.setColors(colors); // Use the random colors
             PieData pieData = new PieData(dataSet);
 
