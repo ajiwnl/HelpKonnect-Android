@@ -49,7 +49,7 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             this.translatedNotes = translatedNotes;
         }
 
-        public String getTranslatedNotes() { // New getter method for translated_notes
+        public String getTranslatedNotes() {
             return translatedNotes;
         }
 
@@ -65,10 +65,8 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             return subtitle;
         }
 
-
         public Timestamp getDate() {
             return date;
-
         }
 
         public String getNotes() {
@@ -87,7 +85,9 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
             return imageUrl;
         }
 
-        public String getDocumentId() {return documentId;}
+        public String getDocumentId() {
+            return documentId;
+        }
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {
@@ -107,13 +107,6 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     Journal journal = journals.get(position);
-                    onItemClick.onItemClick(journal);
-                }
-            });
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    Journal journal = journals.get(position);
 
                     // Start slide-in animation
                     Context context = itemView.getContext();
@@ -123,7 +116,6 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
                     onItemClick.onItemClick(journal);
                 }
             });
-
         }
 
         public void bind(Journal journal) {
@@ -160,13 +152,10 @@ public class JournalListAdapter extends RecyclerView.Adapter<JournalListAdapter.
 
     private static String formatDate(Timestamp timestamp) {
         if (timestamp != null) {
-            // Convert Timestamp to Date
             Date date = timestamp.toDate();
-            // Format the date as needed (e.g., "dd MMMM, yyyy")
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
             return sdf.format(date);
         }
         return ""; // Return empty if timestamp is null
     }
 }
-
