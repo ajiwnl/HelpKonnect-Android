@@ -1,72 +1,72 @@
 package com.helpkonnect.mobileapp;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManageResourcesActivity extends AppCompatActivity {
-
-    private ImageView uploadResourceButton, uploadResourceBackButton;
-    private RecyclerView resourceListView;
-    private TextView resourceErrorTextView;
-    private ProgressBar loadingIndicator;
-    private List<ResourceModel> resourceList = new ArrayList<>();
-    private ManageResourceAdapter resourceAdapter;
+    private RecyclerView recyclerView;
+    private ResourceAdapter resourceAdapter;
+    private List<Resource> resourceList;
+    private FirebaseFirestore firestore;
+    private String facilityName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_resources);
 
-        // Initialize other UI components
-        uploadResourceButton = findViewById(R.id.UploadResourceButton);
-        uploadResourceBackButton = findViewById(R.id.UploadResourceBackButton);
-        resourceListView = findViewById(R.id.ResourceListView);
-        resourceErrorTextView = findViewById(R.id.ResourceErrorTextView);
-        loadingIndicator = findViewById(R.id.LoadingIndicator);
+        facilityName = getIntent().getStringExtra("facilityName");
 
+        resourceList = new ArrayList<>();
+
+        recyclerView = findViewById(R.id.ResourceListView);
+        resourceAdapter = new ResourceAdapter(this, resourceList);
+        recyclerView.setAdapter(resourceAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        ImageView uploadResourceButton = findViewById(R.id.UploadResourceButton);
         uploadResourceButton.setOnClickListener(v -> showAddResourceDialog());
-        uploadResourceBackButton.setOnClickListener(v -> finish());
 
-        resourceAdapter = new ManageResourceAdapter(resourceList);
-        resourceListView.setLayoutManager(new LinearLayoutManager(this));
-        resourceListView.setAdapter(resourceAdapter);
-
-        populateResourceList();
-
+        firestore = FirebaseFirestore.getInstance();
+        fetchResources(facilityName);
     }
 
     private void showAddResourceDialog() {
-        AddResourceFragment dialog = new AddResourceFragment();
-        dialog.show(getSupportFragmentManager(), "AddResourceDialogFragment");
+
+        AddResourceFragment addResourceFragment = new AddResourceFragment();
+        Bundle args = new Bundle();
+        args.putString("facilityName", facilityName);
+        addResourceFragment.setArguments(args);
+
+        addResourceFragment.show(getSupportFragmentManager(), "AddResourceFragment");
     }
 
-    private void populateResourceList() {
-
-        loadingIndicator.setVisibility(View.VISIBLE);
-        resourceErrorTextView.setVisibility(View.GONE);
-
-        resourceList.add(new ResourceModel("Resource 1", "Description for Resource 1", R.drawable.addjournalimageicon));
-
-        new Handler().postDelayed(() -> {
-            loadingIndicator.setVisibility(View.GONE);
-
-            if (resourceList.isEmpty()) {
-                resourceErrorTextView.setText("No resources available.");
-                resourceErrorTextView.setVisibility(View.VISIBLE);
-            } else {
-                resourceErrorTextView.setVisibility(View.GONE);
-                resourceAdapter.notifyDataSetChanged();
-            }
-        }, 1500);
+    private void fetchResources(String facilityName) {
+        firestore.collection("resources")
+                .whereEqualTo("facilityName", facilityName)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    resourceList.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Resource resource = document.toObject(Resource.class);
+                        if (resource.getTime() != null) {
+                            resourceList.add(resource);
+                        }
+                    }
+                    Log.d("ManageResources", "Fetched " + resourceList.size() + " resources");
+                    resourceAdapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> Log.e("FirestoreError", e.getMessage()));
     }
 }
-
