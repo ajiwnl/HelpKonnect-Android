@@ -32,4 +32,10 @@
     <string name="send">Send</string>
     <string name="not_partnered">You are not yet partnered. Apply on Facility</string>
 
+    <string-array name="summary_options">
+        <item>None</item>
+        <item>Overall Summary</item>
+        <item>Weekly Summary</item>
+    </string-array>
+
 </resources>

@@ -6,10 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +49,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +59,7 @@ import java.util.Random;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, activityTitle, predictEmotionTxtView, getPredictEmotionTxtView;
+    private TextView dateDisplay, activityTitle, predictEmotionTxtView, totalEmotionTxtView, noDataTxtView, specificEmotionsTxtView;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -65,6 +70,8 @@ public class TrackerFragment extends Fragment {
     private BarChart emotionBarChart;
     private View loaderView;
     private Map<String, Float> emotionData = new HashMap<>();
+    private Spinner selectOptions ;
+    private CardView barChartView, WeeklySummary;
 
     @Nullable
     @Override
@@ -81,14 +88,27 @@ public class TrackerFragment extends Fragment {
         predictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
         pieChart = rootView.findViewById(R.id.EmotionChart);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        getPredictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
         emotionBarChart = rootView.findViewById(R.id.EmotionBarChart);
+        selectOptions = rootView.findViewById(R.id.summarySpinner);
+        barChartView = rootView.findViewById(R.id.BarChartHolder);
+        WeeklySummary = rootView.findViewById(R.id.WeeklySummary);
+        totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
+        noDataTxtView = rootView.findViewById(R.id.noDataTextView);
+        specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
         dateDisplay.setText(todayDate);
         FirebaseUser user = mAuth.getCurrentUser();
         String userId = user.getUid();
+
+        // Set up the Spinner
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.summary_options,
+                android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectOptions.setAdapter(spinnerAdapter);
 
         adapter = new JournalListAdapter(journalList, journal -> {
             String documentId = journal.getDocumentId(); // Retrieve the document ID of the clicked journal
@@ -108,8 +128,32 @@ public class TrackerFragment extends Fragment {
             analyzeEmotion(journal.getTranslatedNotes(), documentId);
         });
 
+        selectOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedOption = parent.getItemAtPosition(position).toString();
+                if ("Overall Summary".equals(selectedOption)) {
+                    barChartView.setVisibility(View.VISIBLE);
+                    WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
+                    fetchAndAggregateEmotionData();
+                } else if ("Weekly Summary".equals(selectedOption)) {
+                    barChartView.setVisibility(View.GONE); // Hide bar chart
+                    WeeklySummary.setVisibility(View.VISIBLE); // Show WeeklySummary card
+                    fetchWeeklyEmotionSummary(); // Call method to fetch weekly summary data
+                } else {
+                    barChartView.setVisibility(View.GONE); // Hide bar chart
+                    WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                barChartView.setVisibility(View.GONE); // Hide bar chart
+                WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
+            }
+        });
+
         journalRecyclerView.setAdapter(adapter);
-        fetchAndAggregateEmotionData();
         fetchJournals();
         return rootView;
     }
@@ -183,6 +227,89 @@ public class TrackerFragment extends Fragment {
                 });
     }
 
+    private void fetchWeeklyEmotionSummary() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Toast.makeText(requireContext(), "User not logged in!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String userId = user.getUid();
+
+        // Get the start of the week
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date startOfWeek = calendar.getTime();
+        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+        Date endOfWeek = calendar.getTime();
+
+        // Fetch emotion data for the current user within the week
+        db.collection("emotion_analysis")
+                .whereEqualTo("userId", userId)
+                .whereGreaterThanOrEqualTo("dateCreated", startOfWeek)
+                .whereLessThan("dateCreated", endOfWeek)
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w("TrackerFragment", "Listen failed.", e);
+                        Toast.makeText(requireContext(), "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (snapshots != null && !snapshots.isEmpty()) {
+                        Map<String, Float> emotionData = new HashMap<>();
+
+                        for (QueryDocumentSnapshot document : snapshots) {
+                            // Check if emotions field exists
+                            if (document.contains("emotions")) {
+                                Map<String, Object> emotionsRaw = (Map<String, Object>) document.get("emotions");
+                                if (emotionsRaw != null) {
+                                    for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
+                                        String emotionName = entry.getKey();
+                                        float emotionValue = ((Number) entry.getValue()).floatValue();
+
+                                        // Aggregate emotion values
+                                        emotionData.put(emotionName, emotionData.getOrDefault(emotionName, 0f) + emotionValue);
+                                    }
+                                }
+                            }
+                        }
+                        updateWeeklySummary(emotionData);
+                    } else {
+                        // Handle empty data case
+                        updateWeeklySummary(new HashMap<>()); // Pass an empty map to clear the UI
+                    }
+                });
+    }
+    private void updateWeeklySummary(Map<String, Float> emotionData) {
+        // Calculate the total of all emotions
+        float totalEmotions = 0;
+        for (float value : emotionData.values()) {
+            totalEmotions += value;
+        }
+
+        if (totalEmotions > 0) {
+            totalEmotionTxtView.setText("Total Emotions: " + totalEmotions);
+            totalEmotionTxtView.setVisibility(View.VISIBLE);
+            noDataTxtView.setVisibility(View.GONE);
+            WeeklySummary.setVisibility(View.VISIBLE);
+
+            // Display specific emotion totals
+            StringBuilder emotionSummary = new StringBuilder("Specific Emotions:\n");
+            for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
+                emotionSummary.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            }
+            specificEmotionsTxtView.setText(emotionSummary.toString());
+            specificEmotionsTxtView.setVisibility(View.VISIBLE);
+        } else {
+            totalEmotionTxtView.setVisibility(View.GONE);
+            noDataTxtView.setVisibility(View.VISIBLE);
+            WeeklySummary.setVisibility(View.GONE);
+            specificEmotionsTxtView.setVisibility(View.GONE); // Hide the specific emotions view if no data
+        }
+    }
     private void displayBarChart(Map<String, Float> emotions) {
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
@@ -250,7 +377,7 @@ public class TrackerFragment extends Fragment {
             String predictedEmotion = response.getString("predicted_emotion");
 
             // Update the TextView with concatenated string
-            predictEmotionTxtView.setText("Journal Highest Predicted Emotion: " + predictedEmotion);
+            predictEmotionTxtView.setText("Highest Predicted Emotion: " + predictedEmotion);
 
             // Get top emotions
             JSONArray top4Emotions = response.getJSONArray("top_4_emotions");
