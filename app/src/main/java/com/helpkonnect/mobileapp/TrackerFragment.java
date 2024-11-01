@@ -186,13 +186,12 @@ public class TrackerFragment extends Fragment {
     private void displayBarChart(Map<String, Float> emotions) {
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
-        ArrayList<Integer> colors = new ArrayList<>(); // List to hold colors
-
+        ArrayList<Integer> colors = new ArrayList<>();
         int index = 0;
         for (Map.Entry<String, Float> entry : emotions.entrySet()) {
             entries.add(new BarEntry(index++, entry.getValue()));
             labels.add(entry.getKey());
-            colors.add(generateRandomColor()); // Add a random color for each entry
+            colors.add(generateRandomColor());
         }
 
         BarDataSet dataSet = new BarDataSet(entries, "Emotions");
@@ -201,8 +200,13 @@ public class TrackerFragment extends Fragment {
 
         emotionBarChart.setData(barData);
         emotionBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+
+        // Set the position of the X-axis labels below the bars
+        emotionBarChart.getXAxis().setPosition(com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM);
+
         emotionBarChart.invalidate(); // Refresh the chart
     }
+
 
 
     private void analyzeEmotion(String translatedNotes, String journalId) { // Add journalId parameter
