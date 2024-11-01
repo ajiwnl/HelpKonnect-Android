@@ -93,10 +93,10 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             TextView facilityName = findViewById(R.id.FacilityName);
             TextView facilityLocation = findViewById(R.id.FacilityLocation);
             RatingBar facilityRatingBar = findViewById(R.id.FacilityRating);
-            
+
             Glide.with(this)
-                .load(imageUrl)
-                .into(facilityImage);
+                    .load(imageUrl)
+                    .into(facilityImage);
 
             facilityName.setText(name);
             facilityLocation.setText(location);
@@ -113,31 +113,33 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("credentials")
-            .whereEqualTo("associated", currentFacility) // Match the associated field with the facility's userId
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    List<ProfessionalAdapter.Professional> professionals = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                .whereEqualTo("associated", currentFacility)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<ProfessionalAdapter.Professional> professionals = new ArrayList<>();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
 
-                        ProfessionalAdapter.Professional professional = new ProfessionalAdapter.Professional(
-                            document.getString("imageUrl"),
-                            document.getString("username"),
-                            document.getString("role"),
-                            document.getString("bio")
-                        );
-                        professionals.add(professional);
-                    }
+                            ProfessionalAdapter.Professional professional = new ProfessionalAdapter.Professional(
+                                    document.getString("imageUrl"),
+                                    document.getString("username"),
+                                    document.getString("role"),
+                                    document.getString("bio"),
+                                    document.getString("userId"),
+                                    document.getDouble("rate") != null ? document.getDouble("rate").floatValue() : 0.0f
+                            );
+                            professionals.add(professional);
+                        }
 
-                    if (professionals.isEmpty()) {
-                        showError("No associated professionals found.");
+                        if (professionals.isEmpty()) {
+                            showError("No associated professionals found.");
+                        } else {
+                            setupProfessionalRecyclerView(professionals);
+                        }
                     } else {
-                        setupProfessionalRecyclerView(professionals);
+                        showError("Failed to load professionals: " + task.getException().getMessage());
                     }
-                } else {
-                    showError("Failed to load professionals: " + task.getException().getMessage());
-                }
-            });
+                });
     }
 
     private void loadCommentData() {
@@ -173,6 +175,8 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             intent.putExtra("name", professional.getName());
             intent.putExtra("facility", currentFacility);
             intent.putExtra("facilityName", name);
+            intent.putExtra("userId", professional.getUserId());
+            intent.putExtra("rate", professional.getRate());
             startActivity(intent);
         });
 
