@@ -33,6 +33,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+
 import android.view.MotionEvent;
 import android.text.InputType;
 
@@ -214,9 +216,11 @@ public class RegisterFragment extends Fragment {
         user.put("firstName", "");
         user.put("lastName", "");
         user.put("bio", "No information given");
-        user.put("associated", "");
         user.put("imageUrl", "https://csassets.nintendo.com/noaext/image/private/f_auto/q_auto/t_KA_default/icon-menu-user-737373?_a=DATC1RAAZAA0");
-
+        if(Objects.equals(role, "Professional")) {
+            user.put("rate", 0);
+            user.put("associated", "");
+        }
         // Save the user in Firestore
         db.collection("credentials")
                 .document(userId)
