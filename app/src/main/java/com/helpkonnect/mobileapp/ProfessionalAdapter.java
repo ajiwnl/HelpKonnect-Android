@@ -25,18 +25,24 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
         private String name;
         private String profession;
         private String introduction;
+        private String userId;
+        private float rate;
 
-        public Professional(String image, String name, String profession, String introduction) {
+        public Professional(String image, String name, String profession, String introduction, String userId, float rate) {
             this.image = image;
             this.name = name;
             this.profession = profession;
             this.introduction = introduction;
+            this.userId = userId;
+            this.rate = rate;
         }
 
         public String getImage() { return image; }
         public String getName() { return name; }
         public String getProfession() { return profession; }
         public String getIntroduction() { return introduction; }
+        public String getUserId() { return userId; }
+        public float getRate() {return rate;}
     }
 
     public class ProfessionalViewHolder extends RecyclerView.ViewHolder {
@@ -78,7 +84,7 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
     @Override
     public void onBindViewHolder(@NonNull ProfessionalViewHolder holder, int position) {
         Professional professional = professionals.get(position);
-        
+
         Glide.with(holder.itemView.getContext())
                 .load(professional.getImage())
                 .into(holder.therapistImage);
