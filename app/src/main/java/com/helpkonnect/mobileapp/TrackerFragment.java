@@ -18,18 +18,25 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpkonnect.mobileapp.JournalListAdapter.Journal;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,9 +61,11 @@ public class TrackerFragment extends Fragment {
     private RecyclerView journalRecyclerView;
     private JournalListAdapter adapter;
     private RequestQueue requestQueue;
-
     private PieChart pieChart;
+    private BarChart emotionBarChart;
     private View loaderView;
+    private Map<String, Float> emotionData = new HashMap<>();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,7 +81,8 @@ public class TrackerFragment extends Fragment {
         predictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
         pieChart = rootView.findViewById(R.id.EmotionChart);
         journalRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        getPredictEmotionTxtView = rootView.findViewById(R.id.emotionPercentage);
+        getPredictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);
+        emotionBarChart = rootView.findViewById(R.id.EmotionBarChart);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
@@ -81,15 +91,25 @@ public class TrackerFragment extends Fragment {
         String userId = user.getUid();
 
         adapter = new JournalListAdapter(journalList, journal -> {
+            String documentId = journal.getDocumentId(); // Retrieve the document ID of the clicked journal
+            String journalUserId = mAuth.getCurrentUser().getUid(); // Retrieve the user ID
 
-            activityTitle.setText(journal.getTitle()); // Set the title
+            // Set the title and date based on the selected journal
+            activityTitle.setText(journal.getTitle());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
             dateDisplay.setText(dateFormat.format(journal.getDate().toDate()));
-            userActivity(userId);
-            analyzeEmotion(journal.getTranslatedNotes());
-        });
-        journalRecyclerView.setAdapter(adapter);
 
+            // Log the documentId and userId for verification
+            Log.d("TrackerFragment", "Clicked Journal Document ID: " + documentId);
+            Log.d("TrackerFragment", "User ID: " + journalUserId);
+
+            // Perform actions using documentId and userId as needed
+            userActivity(userId);
+            analyzeEmotion(journal.getTranslatedNotes(), documentId);
+        });
+
+        journalRecyclerView.setAdapter(adapter);
+        fetchAndAggregateEmotionData();
         fetchJournals();
         return rootView;
     }
@@ -136,7 +156,56 @@ public class TrackerFragment extends Fragment {
                 });
     }
 
-   private void analyzeEmotion(String translatedNotes) {
+    private void fetchAndAggregateEmotionData() {
+        db.collection("emotion_analysis")
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        Log.w("TrackerFragment", "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshots != null) {
+                        emotionData.clear(); // Clear previous data
+                        for (QueryDocumentSnapshot document : snapshots) {
+                            Map<String, Object> emotionsRaw = (Map<String, Object>) document.getData().get("emotions");
+                            if (emotionsRaw != null) {
+                                for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
+                                    String emotionName = entry.getKey();
+                                    float emotionValue = ((Number) entry.getValue()).floatValue();
+
+                                    // Aggregate emotion values
+                                    emotionData.put(emotionName, emotionData.getOrDefault(emotionName, 0f) + emotionValue);
+                                }
+                            }
+                        }
+                        displayBarChart(emotionData); // Call to display the aggregated data in the bar chart
+                    }
+                });
+    }
+
+    private void displayBarChart(Map<String, Float> emotions) {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+        ArrayList<Integer> colors = new ArrayList<>(); // List to hold colors
+
+        int index = 0;
+        for (Map.Entry<String, Float> entry : emotions.entrySet()) {
+            entries.add(new BarEntry(index++, entry.getValue()));
+            labels.add(entry.getKey());
+            colors.add(generateRandomColor()); // Add a random color for each entry
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Emotions");
+        dataSet.setColors(colors); // Set the list of random colors
+        BarData barData = new BarData(dataSet);
+
+        emotionBarChart.setData(barData);
+        emotionBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        emotionBarChart.invalidate(); // Refresh the chart
+    }
+
+
+    private void analyzeEmotion(String translatedNotes, String journalId) { // Add journalId parameter
         if (translatedNotes != null && !translatedNotes.isEmpty()) {
             // Show the loading indicator
             showLoader(true, null);
@@ -154,7 +223,7 @@ public class TrackerFragment extends Fragment {
                     Request.Method.POST, url, jsonBody,
                     response -> {
                         // Handle the response to extract emotions and update the chart
-                        handleEmotionResponse(response);
+                        handleEmotionResponse(response, journalId); // Pass journalId here
                         // Hide the loading indicator
                         showLoader(false, null);
                     },
@@ -172,19 +241,19 @@ public class TrackerFragment extends Fragment {
         }
     }
 
-
-    private void handleEmotionResponse(JSONObject response) {
+    private void handleEmotionResponse(JSONObject response, String journalId) { // Add journalId parameter
         try {
-            String  predictedEmotion = response.getString("predicted_emotion");
+            String predictedEmotion = response.getString("predicted_emotion");
 
             // Update the TextView with concatenated string
-            predictEmotionTxtView.setText("Highest Predicted Emotion: " + predictedEmotion);
-
+            predictEmotionTxtView.setText("Journal Highest Predicted Emotion: " + predictedEmotion);
 
             // Get top emotions
             JSONArray top4Emotions = response.getJSONArray("top_4_emotions");
             ArrayList<PieEntry> entries = new ArrayList<>();
             ArrayList<Integer> colors = new ArrayList<>();
+
+            emotionData.clear();
 
             for (int i = 0; i < top4Emotions.length(); i++) {
                 JSONObject emotionObj = top4Emotions.getJSONObject(i);
@@ -192,18 +261,16 @@ public class TrackerFragment extends Fragment {
                 float probability = (float) emotionObj.getDouble("probability");
 
                 // Highlight the predicted emotion
-                if (emotionName.equals(predictedEmotion)) {
-                    entries.add(new PieEntry(probability, emotionName));
-                } else {
-                    entries.add(new PieEntry(probability, emotionName));
-                }
-
-                // Generate a random color for this entry
+                entries.add(new PieEntry(probability, emotionName));
                 colors.add(generateRandomColor());
+
+                // Store the emotion name and its probability in the map
+                emotionData.put(emotionName, probability);
+
             }
 
             // Create dataset and update chart
-            PieDataSet dataSet = new PieDataSet(entries,"");
+            PieDataSet dataSet = new PieDataSet(entries, "");
             dataSet.setColors(colors); // Use the random colors
             PieData pieData = new PieData(dataSet);
 
@@ -216,6 +283,8 @@ public class TrackerFragment extends Fragment {
             pieChart.setData(pieData);
             pieChart.getDescription().setEnabled(false);
             pieChart.invalidate(); // Refresh the chart
+
+            checkIfEntryExists(journalId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -258,6 +327,55 @@ public class TrackerFragment extends Fragment {
                 });
     }
 
+    private void checkIfEntryExists(String journalId) {
+        db.collection("journals")
+                .document(journalId) // Get the journal document to retrieve the dateCreated
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            // Retrieve the dateCreated from the journal document
+                            Timestamp dateCreated = document.getTimestamp("dateCreated");
+
+                            // Check if the emotion entry already exists
+                            db.collection("emotion_analysis")
+                                    .document(journalId)
+                                    .get()
+                                    .addOnCompleteListener(entryTask -> {
+                                        if (entryTask.isSuccessful()) {
+                                            DocumentSnapshot entryDocument = entryTask.getResult();
+                                            if (entryDocument.exists()) {
+                                                // The entry already exists, do nothing or log if necessary
+                                                Log.d("TrackerFragment", "Entry already exists for journal ID: " + journalId);
+                                            } else {
+                                                // Save journalId and journalUserId to Firestore
+                                                saveEmotionAnalysis(journalId, mAuth.getCurrentUser().getUid(), true, emotionData, dateCreated);
+                                            }
+                                        }
+                                    });
+                        }
+                    } else {
+                        Log.e("TrackerFragment", "Failed to get journal document: " + task.getException().getMessage());
+                    }
+                });
+    }
+
+
+    private void saveEmotionAnalysis(String journalId, String journalUserId, boolean isClicked, Map<String, Float> emotionData, Timestamp dateCreated) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("journalUserId", journalUserId);
+        data.put("emotions", emotionData);
+        data.put("isClicked", isClicked);
+        data.put("dateCreated", dateCreated);
+
+        db.collection("emotion_analysis")
+                .document(journalId)  // Use the journalId as document name
+                .set(data)
+                .addOnSuccessListener(aVoid -> Log.d("TrackerFragment", "Emotion analysis saved successfully"))
+                .addOnFailureListener(e -> Log.w("TrackerFragment", "Error saving emotion analysis", e));
+    }
+
     private void showLoader(boolean show, String message) {
         if (loaderView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -280,4 +398,48 @@ public class TrackerFragment extends Fragment {
             }
         }
     }
+
+       /* private void fetchAndAggregateEmotionDataSimpleSum() {
+        db.collection("emotion_analysis")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<EmotionSummary> weeklyEmotionSummary = new ArrayList<>();
+                        for (int i = 0; i < 7; i++) {
+                            String day = new SimpleDateFormat("EEE", Locale.getDefault()).format(new Date(System.currentTimeMillis() - (i * 86400000)));
+                            weeklyEmotionSummary.add(new EmotionSummary(day));
+                        }
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> emotionsRaw = (Map<String, Object>) document.getData().get("emotions");
+                            if (emotionsRaw != null) {
+                                Timestamp dateCreated = document.getTimestamp("dateCreated");
+                                if (dateCreated != null) {
+                                    String day = new SimpleDateFormat("EEE", Locale.getDefault()).format(dateCreated.toDate());
+                                    for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
+                                        String emotionName = entry.getKey();
+                                        float emotionValue = ((Number) entry.getValue()).floatValue();
+                                        for (EmotionSummary summary : weeklyEmotionSummary) {
+                                            if (summary.getDay().equals(day)) {
+                                                summary.addEmotion(emotionName, emotionValue);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        displayWeeklySummary(weeklyEmotionSummary);
+                    } else {
+                        Log.d("TrackerFragment", "Error getting documents: ", task.getException());
+                    }
+                });
+    }*/
+
+/*    private void displayWeeklySummary(List<EmotionSummary> weeklySummary) {
+        // Set up a RecyclerView and an adapter
+        RecyclerView summaryRecyclerView = getView().findViewById(R.id.SummaryRecyclerView);
+        summaryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        SummaryAdapter summaryAdapter = new SummaryAdapter(weeklySummary);
+        summaryRecyclerView.setAdapter(summaryAdapter);
+    }*/
 }

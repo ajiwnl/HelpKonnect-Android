@@ -60,7 +60,7 @@
              android:id="@+id/EmotionChart"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:layout_margin="10dp" />
+             android:layout_margin="20dp" />
 
       </androidx.cardview.widget.CardView>
 
@@ -69,23 +69,44 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="10dp"
-          android:text="Highest Predicted Emotion:"
-          android:textSize="16sp"
+          android:text="Journal Highest Predicted Emotion:"
+          android:textSize="12sp"
           android:textStyle="bold"
-          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintStart_toStartOf="@id/PieChartHolder"
           app:layout_constraintTop_toBottomOf="@id/PieChartHolder" />
 
       <TextView
-          android:id="@+id/emotionPercentage"
-          android:layout_width="0dp"
-          android:layout_height="100dp"
+          android:id="@+id/barChartTitle"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
           android:layout_marginTop="10dp"
-          android:maxHeight="200dp"
-          android:text="Your Feel About this percentage Today"
-          android:textSize="12sp"
-          app:layout_constraintEnd_toEndOf="parent"
+          android:text="Overall Journal Emotion Summary"
+          android:textSize="16sp"
+          android:textStyle="bold"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@id/predictedEmotion" />
+          app:layout_constraintTop_toBottomOf="@+id/predictedEmotion"
+          app:layout_constraintEnd_toEndOf="parent" />
+
+      <androidx.cardview.widget.CardView
+          android:id="@+id/BarChartHolder"
+          android:layout_width="0dp"
+          android:layout_height="150dp"
+          android:layout_margin="10dp"
+          android:background="@drawable/layout_roundcorners"
+          android:backgroundTint="@color/PrimaryLight"
+          android:elevation="12dp"
+          app:cardCornerRadius="12dp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/barChartTitle"
+          app:layout_constraintEnd_toEndOf="parent">
+
+         <com.github.mikephil.charting.charts.BarChart
+             android:id="@+id/EmotionBarChart"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_margin="10dp" />
+
+      </androidx.cardview.widget.CardView>
 
       <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/JournalListView"
@@ -93,7 +114,7 @@
           android:layout_height="0dp"
           android:paddingTop="10dp"
           app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/emotionPercentage"
+          app:layout_constraintTop_toBottomOf="@+id/BarChartHolder"
           tools:layout_editor_absoluteX="15dp" />
 
    </androidx.constraintlayout.widget.ConstraintLayout>
