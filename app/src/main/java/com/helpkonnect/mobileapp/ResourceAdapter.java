@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
-import com.google.firebase.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -80,6 +79,12 @@ public class ResourceAdapter extends RecyclerView.Adapter<ResourceAdapter.Resour
             resourceImage = itemView.findViewById(R.id.resourceImage);
             resourceTime = itemView.findViewById(R.id.resourceTime);
         }
+    }
+
+    public void updateList(List<Resource> newList) {
+        resourceList.clear();
+        resourceList.addAll(newList);
+        notifyDataSetChanged();
     }
 }
 
