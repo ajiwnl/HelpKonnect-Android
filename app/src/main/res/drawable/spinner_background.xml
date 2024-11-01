@@ -1,0 +1,10 @@
+<!-- res/drawable/spinner_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/PrimaryLight"/>
+    <corners android:radius="10dp"/>
+    <padding
+        android:left="10dp"
+        android:right="10dp"
+        android:top="8dp"
+        android:bottom="8dp" />
+</shape>
