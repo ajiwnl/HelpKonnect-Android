@@ -31,6 +31,7 @@
     <string name="write_a_message">Write a message</string>
     <string name="send">Send</string>
     <string name="not_partnered">You are not yet partnered. Apply on Facility</string>
+    <string name="InitialSigninTextDesc">Let Help-Konnect, help you to match the right facility for you</string>
 
     <string-array name="summary_options">
         <item>None</item>

@@ -12,13 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/SelectedPostBackButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/floatingactionbutton_background"
+            android:src="@drawable/stream_ui_ic_close"
+            android:elevation="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:minHeight="400dp"
-            app:cardCornerRadius="8dp"
+            app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toTopOf="@+id/commentText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -30,8 +41,10 @@
                 android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/edittextdesign"
                 android:minHeight="400dp"
                 android:paddingBottom="8dp">
+
 
                 <ImageView
                     android:id="@+id/userprofileimage"
@@ -140,7 +153,6 @@
             android:layout_height="wrap_content"
             android:hint="@string/comment_here"
             android:inputType="text"
-            android:elevation="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/commentButton"
             app:layout_constraintStart_toStartOf="parent" />

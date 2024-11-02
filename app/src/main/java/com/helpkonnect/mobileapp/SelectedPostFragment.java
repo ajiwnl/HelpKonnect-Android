@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -51,7 +52,7 @@ public class SelectedPostFragment extends Fragment {
     private RequestQueue requestQueue;
     private String filterKey;
     private String filterHost;
-    private ImageView heartIcon;
+    private ImageView heartIcon, backbutton;
     private TextView heartTextView;
     private Button commentButton;
 
@@ -143,12 +144,18 @@ public class SelectedPostFragment extends Fragment {
 
         // Initialize UI elements
         heartIcon = rootView.findViewById(R.id.heartIcon);
+        backbutton = rootView.findViewById(R.id.SelectedPostBackButton);
         heartTextView = rootView.findViewById(R.id.userpostlikes);
         TextView userPostName = rootView.findViewById(R.id.userpostname);
         TextView userPostDescription = rootView.findViewById(R.id.userpostdescription);
         TextView userPostDate = rootView.findViewById(R.id.userpostdate);
         ImageView userProfileImage = rootView.findViewById(R.id.userprofileimage);
         LinearLayout imageContainer = rootView.findViewById(R.id.imageContainer);
+
+        backbutton.setOnClickListener( v-> {
+            androidx.fragment.app.FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
+        });
 
         // Set data to UI elements
         if (post != null) {

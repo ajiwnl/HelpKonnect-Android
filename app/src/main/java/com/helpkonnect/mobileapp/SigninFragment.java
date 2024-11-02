@@ -59,7 +59,6 @@ public class SigninFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
-        //Change the Text of loader to signing in
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -183,10 +182,21 @@ public class SigninFragment extends Fragment {
                                                 updateUserSession(userId, true);
                                                 userActivity(userId);
 
-                                                Intent intent = new Intent(getContext(), MainScreenActivity.class);
-                                                intent.putExtra("userRole", role);
-                                                startActivity(intent);
-                                                getActivity().finish();
+                                                //For Firsttimesignin ,change if value from tru to isFirstSignIn
+                                                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                                                boolean isFirstSignIn = preferences.getBoolean("isFirstSignIn", true);
+                                                if (true) {
+                                                    showLoader(false, null);
+                                                    androidx.fragment.app.FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                                                    FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new InitialSigninFragment());
+                                                    preferences.edit().putBoolean("isFirstSignIn", false).apply();
+                                                } else {
+                                                    Intent intent = new Intent(getContext(), MainScreenActivity.class);
+                                                    intent.putExtra("userRole", role);
+                                                    startActivity(intent);
+                                                    getActivity().finish();
+                                                }
+
                                             } else {
                                                 Log.d(TAG, "No document found with userId: " + userId);
                                                 Toast.makeText(getContext(), "User role not found.", Toast.LENGTH_SHORT).show();
