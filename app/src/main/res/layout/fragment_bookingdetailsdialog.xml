@@ -27,55 +27,125 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/BookingTitleTextView"
-            android:layout_width="0dp"
+            android:id="@+id/texttitle1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Booking Title/Booked Service"
-            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            android:layout_marginTop="10dp"
+            android:text="Booking"
+            android:textSize="16dp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/BookingDateTextView"
-            android:layout_width="0dp"
+            android:id="@+id/BookingTitleTextView"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="Booking Date"
-            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            android:layout_margin="5dp"
+            android:text="Booking Title/Booked Service"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/texttitle1" />
+
+        <TextView
+            android:id="@+id/texttitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Date"
+            android:textSize="16dp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/BookingTitleTextView" />
 
         <TextView
-            android:id="@+id/BookingDetailsTextView"
-            android:layout_width="0dp"
+            android:id="@+id/BookingDateTextView"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="Booking Details/Description"
-            app:layout_constraintEnd_toStartOf="@+id/DetailsDismissButton"
+            android:layout_margin="5dp"
+            android:text="Booking Date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/texttitle2" />
+
+        <TextView
+            android:id="@+id/texttitle3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Details"
+            android:textSize="16dp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/BookingDateTextView" />
+
+        <TextView
+            android:id="@+id/BookingDetailsTextView"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Booking Details/Description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/texttitle3" />
+
+        <TextView
+            android:id="@+id/texttitle4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Session Started"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingDetailsTextView" />
 
         <TextView
             android:id="@+id/BookingStartTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:text="Booking StartTime"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/BookingDetailsTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/texttitle4" />
+
+        <TextView
+            android:id="@+id/texttitle5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Session Duration"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingStartTimeTextView" />
 
         <TextView
             android:id="@+id/BookingDurationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:text="Booking Duration"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/BookingStartTimeTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/texttitle5" />
+
+        <TextView
+            android:id="@+id/texttitle6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Payment"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BookingDurationTextView" />
 
         <TextView
             android:id="@+id/BookingPriceTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:text="Booking Price"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/BookingDurationTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/texttitle6" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

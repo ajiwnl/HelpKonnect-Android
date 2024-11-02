@@ -48,8 +48,10 @@
         android:id="@+id/BookingListTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:text="Booking History"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BookingBackButton" />
 
@@ -57,10 +59,43 @@
         android:id="@+id/BookingListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BookingListTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/BookingListTextView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/RecentSwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/layout_roundcorners"
+        android:backgroundTint="@color/SecondaryLight"
+        android:paddingStart="30dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="30dp"
+        android:paddingBottom="5dp"
+        android:elevation="6dp"
+        android:text="Recent"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/BookingListTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/BookingListTextView" />
+
+    <ImageView
+        android:id="@+id/SortOrderIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_up"
+        android:layout_marginEnd="7dp"
+        android:elevation="7dp"
+        app:layout_constraintBottom_toBottomOf="@+id/RecentSwitcher"
+        app:layout_constraintEnd_toEndOf="@+id/RecentSwitcher"
+        app:layout_constraintTop_toTopOf="@+id/RecentSwitcher" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

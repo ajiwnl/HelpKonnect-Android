@@ -17,15 +17,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BookingActivity extends AppCompatActivity {
 
     private RecyclerView bookingListView;
-    private TextView bookingErrorTextView;
+    private TextView bookingErrorTextView, recentSwitcher;
     private ProgressBar loadingIndicator;
     private List<BookingModel> bookingList = new ArrayList<>();
     private BookingAdapter bookingAdapter;
+    private boolean isAscending = true;
+    private ImageView sortOrderIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +40,29 @@ public class BookingActivity extends AppCompatActivity {
         bookingListView = findViewById(R.id.BookingListRecyclerView);
         bookingErrorTextView = findViewById(R.id.BookingErrorTextView);
         loadingIndicator = findViewById(R.id.LoadingIndicator);
+        recentSwitcher = findViewById(R.id.RecentSwitcher);
+        sortOrderIcon = findViewById(R.id.SortOrderIcon);
 
         backButton.setOnClickListener(v -> finish());
+        recentSwitcher.setOnClickListener(v -> toggleSortOrder());
 
         bookingAdapter = new BookingAdapter(bookingList, booking -> showBookingDetailsDialog(booking));
         bookingListView.setLayoutManager(new LinearLayoutManager(this));
         bookingListView.setAdapter(bookingAdapter);
 
         populateBookingHistory();
+    }
+
+    private void toggleSortOrder() {
+        if (isAscending) {
+            Collections.sort(bookingList, (b1, b2) -> b2.getBookingDate().compareTo(b1.getBookingDate()));
+            sortOrderIcon.setImageResource(R.drawable.ic_down); // Change icon to down
+        } else {
+            Collections.sort(bookingList, (b1, b2) -> b1.getBookingDate().compareTo(b2.getBookingDate()));
+            sortOrderIcon.setImageResource(R.drawable.ic_up);
+        }
+        isAscending = !isAscending;
+        bookingAdapter.notifyDataSetChanged();
     }
 
     private void showBookingDetailsDialog(BookingModel booking) {
