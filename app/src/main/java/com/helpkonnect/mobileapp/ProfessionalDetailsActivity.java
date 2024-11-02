@@ -45,7 +45,7 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
     private EditText startTimeEditText, sessionDurationEditText, availableDateEditText;
     private ImageButton backButton;
     private Button requestBookButton;
-    private String professionalId, userEmail, userUsername, userId;
+    private String professionalId, userEmail, userUsername, userId, facility;
     private float rate, amount, subtotal;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -76,7 +76,7 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             String imageUrl = getIntent().getStringExtra("imageUrl");
             String name = getIntent().getStringExtra("name");
-            String facility = getIntent().getStringExtra("facilityName");
+            facility = getIntent().getStringExtra("facilityName");
             professionalId = getIntent().getStringExtra("userId");
             rate = getIntent().getFloatExtra("rate", 0.0f);
             Glide.with(this)
@@ -150,8 +150,8 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
         booking.put("amount", amount);
         booking.put("sessionDuration", sessionDuration);
         booking.put("bookingDate", availableDateEditText.getText().toString());
-        booking.put("status", "completed");
         booking.put("createdAt", FieldValue.serverTimestamp());
+        booking.put("facilityName", facility);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
