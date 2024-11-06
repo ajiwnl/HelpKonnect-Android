@@ -91,7 +91,6 @@ public class TrackerFragment extends Fragment {
         requestQueue = Volley.newRequestQueue(requireContext());
         db = FirebaseFirestore.getInstance();
         journalList = new ArrayList<>();
-        activityTitle = rootView.findViewById(R.id.ActivityTitle);
         dateDisplay = rootView.findViewById(R.id.DateDisplay);
         journalRecyclerView = rootView.findViewById(R.id.JournalListView);
         predictEmotionTxtView = rootView.findViewById(R.id.predictedEmotion);

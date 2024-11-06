@@ -78,7 +78,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
         public LinearLayout imageContainer;
         public TextView userPostLikes;
         public TextView userPostDate;
-        public TextView postComment;
         public ImageView heartIcon; // Add this line
 
         public CommunityViewHolder(View itemView) {
@@ -89,7 +88,6 @@ public class CommunityListAdapter extends RecyclerView.Adapter<CommunityListAdap
             imageContainer = itemView.findViewById(R.id.imageContainer);
             userPostLikes = itemView.findViewById(R.id.userpostlikes);
             userPostDate = itemView.findViewById(R.id.userpostdate);
-            postComment = itemView.findViewById(R.id.postComment);
             heartIcon = itemView.findViewById(R.id.heartIcon); // Add this line
 
             itemView.setOnClickListener(v -> {
