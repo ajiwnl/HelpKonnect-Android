@@ -1,5 +1,7 @@
 package com.helpkonnect.mobileapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,26 +10,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,30 +45,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpkonnect.mobileapp.JournalListAdapter.Journal;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import com.google.firebase.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, activityTitle, predictEmotionTxtView, totalEmotionTxtView, noDataTxtView, specificEmotionsTxtView;
+    private TextView dateDisplay, activityTitle, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -93,8 +102,8 @@ public class TrackerFragment extends Fragment {
         barChartView = rootView.findViewById(R.id.BarChartHolder);
         WeeklySummary = rootView.findViewById(R.id.WeeklySummary);
         totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
-        noDataTxtView = rootView.findViewById(R.id.noDataTextView);
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
+        dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
@@ -139,7 +148,7 @@ public class TrackerFragment extends Fragment {
                 } else if ("Weekly Summary".equals(selectedOption)) {
                     barChartView.setVisibility(View.GONE); // Hide bar chart
                     WeeklySummary.setVisibility(View.VISIBLE); // Show WeeklySummary card
-                    fetchWeeklyEmotionSummary(); // Call method to fetch weekly summary data
+                    fetchAndAggregateEmotionDataText();
                 } else {
                     barChartView.setVisibility(View.GONE); // Hide bar chart
                     WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
@@ -222,94 +231,99 @@ public class TrackerFragment extends Fragment {
                                 }
                             }
                         }
+
+                        for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
+                            Log.w("TrackerFragment", "Emotion: " + entry.getKey() + ", Aggregated Sum: " + entry.getValue());
+                        }
+
+                        int totalNumberOfEmotions = emotionData.size();
+                        Log.w("TrackerFragment", "Total Number of Emotions: " + totalNumberOfEmotions);
+
+
                         displayBarChart(emotionData); // Call to display the aggregated data in the bar chart
                     }
                 });
     }
 
-    private void fetchWeeklyEmotionSummary() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            Toast.makeText(requireContext(), "User not logged in!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String userId = user.getUid();
-
-        // Get the start of the week
+    private void fetchAndAggregateEmotionDataText() {
+        // Get the current date and calculate the current week of the year
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date startOfWeek = calendar.getTime();
-        calendar.add(Calendar.WEEK_OF_YEAR, 1);
-        Date endOfWeek = calendar.getTime();
+        calendar.setFirstDayOfWeek(Calendar.MONDAY); // Ensure the week starts on Monday
+        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR); // Get the current week of the year
+        int year = calendar.get(Calendar.YEAR); // Get the current year
 
-        // Fetch emotion data for the current user within the week
+        // Get the start date of the current week (Monday)
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY); // Set to Monday (start of the week)
+        Date startOfCurrentWeek = calendar.getTime();
+
+        // Get the end date of the current week (Sunday)
+        calendar.add(Calendar.DAY_OF_YEAR, 6); // Move to Sunday of the current week
+        Date endOfCurrentWeek = calendar.getTime();
+
+        // Format the start and end dates to display like "Nov 1 - Nov 7"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
+        String formattedStartDate = dateFormat.format(startOfCurrentWeek);
+        String formattedEndDate = dateFormat.format(endOfCurrentWeek);
+
+        // Update the TextView to display the date range for the current week
+        dateTxtView.setText(formattedStartDate + " - " + formattedEndDate);
+
+        // Get the date one week ago for filtering (if needed)
+        calendar.add(Calendar.DAY_OF_YEAR, -7); // Get the start of last week
+        Date oneWeekAgo = calendar.getTime();
+
+        // Fetch data from Firestore, filtering for this week
         db.collection("emotion_analysis")
-                .whereEqualTo("userId", userId)
-                .whereGreaterThanOrEqualTo("dateCreated", startOfWeek)
-                .whereLessThan("dateCreated", endOfWeek)
+                .whereGreaterThanOrEqualTo("dateCreated", startOfCurrentWeek) // Get data from the start of the current week
+                .whereLessThan("dateCreated", new Date()) // Ensure it's before the current date
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Log.w("TrackerFragment", "Listen failed.", e);
-                        Toast.makeText(requireContext(), "Error fetching data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     if (snapshots != null && !snapshots.isEmpty()) {
-                        Map<String, Float> emotionData = new HashMap<>();
+                        emotionData.clear(); // Clear previous data
 
+                        // Iterate through snapshot documents to aggregate emotion data
                         for (QueryDocumentSnapshot document : snapshots) {
-                            // Check if emotions field exists
-                            if (document.contains("emotions")) {
-                                Map<String, Object> emotionsRaw = (Map<String, Object>) document.get("emotions");
-                                if (emotionsRaw != null) {
-                                    for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
-                                        String emotionName = entry.getKey();
-                                        float emotionValue = ((Number) entry.getValue()).floatValue();
+                            Map<String, Object> emotionsRaw = (Map<String, Object>) document.getData().get("emotions");
+                            if (emotionsRaw != null) {
+                                for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
+                                    String emotionName = entry.getKey();
+                                    float emotionValue = ((Number) entry.getValue()).floatValue();
 
-                                        // Aggregate emotion values
-                                        emotionData.put(emotionName, emotionData.getOrDefault(emotionName, 0f) + emotionValue);
-                                    }
+                                    // Aggregate emotion values
+                                    emotionData.put(emotionName, emotionData.getOrDefault(emotionName, 0f) + emotionValue);
                                 }
                             }
                         }
-                        updateWeeklySummary(emotionData);
+
+                        // Build a string with formatted emotion data
+                        StringBuilder aggregatedDetails = new StringBuilder();
+                        for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
+                            String formattedLog = String.format("Emotion: %s, Total Sum: %.2f%%", entry.getKey(), entry.getValue());
+                            Log.w("TrackerFragment", formattedLog);
+                            aggregatedDetails.append(formattedLog).append("\n");
+                        }
+
+                        // Get the total number of different emotions
+                        int totalNumberOfEmotions = emotionData.size();
+                        Log.w("TrackerFragment", "Total Number of Emotions: " + totalNumberOfEmotions);
+
+                        // Update TextViews with the data
+                        totalEmotionTxtView.setText("Total Emotions: " + totalNumberOfEmotions);
+                        specificEmotionsTxtView.setText(aggregatedDetails.toString());
                     } else {
-                        // Handle empty data case
-                        updateWeeklySummary(new HashMap<>()); // Pass an empty map to clear the UI
+                        // Handle the case where there are no entries for the current week
+                        Log.w("TrackerFragment", "No emotion data found for the current week.");
+                        totalEmotionTxtView.setText("Total Emotions: 0");
+                        specificEmotionsTxtView.setText("No emotion data found for the current week.");
                     }
                 });
     }
-    private void updateWeeklySummary(Map<String, Float> emotionData) {
-        // Calculate the total of all emotions
-        float totalEmotions = 0;
-        for (float value : emotionData.values()) {
-            totalEmotions += value;
-        }
 
-        if (totalEmotions > 0) {
-            totalEmotionTxtView.setText("Total Emotions: " + totalEmotions);
-            totalEmotionTxtView.setVisibility(View.VISIBLE);
-            noDataTxtView.setVisibility(View.GONE);
-            WeeklySummary.setVisibility(View.VISIBLE);
 
-            // Display specific emotion totals
-            StringBuilder emotionSummary = new StringBuilder("Specific Emotions:\n");
-            for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
-                emotionSummary.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-            }
-            specificEmotionsTxtView.setText(emotionSummary.toString());
-            specificEmotionsTxtView.setVisibility(View.VISIBLE);
-        } else {
-            totalEmotionTxtView.setVisibility(View.GONE);
-            noDataTxtView.setVisibility(View.VISIBLE);
-            WeeklySummary.setVisibility(View.GONE);
-            specificEmotionsTxtView.setVisibility(View.GONE); // Hide the specific emotions view if no data
-        }
-    }
     private void displayBarChart(Map<String, Float> emotions) {
         ArrayList<BarEntry> entries = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
@@ -341,7 +355,7 @@ public class TrackerFragment extends Fragment {
             // Show the loading indicator
             showLoader(true, null);
 
-            String url = "http://192.168.1.5:5000/predict"; // Update with your API URL
+            String url = "http://192.168.1.9:5000/predict"; // Update with your API URL
 
             JSONObject jsonBody = new JSONObject();
             try {
@@ -529,48 +543,4 @@ public class TrackerFragment extends Fragment {
             }
         }
     }
-
-       /* private void fetchAndAggregateEmotionDataSimpleSum() {
-        db.collection("emotion_analysis")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        List<EmotionSummary> weeklyEmotionSummary = new ArrayList<>();
-                        for (int i = 0; i < 7; i++) {
-                            String day = new SimpleDateFormat("EEE", Locale.getDefault()).format(new Date(System.currentTimeMillis() - (i * 86400000)));
-                            weeklyEmotionSummary.add(new EmotionSummary(day));
-                        }
-
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> emotionsRaw = (Map<String, Object>) document.getData().get("emotions");
-                            if (emotionsRaw != null) {
-                                Timestamp dateCreated = document.getTimestamp("dateCreated");
-                                if (dateCreated != null) {
-                                    String day = new SimpleDateFormat("EEE", Locale.getDefault()).format(dateCreated.toDate());
-                                    for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
-                                        String emotionName = entry.getKey();
-                                        float emotionValue = ((Number) entry.getValue()).floatValue();
-                                        for (EmotionSummary summary : weeklyEmotionSummary) {
-                                            if (summary.getDay().equals(day)) {
-                                                summary.addEmotion(emotionName, emotionValue);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        displayWeeklySummary(weeklyEmotionSummary);
-                    } else {
-                        Log.d("TrackerFragment", "Error getting documents: ", task.getException());
-                    }
-                });
-    }*/
-
-/*    private void displayWeeklySummary(List<EmotionSummary> weeklySummary) {
-        // Set up a RecyclerView and an adapter
-        RecyclerView summaryRecyclerView = getView().findViewById(R.id.SummaryRecyclerView);
-        summaryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        SummaryAdapter summaryAdapter = new SummaryAdapter(weeklySummary);
-        summaryRecyclerView.setAdapter(summaryAdapter);
-    }*/
 }
