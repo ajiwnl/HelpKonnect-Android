@@ -159,11 +159,9 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
                 .add(booking)
                 .addOnSuccessListener(documentReference -> {
                     Log.d("Booking", "Booking saved with ID: " + documentReference.getId());
-                    Toast.makeText(this, "Booking saved successfully!", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Booking", "Error saving booking: ", e);
-                    Toast.makeText(this, "Error saving booking", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -172,6 +170,7 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
 
         JSONObject requestBody = new JSONObject();
         try {
+            requestBody.put("title", facility);
             requestBody.put("amount", subtotal);
             requestBody.put("username", userUsername);
             requestBody.put("email", userEmail);
