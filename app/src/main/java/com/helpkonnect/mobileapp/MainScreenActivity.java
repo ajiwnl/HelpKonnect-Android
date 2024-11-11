@@ -73,7 +73,7 @@ public class MainScreenActivity extends AppCompatActivity {
         String userRole = intent.getStringExtra("userRole");
 
         Menu menu = navView.getMenu();
-        //Only Displays Menu for 2 roles
+
         if (Objects.equals(userRole, "Professional")) {
             menu.findItem(R.id.homenav).setVisible(false);
             menu.findItem(R.id.journalnav).setVisible(false);

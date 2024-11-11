@@ -84,12 +84,12 @@ public class BookingActivity extends AppCompatActivity {
 
         // Simulate data loading (add booking entries here)
         bookingList.add(new BookingModel(
-                "Dr. John Smith",
-                "2024-10-10",
+                "Dr. John Knee",
+                "2024-11-11",
                 "Planning to relieve stress on work",
-                "15:00",
+                "01:00",
                 "2",
-                "3000"
+                "444"
         ));
 
         bookingList.add(new BookingModel(

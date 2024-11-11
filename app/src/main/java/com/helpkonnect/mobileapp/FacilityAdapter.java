@@ -98,7 +98,7 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         holder.facilityTitle.setText(facility.getTitle());
         holder.facilityLocation.setText(facility.getLocation());
         holder.facilityRating.setText(String.valueOf(facility.getRating()));
-        holder.facilityPrice.setText(facility.getPriceRange());
+        holder.facilityPrice.setText(String.format("₱ %s", facility.getPriceRange()));
     }
 
     @Override

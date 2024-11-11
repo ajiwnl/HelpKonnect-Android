@@ -2,6 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/layout_roundcorners"
+    android:backgroundTint="@color/hkcolor"
+    android:elevation="8dp"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -15,8 +18,11 @@
         android:id="@+id/editTextComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/edittextdesign"
+        android:padding="10dp"
+        android:textAlignment="textStart"
         android:hint="Enter your comment"
         android:inputType="textMultiLine"
-        android:minLines="3" />
+        android:maxLines="3" />
 
 </LinearLayout>

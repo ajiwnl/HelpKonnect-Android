@@ -119,8 +119,8 @@ public class FacilitiesFragment extends Fragment {
                             document.getString("facilityName"),
                             document.getString("facilityLocation"),
                             document.getString("userId"),
-                            0,
-                            ""
+                            4,
+                            "1200"
                         );
                         facilities.add(facility);
                     }
