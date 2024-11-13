@@ -69,26 +69,12 @@ public class MainScreenActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         navView = findViewById(R.id.nav_view);
 
-        Intent intent = getIntent();
-        String userRole = intent.getStringExtra("userRole");
-
         Menu menu = navView.getMenu();
-
-        if (Objects.equals(userRole, "Professional")) {
-            menu.findItem(R.id.homenav).setVisible(false);
-            menu.findItem(R.id.journalnav).setVisible(false);
-            menu.findItem(R.id.tracknav).setVisible(false);
-            menu.findItem(R.id.chatbotnav).setVisible(false);
-            menu.findItem(R.id.resnav).setVisible(false);
-            menu.findItem(R.id.setnav).setVisible(false);
-        } else if (Objects.equals(userRole,"User")) {
-            menu.findItem(R.id.assonav).setVisible(false);
-        }
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
             String userName = currentUser.getDisplayName();
-            loadUserData(userId);
+            loadUserData(userId, menu);
             fetchTokenAndConnectUser(userId, userName);
         } else {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
@@ -131,7 +117,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
             } else if (id == R.id.setnav) {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
-            }   else if (id == R.id.assonav) {
+            } else if (id == R.id.assonav) {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new AssociateFragment());
             }
 
@@ -155,10 +141,9 @@ public class MainScreenActivity extends AppCompatActivity {
         dialog.setOnLogoutConfirmationListener(() -> {
             if (currentUser != null) {
                 String userId = currentUser.getUid();
-                updateUserSession(userId, false); // Update session in Firestore
+                updateUserSession(userId, false);
             }
             mAuth.signOut();
-            // Go back to Account Management Activity with fragment of Sign in
             Intent intent = new Intent(MainScreenActivity.this, UserAccountManagementActivity.class);
             startActivity(intent);
             finish();
@@ -170,29 +155,22 @@ public class MainScreenActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("userSessions").document(userId);
 
-        // Create a map to hold the session data
         Map<String, Object> sessionData = new HashMap<>();
         if (isActive) {
             sessionData.put("isActive", true);
             sessionData.put("sessionStart", Timestamp.now());
-            sessionData.put("sessionEnd", null);// sessionEnd is not set on sign-in
+            sessionData.put("sessionEnd", null);
         } else {
             sessionData.put("isActive", false);
             sessionData.put("sessionEnd", Timestamp.now());
         }
 
-        // Update the document
         docRef.set(sessionData, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Session data updated successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Failed to update session data: " + e.getMessage());
-                });
+                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Session data updated successfully."))
+                .addOnFailureListener(e -> Log.e("Firestore", "Failed to update session data: " + e.getMessage()));
     }
 
-
-    private void loadUserData(String userId) {
+    private void loadUserData(String userId, Menu menu) {
         DocumentReference userDocRef = firestore.collection("credentials").document(userId);
 
         userDocRef.addSnapshotListener((documentSnapshot, e) -> {
@@ -202,6 +180,7 @@ public class MainScreenActivity extends AppCompatActivity {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
+                String role = documentSnapshot.getString("role");
                 String username = documentSnapshot.getString("username");
                 String imageUrl = documentSnapshot.getString("imageUrl");
 
@@ -211,6 +190,16 @@ public class MainScreenActivity extends AppCompatActivity {
                             .into(profileImageView);
                 } else {
                     profileImageView.setImageResource(R.drawable.userprofileicon);
+                }
+
+                if ("Professional".equals(role)) {
+                    menu.findItem(R.id.homenav).setVisible(false);
+                    menu.findItem(R.id.journalnav).setVisible(false);
+                    menu.findItem(R.id.tracknav).setVisible(false);
+                    menu.findItem(R.id.chatbotnav).setVisible(false);
+                    menu.findItem(R.id.resnav).setVisible(false);
+                } else {
+                    menu.findItem(R.id.assonav).setVisible(false);
                 }
             } else {
                 Toast.makeText(MainScreenActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
@@ -234,23 +223,15 @@ public class MainScreenActivity extends AppCompatActivity {
                 Request.Method.POST,
                 url,
                 requestBody,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String token = response.getString("token");
-                            connectUserToStreamChat(userId, token, userName);
-                        } catch (JSONException e) {
-                            Log.e("MainScreenActivity", "Failed to parse token from response", e);
-                        }
+                response -> {
+                    try {
+                        String token = response.getString("token");
+                        connectUserToStreamChat(userId, token, userName);
+                    } catch (JSONException e) {
+                        Log.e("MainScreenActivity", "Failed to parse token from response", e);
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("MainScreenActivity", "Failed to fetch token", error);
-                    }
-                }
+                error -> Log.e("MainScreenActivity", "Failed to fetch token", error)
         );
 
         requestQueue.add(jsonObjectRequest);
@@ -266,9 +247,9 @@ public class MainScreenActivity extends AppCompatActivity {
         ChatClient chatClient = ChatClient.instance();
         chatClient.connectUser(user, token).enqueue(result -> {
             if (result.isSuccess()) {
-                Log.d("MainScreenActivity", "User connected to Stream Chat successfully");
+                Log.d("MainScreenActivity", "Connected to Stream Chat successfully");
             } else {
-                Log.e("MainScreenActivity", "Failed to connect user to Stream Chat");
+                Log.e("MainScreenActivity", "Failed to connect to Stream Chat");
             }
         });
     }

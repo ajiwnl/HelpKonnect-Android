@@ -68,7 +68,7 @@ import com.itextpdf.layout.element.Paragraph;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, activityTitle, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
+    private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -122,8 +122,6 @@ public class TrackerFragment extends Fragment {
             String documentId = journal.getDocumentId(); // Retrieve the document ID of the clicked journal
             String journalUserId = mAuth.getCurrentUser().getUid(); // Retrieve the user ID
 
-            // Set the title and date based on the selected journal
-            activityTitle.setText(journal.getTitle());
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
             dateDisplay.setText(dateFormat.format(journal.getDate().toDate()));
 
@@ -245,18 +243,32 @@ public class TrackerFragment extends Fragment {
     }
 
     private void fetchAndAggregateEmotionDataText() {
-        // Get the current date and calculate the current week of the year
-        Calendar calendar = Calendar.getInstance();
-        calendar.setFirstDayOfWeek(Calendar.MONDAY); // Ensure the week starts on Monday
-        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR); // Get the current week of the year
-        int year = calendar.get(Calendar.YEAR); // Get the current year
+       Calendar calendar = Calendar.getInstance();
+        /*.setFirstDayOfWeek(Calendar.MONDAY);
+        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+        int year = calendar.get(Calendar.YEAR);
 
         // Get the start date of the current week (Monday)
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY); // Set to Monday (start of the week)
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         Date startOfCurrentWeek = calendar.getTime();
 
         // Get the end date of the current week (Sunday)
-        calendar.add(Calendar.DAY_OF_YEAR, 6); // Move to Sunday of the current week
+        calendar.add(Calendar.DAY_OF_YEAR, 6)
+        Date endOfCurrentWeek = calendar.getTime();*/
+
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY); // Set to Sunday (start of the week)
+        calendar.set(Calendar.HOUR_OF_DAY, 0); // Set hour to midnight
+        calendar.set(Calendar.MINUTE, 0); // Set minute to 0
+        calendar.set(Calendar.SECOND, 0); // Set second to 0
+        calendar.set(Calendar.MILLISECOND, 0); // Set millisecond to 0
+        Date startOfCurrentWeek = calendar.getTime();
+
+// Get the end date of the current week (Saturday) and set time to the last millisecond of the day
+        calendar.add(Calendar.DAY_OF_YEAR, 6); // Move to Saturday of the current week
+        calendar.set(Calendar.HOUR_OF_DAY, 23); // Set hour to end of day
+        calendar.set(Calendar.MINUTE, 59); // Set minute to end of day
+        calendar.set(Calendar.SECOND, 59); // Set second to end of day
+        calendar.set(Calendar.MILLISECOND, 999); // Set millisecond to end of day
         Date endOfCurrentWeek = calendar.getTime();
 
         // Format the start and end dates to display like "Nov 1 - Nov 7"
