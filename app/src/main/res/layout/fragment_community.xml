@@ -16,12 +16,13 @@
             android:id="@+id/searchCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search"
+            android:layout_margin="5dp"
+            android:queryHint="Search Post here..."
+            android:background="@drawable/layout_roundcorners"
+            android:backgroundTint="@color/SecondaryLight"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="8dp"/>
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ProgressBar
             android:id="@+id/LoaderPost"

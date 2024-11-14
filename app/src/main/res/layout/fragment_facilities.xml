@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:queryHint="Search Facilities here..."
             android:background="@drawable/layout_roundcorners"
             android:backgroundTint="@color/SecondaryLight"
             app:layout_constraintEnd_toEndOf="parent"

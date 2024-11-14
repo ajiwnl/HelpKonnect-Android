@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -64,6 +65,9 @@ public class EditProfileDialogFragment extends DialogFragment {
         // Initialize Firebase
         firestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        setEnterTransition(AnimationUtils.loadAnimation(view.getContext(), R.anim.appear_in));
+        setExitTransition(AnimationUtils.loadAnimation(view.getContext(), R.anim.disappear_out));
 
         // Initialize edit texts, buttons, and others
         saveButton = view.findViewById(R.id.saveButton);

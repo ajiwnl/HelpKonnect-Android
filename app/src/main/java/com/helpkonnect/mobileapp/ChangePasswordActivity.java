@@ -23,6 +23,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
         //Change the Text VAlue of Loader
+
+        findViewById(R.id.changePassBackButton).setOnClickListener(v -> finish());
+
         loaderView = getLayoutInflater().inflate(R.layout.loader_uam, null);
         TextView updateCredLoaderText = loaderView.findViewById(R.id.loadingText);
         updateCredLoaderText.setText("Updating Your Password");//Warning HArdcodedtext

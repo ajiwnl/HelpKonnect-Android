@@ -70,6 +70,10 @@ public class CommunityFragment extends Fragment {
 
         // Add SearchView functionality
         SearchView searchView = rootView.findViewById(R.id.searchCaption);
+        searchView.setOnClickListener( v -> {
+            searchView.setIconified(false);
+            searchView.requestFocus();
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

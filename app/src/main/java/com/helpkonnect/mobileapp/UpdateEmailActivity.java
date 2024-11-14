@@ -25,6 +25,8 @@ public class UpdateEmailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_email);
 
+
+        findViewById(R.id.changeEmailBackButton).setOnClickListener(v -> finish());
         // Initialize loaderView by inflating the loader layout
         loaderView = getLayoutInflater().inflate(R.layout.loader_uam, null);
         TextView updateEmailLoaderText = loaderView.findViewById(R.id.loadingText);

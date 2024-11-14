@@ -54,6 +54,10 @@ public class MessageFragment extends Fragment {
 
         // Set up the search view
         SearchView searchUser = rootView.findViewById(R.id.searchUser);
+        searchUser.setOnClickListener( v -> {
+            searchUser.setIconified(false);
+            searchUser.requestFocus();
+        });
         searchUser.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

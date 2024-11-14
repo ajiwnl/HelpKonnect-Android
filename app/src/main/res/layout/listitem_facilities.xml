@@ -18,21 +18,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="70dp"
-            android:background="@color/SecondaryLight"
+            android:background="@color/PrimaryLight"
             android:scaleType="centerCrop"
             android:src="@drawable/musicplayerbg"/>
 
         <TextView
             android:id="@+id/facilityTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:ellipsize="end"
             android:maxLines="1"
             android:text="Facility Title"
-            android:ellipsize="end"
+            android:paddingEnd="10dp"
             android:textColor="@android:color/black"
             android:textSize="26sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/facilityrating"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/facilityimageviewholder" />
 
@@ -41,6 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:maxLines="1"
             android:paddingEnd="10dp"
             android:text="Facility Location"
