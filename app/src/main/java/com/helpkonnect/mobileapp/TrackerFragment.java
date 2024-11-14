@@ -207,7 +207,15 @@ public class TrackerFragment extends Fragment {
     }
 
     private void fetchAndAggregateEmotionData() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Log.w("TrackerFragment", "User not logged in.");
+            return;
+        }
+        String userId = user.getUid();
+
         db.collection("emotion_analysis")
+                .whereEqualTo("journalUserId", userId)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Log.w("TrackerFragment", "Listen failed.", e);
@@ -229,64 +237,38 @@ public class TrackerFragment extends Fragment {
                             }
                         }
 
-                        for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
-                            Log.w("TrackerFragment", "Emotion: " + entry.getKey() + ", Aggregated Sum: " + entry.getValue());
-                        }
-
-                        int totalNumberOfEmotions = emotionData.size();
-                        Log.w("TrackerFragment", "Total Number of Emotions: " + totalNumberOfEmotions);
-
-
                         displayBarChart(emotionData); // Call to display the aggregated data in the bar chart
                     }
                 });
     }
 
     private void fetchAndAggregateEmotionDataText() {
-       Calendar calendar = Calendar.getInstance();
-        /*.setFirstDayOfWeek(Calendar.MONDAY);
-        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
-        int year = calendar.get(Calendar.YEAR);
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Log.w("TrackerFragment", "User not logged in.");
+            return;
+        }
+        String userId = user.getUid();
 
-        // Get the start date of the current week (Monday)
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         Date startOfCurrentWeek = calendar.getTime();
 
-        // Get the end date of the current week (Sunday)
-        calendar.add(Calendar.DAY_OF_YEAR, 6)
-        Date endOfCurrentWeek = calendar.getTime();*/
-
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY); // Set to Sunday (start of the week)
-        calendar.set(Calendar.HOUR_OF_DAY, 0); // Set hour to midnight
-        calendar.set(Calendar.MINUTE, 0); // Set minute to 0
-        calendar.set(Calendar.SECOND, 0); // Set second to 0
-        calendar.set(Calendar.MILLISECOND, 0); // Set millisecond to 0
-        Date startOfCurrentWeek = calendar.getTime();
-
-// Get the end date of the current week (Saturday) and set time to the last millisecond of the day
-        calendar.add(Calendar.DAY_OF_YEAR, 6); // Move to Saturday of the current week
-        calendar.set(Calendar.HOUR_OF_DAY, 23); // Set hour to end of day
-        calendar.set(Calendar.MINUTE, 59); // Set minute to end of day
-        calendar.set(Calendar.SECOND, 59); // Set second to end of day
-        calendar.set(Calendar.MILLISECOND, 999); // Set millisecond to end of day
+        calendar.add(Calendar.DAY_OF_YEAR, 6);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
         Date endOfCurrentWeek = calendar.getTime();
 
-        // Format the start and end dates to display like "Nov 1 - Nov 7"
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd", Locale.getDefault());
-        String formattedStartDate = dateFormat.format(startOfCurrentWeek);
-        String formattedEndDate = dateFormat.format(endOfCurrentWeek);
-
-        // Update the TextView to display the date range for the current week
-        dateTxtView.setText(formattedStartDate + " - " + formattedEndDate);
-
-        // Get the date one week ago for filtering (if needed)
-        calendar.add(Calendar.DAY_OF_YEAR, -7); // Get the start of last week
-        Date oneWeekAgo = calendar.getTime();
-
-        // Fetch data from Firestore, filtering for this week
         db.collection("emotion_analysis")
-                .whereGreaterThanOrEqualTo("dateCreated", startOfCurrentWeek) // Get data from the start of the current week
-                .whereLessThan("dateCreated", new Date()) // Ensure it's before the current date
+                .whereEqualTo("journalUserId", userId)
+                .whereGreaterThanOrEqualTo("dateCreated", startOfCurrentWeek)
+                .whereLessThan("dateCreated", new Date())
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
                         Log.w("TrackerFragment", "Listen failed.", e);
@@ -295,21 +277,16 @@ public class TrackerFragment extends Fragment {
 
                     if (snapshots != null && !snapshots.isEmpty()) {
                         emotionData.clear(); // Clear previous data
-
-                        // Iterate through snapshot documents to aggregate emotion data
                         for (QueryDocumentSnapshot document : snapshots) {
                             Map<String, Object> emotionsRaw = (Map<String, Object>) document.getData().get("emotions");
                             if (emotionsRaw != null) {
                                 for (Map.Entry<String, Object> entry : emotionsRaw.entrySet()) {
                                     String emotionName = entry.getKey();
                                     float emotionValue = ((Number) entry.getValue()).floatValue();
-
-                                    // Aggregate emotion values
                                     emotionData.put(emotionName, emotionData.getOrDefault(emotionName, 0f) + emotionValue);
                                 }
                             }
                         }
-
                         // Build a string with formatted emotion data
                         StringBuilder aggregatedDetails = new StringBuilder();
                         for (Map.Entry<String, Float> entry : emotionData.entrySet()) {
@@ -326,13 +303,14 @@ public class TrackerFragment extends Fragment {
                         totalEmotionTxtView.setText("Total Emotions: " + totalNumberOfEmotions);
                         specificEmotionsTxtView.setText(aggregatedDetails.toString());
                     } else {
-                        // Handle the case where there are no entries for the current week
                         Log.w("TrackerFragment", "No emotion data found for the current week.");
                         totalEmotionTxtView.setText("Total Emotions: 0");
                         specificEmotionsTxtView.setText("No emotion data found for the current week.");
+
                     }
                 });
     }
+
 
 
     private void displayBarChart(Map<String, Float> emotions) {
