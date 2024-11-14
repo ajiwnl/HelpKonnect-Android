@@ -146,23 +146,31 @@
                    android:layout_height="wrap_content"
                    android:orientation="horizontal">
 
-                  <Button
-                      android:id="@+id/ShareBtn"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:layout_margin="5dp"
-                      android:background="@drawable/buttondesign"
-                      android:text="Share"/>
+                  <ImageButton
+                      android:id="@+id/shareBtn"
+                      android:layout_width="56dp"
+                      android:layout_height="56dp"
+                      android:layout_margin="18dp"
+                      android:background="@drawable/background_textoutput"
+                      android:clickable="true"
+                      android:elevation="10dp"
+                      android:focusable="true"
+                      android:src="@drawable/edittextsendicon"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent" />
 
-                  <Button
-                      android:id="@+id/SaveBtn"
-                      android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:layout_weight="1"
-                      android:layout_margin="5dp"
-                      android:background="@drawable/buttondesign"
-                      android:text="Save"/>
+                  <ImageButton
+                      android:id="@+id/saveBtn"
+                      android:layout_width="56dp"
+                      android:layout_height="56dp"
+                      android:layout_margin="18dp"
+                      android:background="@drawable/background_textoutput"
+                      android:clickable="true"
+                      android:elevation="10dp"
+                      android:focusable="true"
+                      android:src="@drawable/ic_save_24"
+                      app:layout_constraintBottom_toBottomOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent" />
 
                </LinearLayout>
 

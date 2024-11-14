@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,7 +76,7 @@ import com.itextpdf.layout.element.Paragraph;
 public class TrackerFragment extends Fragment {
 
     private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
-    private Button saveBtn, shareBtn;
+    private ImageButton saveBtn, shareBtn;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -111,8 +112,8 @@ public class TrackerFragment extends Fragment {
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
         dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
         //Save and share button on tracker fragment
-        saveBtn = rootView.findViewById(R.id.SaveBtn);
-        shareBtn = rootView.findViewById(R.id.ShareBtn);
+        saveBtn = rootView.findViewById(R.id.saveBtn);
+        shareBtn = rootView.findViewById(R.id.shareBtn);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
