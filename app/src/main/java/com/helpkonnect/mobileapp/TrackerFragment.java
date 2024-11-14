@@ -69,6 +69,7 @@ import com.itextpdf.layout.element.Paragraph;
 public class TrackerFragment extends Fragment {
 
     private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
+    private Button saveBtn, shareBtn;
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -103,6 +104,9 @@ public class TrackerFragment extends Fragment {
         totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
         dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
+        //Save and share button on tracker fragment
+        saveBtn = rootView.findViewById(R.id.SaveBtn);
+        shareBtn = rootView.findViewById(R.id.ShareBtn);
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());

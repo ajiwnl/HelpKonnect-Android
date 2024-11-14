@@ -77,9 +77,12 @@
 
          <Spinner
              android:id="@+id/summarySpinner"
-             android:layout_width="200dp"
+             android:layout_width="match_parent"
              android:layout_height="40dp"
              android:layout_marginTop="10dp"
+             android:textAlignment="center"
+             android:elevation="8dp"
+             android:background="@drawable/buttondesign"
              app:layout_constraintTop_toBottomOf="@+id/PieChartHolder"
              app:layout_constraintStart_toStartOf="parent"
              app:layout_constraintEnd_toEndOf="parent"
@@ -137,6 +140,32 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:textSize="12sp" />
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+
+                  <Button
+                      android:id="@+id/ShareBtn"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:layout_margin="5dp"
+                      android:background="@drawable/buttondesign"
+                      android:text="Share"/>
+
+                  <Button
+                      android:id="@+id/SaveBtn"
+                      android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:layout_margin="5dp"
+                      android:background="@drawable/buttondesign"
+                      android:text="Save"/>
+
+               </LinearLayout>
+
             </LinearLayout>
 
          </androidx.cardview.widget.CardView>

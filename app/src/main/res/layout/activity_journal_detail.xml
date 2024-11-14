@@ -120,18 +120,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-
-    <ImageButton
-        android:id="@+id/expandJournalButton"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="18dp"
-        android:elevation="10dp"
-        android:background="@drawable/background_textoutput"
-        android:src="@drawable/floatingactionbuttonaddicon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ImageButton
         android:id="@+id/removeJournalButton"
         android:layout_width="56dp"
@@ -142,23 +130,9 @@
         android:elevation="10dp"
         android:focusable="true"
         android:src="@drawable/removebuttonicon"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/expandJournalButton"
-        app:layout_constraintEnd_toEndOf="parent" /> <!-- Initially hidden -->
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageButton
-        android:id="@+id/shareJournalDetailButton"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="18dp"
-        android:background="@drawable/background_textoutput"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:focusable="true"
-        android:src="@drawable/edittextsendicon"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/removeJournalButton"
-        app:layout_constraintEnd_toEndOf="parent" /> <!-- Initially hidden -->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,7 +45,7 @@ import okhttp3.Response;
 public class CreateJournalActivity extends AppCompatActivity {
 
     private ImageView backButton, journalImage;
-    private ImageButton saveButton, shareButton, expandButton;
+    private ImageButton saveButton;
     private View loaderView;
     private EditText journalTitle, journalSubtitle, journalNotes;
     private TextView journalDate;
@@ -56,10 +56,6 @@ public class CreateJournalActivity extends AppCompatActivity {
     private static final String TAG = "Translation";
     private static String API_KEY;
     private OkHttpClient client = new OkHttpClient();  // OkHttpClient instance
-
-    private final Date DateToday = new Date();
-    private final SimpleDateFormat DateTodayFormat = new SimpleDateFormat("EEEE, dd MMMM, yyyy", Locale.ENGLISH);
-    private final String DateTodayString = DateTodayFormat.format(DateToday);
 
 
     private boolean isExpanded = false;
@@ -79,8 +75,6 @@ public class CreateJournalActivity extends AppCompatActivity {
         // Set up UI components
         backButton = findViewById(R.id.journalBackButton);
         saveButton = findViewById(R.id.saveJournalButton);
-        shareButton = findViewById(R.id.shareJournalButton);
-        expandButton = findViewById(R.id.ExpandJournalActionButton);
 
         journalTitle = findViewById(R.id.journalEntryTitleEditText);
         journalSubtitle = findViewById(R.id.journalEntrySubtitleEditText);
@@ -91,16 +85,6 @@ public class CreateJournalActivity extends AppCompatActivity {
         backButton.setOnClickListener( v -> {
             finish();
         });
-
-        expandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                toggleButtons();
-            }
-        });
-
-
 
         //Get the current timestamp
         com.google.firebase.Timestamp timestamp = com.google.firebase.Timestamp.now();
@@ -122,31 +106,6 @@ public class CreateJournalActivity extends AppCompatActivity {
         // Save journal entry
         saveButton.setOnClickListener(v -> saveJournalEntry());
 
-        shareButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Cannot Share Yet", Toast.LENGTH_SHORT).show();
-        });
-
-    }
-
-    private void toggleButtons() {
-        Animation animShow = AnimationUtils.loadAnimation(this, R.anim.fab_slide_up);
-        Animation animHide = AnimationUtils.loadAnimation(this, R.anim.fab_slide_down);
-        Animation animShake = AnimationUtils.loadAnimation(this, R.anim.fab_shake_up);
-
-        expandButton.startAnimation(animShake);
-
-        if (isExpanded) {
-            saveButton.startAnimation(animHide);
-            shareButton.startAnimation(animHide);
-            saveButton.setVisibility(View.GONE);
-            shareButton.setVisibility(View.GONE);
-        } else {
-            saveButton.setVisibility(View.VISIBLE);
-            shareButton.setVisibility(View.VISIBLE);
-            saveButton.startAnimation(animShow);
-            shareButton.startAnimation(animShow);
-        }
-        isExpanded = !isExpanded;
     }
 
     private void openImagePicker() {
