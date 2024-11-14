@@ -1,7 +1,10 @@
 package com.helpkonnect.mobileapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +45,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import androidx.core.app.NotificationCompat;
+
 public class JournalFragment extends Fragment {
 
     private TextView currentDateTextView;
@@ -84,8 +96,6 @@ public class JournalFragment extends Fragment {
         journalCollections = rootView.findViewById(R.id.journalcollectionrecyclerview);
         journalCollections.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-
-
         // Initialize adapter with click listener to navigate to JournalDetailActivity
         adapter = new JournalListAdapter(journalList, journal -> {
             //Convert Timestamp to String
@@ -119,7 +129,7 @@ public class JournalFragment extends Fragment {
         });
 
         setRandomGreeting();
-
+        setDailyNotification();
         fetchJournals(); // Load the journals
         fetchWeatherApiKey();
         return rootView;
@@ -397,5 +407,48 @@ public class JournalFragment extends Fragment {
         // Set the selected greeting to the TextView
         userGreetingTextView.setText(selectedGreeting);
     }
+
+    private void setDailyNotification() {
+        // Check if the app can schedule exact alarms
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
+            AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                // Request permission for exact alarms if not granted
+                requestExactAlarmPermission();
+                return;  // Return early if the permission is not granted yet
+            }
+        }
+
+        // Proceed with scheduling the notification if permission is granted
+        Intent intent = new Intent(requireContext(), JournalReminderReceiver.class);
+
+        // Use FLAG_IMMUTABLE since you likely don't need to modify this PendingIntent after it is created
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        // Set up AlarmManager to fire the intent every 5 minutes
+        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            long interval = 3 * 60 * 1000;
+            long triggerAtMillis = System.currentTimeMillis() + interval;
+
+            // Use setExactAndAllowWhileIdle to ensure the alarm fires exactly at the specified time
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // For newer versions (Android 6.0 and above), use setExactAndAllowWhileIdle
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+            } else {
+                // For older versions, use setRepeating
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, interval, pendingIntent);
+            }
+        }
+    }
+
+    // Method to request permission for exact alarms
+    private void requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            startActivityForResult(intent, 1001);  // Custom request code
+        }
+    }
+
 
 }
