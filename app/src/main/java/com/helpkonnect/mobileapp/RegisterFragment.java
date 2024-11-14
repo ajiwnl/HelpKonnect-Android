@@ -221,6 +221,9 @@ public class RegisterFragment extends Fragment {
             user.put("rate", 0);
             user.put("associated", "");
         }
+        if(Objects.equals(role, "User")) {
+            user.put("firstTimeLogin", true);
+        }
         // Save the user in Firestore
         db.collection("credentials")
                 .document(userId)
