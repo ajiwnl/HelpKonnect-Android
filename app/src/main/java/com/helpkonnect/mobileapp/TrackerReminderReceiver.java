@@ -11,23 +11,16 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.Timestamp;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class JournalReminderReceiver extends BroadcastReceiver {
+public class TrackerReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -55,8 +48,8 @@ public class JournalReminderReceiver extends BroadcastReceiver {
         Timestamp startTimestamp = new Timestamp(startOfDay);
         Timestamp endTimestamp = new Timestamp(endOfDay);
 
-        db.collection("journals")
-                .whereEqualTo("userId", userId)
+        db.collection("emotion_analysis")
+                .whereEqualTo("journalUserId", userId)
                 .whereGreaterThanOrEqualTo("dateCreated", startTimestamp)
                 .whereLessThanOrEqualTo("dateCreated", endTimestamp)
                 .get()
@@ -69,10 +62,10 @@ public class JournalReminderReceiver extends BroadcastReceiver {
                             // Reschedule the alarm to repeat every 3 minutes
                         } else {
                             // Found a journal entry for today
-                            Log.d("JournalReminderReceiver", "Found journal entry for today.");
+                            Log.d("TrackerReminderReceiver", "Found analyzed journal entry for today.");
                         }
                     } else {
-                        Log.e("JournalReminderReceiver", "Error getting journal entries: " + task.getException());
+                        Log.e("TrackerReminderReceiver", "Error getting analyzed journal entries: " + task.getException());
                     }
                 });
     }
@@ -123,18 +116,18 @@ public class JournalReminderReceiver extends BroadcastReceiver {
     private void sendReminderNotification(Context context) {
         // Build and show the notification
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        String channelId = "journal_reminder_channel";
+        String channelId = "tracker_reminder_channel";
 
         // Create the notification channel if required (for Android 8+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    "Journal Reminders", NotificationManager.IMPORTANCE_DEFAULT);
+                    "Emotion Analysis Reminders", NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
 
         Notification notification = new NotificationCompat.Builder(context, channelId)
                 .setContentTitle("Reminder")
-                .setContentText("You haven't written your journal for today. Remember to write!")
+                .setContentText("Analyze your emotion today. To keep track of your emotion.")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .build();
 

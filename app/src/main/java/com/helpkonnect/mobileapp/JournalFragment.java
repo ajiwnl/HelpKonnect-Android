@@ -428,7 +428,7 @@ public class JournalFragment extends Fragment {
         // Set up AlarmManager to fire the intent every 5 minutes
         AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            long interval = 3 * 60 * 1000;
+            long interval = 60 * 60 * 1000;
             long triggerAtMillis = System.currentTimeMillis() + interval;
 
             // Use setExactAndAllowWhileIdle to ensure the alarm fires exactly at the specified time
@@ -441,6 +441,49 @@ public class JournalFragment extends Fragment {
             }
         }
     }
+
+    /*private void setDailyNotification() {
+        // Check if the app can schedule exact alarms
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
+            AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                // Request permission for exact alarms if not granted
+                requestExactAlarmPermission();
+                return;  // Return early if the permission is not granted yet
+            }
+        }
+
+        Log.d("JournalFragment", "Setting daily notification...");
+
+        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) {
+            Log.e("JournalFragment", "AlarmManager is null. Unable to set notification.");
+            return;
+        }
+
+        Intent intent = new Intent(getContext(), JournalReminderReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 01);  // Set the hour to midnight
+        calendar.set(Calendar.MINUTE, 30);  // Set the minute to 50
+        calendar.set(Calendar.SECOND, 0);  // Set the second to 0
+
+        // If it's already past midnight today, schedule for tomorrow
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        Log.d("JournalFragment", "Notification scheduled for: " + calendar.getTime());
+
+        // Set the alarm
+        alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(),
+                pendingIntent
+        );
+    }*/
+
 
     // Method to request permission for exact alarms
     private void requestExactAlarmPermission() {

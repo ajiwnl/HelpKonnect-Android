@@ -82,7 +82,7 @@
             android:exported="false" />
 
         <receiver android:name=".JournalReminderReceiver" android:enabled="true" android:exported="false" />
-
+        <receiver android:name=".TrackerReminderReceiver" android:enabled="true" android:exported="false" />
 
     </application>
 
