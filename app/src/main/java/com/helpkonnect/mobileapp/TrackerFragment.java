@@ -265,6 +265,13 @@ public class TrackerFragment extends Fragment {
         calendar.set(Calendar.MILLISECOND, 999);
         Date endOfCurrentWeek = calendar.getTime();
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM. dd", Locale.getDefault());
+        String startWeekString = dateFormat.format(startOfCurrentWeek);
+        String endWeekString = dateFormat.format(endOfCurrentWeek);
+        String weekRange = startWeekString + " - " + endWeekString;
+        dateTxtView.setText(weekRange);
+
+
         db.collection("emotion_analysis")
                 .whereEqualTo("journalUserId", userId)
                 .whereGreaterThanOrEqualTo("dateCreated", startOfCurrentWeek)
