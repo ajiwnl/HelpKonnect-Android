@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
 
@@ -178,39 +179,43 @@ public class InitialSigninFragment extends Fragment {
         } else {
             String userId = mAuth.getCurrentUser().getUid();
 
-            CollectionReference answersRef = db.collection("answers");
+            // Reference to the "answers" collection with each user's answers in a subcollection named "userAnswers" under their userId
+            DocumentReference userDocRef = db.collection("answers").document(userId);
+            CollectionReference userAnswersRef = userDocRef.collection("userAnswers");
+
             for (HashMap<String, String> response : userResponses) {
                 String question = response.get("question");
                 String answer = response.get("answer");
                 String customAnswer = response.get("customAnswer");
 
                 HashMap<String, Object> answerData = new HashMap<>();
-                answerData.put("userId", userId);
                 answerData.put("question", question);
                 answerData.put("answer", answer);
                 answerData.put("customAnswer", customAnswer);
 
-                answersRef.add(answerData)
+                userAnswersRef.add(answerData)
                         .addOnSuccessListener(documentReference -> {
-                            Log.d("InitialSigninFragment", "Answers saved successfully!");
+                            Log.d("InitialSigninFragment", "Answer saved successfully for question: " + question);
                         })
                         .addOnFailureListener(e -> {
-                            Log.d("InitialSigninFragment", "Failed to save answers: " + e.getMessage());
-                        });
-
-                db.collection("credentials").document(userId)
-                        .update("firstTimeLogin", false)
-                        .addOnSuccessListener(aVoid -> {
-                            Log.d("InitialSigninFragment", "First-time login updated.");
-
-                            Intent toMainScreen = new Intent(getActivity(), MainScreenActivity.class);
-                            startActivity(toMainScreen);
-                            getActivity().finish();
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.d("InitialSigninFragment", "Failed to update firstTimeLogin: " + e.getMessage());
+                            Log.d("InitialSigninFragment", "Failed to save answer for question: " + question + ", error: " + e.getMessage());
                         });
             }
+
+            // After saving answers, update 'firstTimeLogin' field in the 'credentials' collection
+            db.collection("credentials").document(userId)
+                    .update("firstTimeLogin", false)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("InitialSigninFragment", "First-time login updated.");
+
+                        // Navigate to MainScreenActivity
+                        Intent toMainScreen = new Intent(getActivity(), MainScreenActivity.class);
+                        startActivity(toMainScreen);
+                        getActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.d("InitialSigninFragment", "Failed to update firstTimeLogin: " + e.getMessage());
+                    });
         }
     }
 }
