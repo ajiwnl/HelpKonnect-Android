@@ -1,12 +1,15 @@
 package com.helpkonnect.mobileapp;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -23,8 +26,11 @@ import java.util.Date;
 public class TrackerReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("TrackerReminderReceiver", "onReceive triggered.");
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
+            Log.d("TrackerReminderReceiver", "User is not logged in.");
             return;
         }
 
@@ -48,6 +54,8 @@ public class TrackerReminderReceiver extends BroadcastReceiver {
         Timestamp startTimestamp = new Timestamp(startOfDay);
         Timestamp endTimestamp = new Timestamp(endOfDay);
 
+        Log.d("TrackerReminderReceiver", "Checking journal entries for userId: " + userId + " from " + startTimestamp + " to " + endTimestamp);
+
         db.collection("emotion_analysis")
                 .whereEqualTo("journalUserId", userId)
                 .whereGreaterThanOrEqualTo("dateCreated", startTimestamp)
@@ -58,6 +66,7 @@ public class TrackerReminderReceiver extends BroadcastReceiver {
                         QuerySnapshot querySnapshot = task.getResult();
                         if (querySnapshot != null && querySnapshot.isEmpty()) {
                             // No journal found for today, send a reminder notification
+                            Log.d("TrackerReminderReceiver", "No journal entry found for today.");
                             sendReminderNotification(context);
                             // Reschedule the alarm to repeat every 3 minutes
                         } else {
@@ -70,7 +79,7 @@ public class TrackerReminderReceiver extends BroadcastReceiver {
                 });
     }
 
-    /*private static final String TAG = "DailyNotificationReceiver";
+      /*private static final String TAG = "DailyNotificationReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -115,6 +124,7 @@ public class TrackerReminderReceiver extends BroadcastReceiver {
 
     private void sendReminderNotification(Context context) {
         // Build and show the notification
+        Log.d("TrackerReminderReceiver", "Sending reminder notification.");
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "tracker_reminder_channel";
 
@@ -132,6 +142,7 @@ public class TrackerReminderReceiver extends BroadcastReceiver {
                 .build();
 
         notificationManager.notify(1, notification);
+        Log.d("TrackerReminderReceiver", "Reminder notification sent.");
     }
 }
 

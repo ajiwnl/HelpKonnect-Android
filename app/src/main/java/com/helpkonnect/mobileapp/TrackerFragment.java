@@ -552,10 +552,14 @@ public class TrackerFragment extends Fragment {
         }
     }
     private void setDailyNotification() {
+        Log.d("TrackerReminderReceiver", "Setting up daily notification...");
+
         // Check if the app can schedule exact alarms
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
             AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
             if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                Log.w("TrackerReminderReceiver", "Exact alarm permission not granted.");
+
                 // Request permission for exact alarms if not granted
                 requestExactAlarmPermission();
                 return;  // Return early if the permission is not granted yet
@@ -564,26 +568,25 @@ public class TrackerFragment extends Fragment {
 
         // Proceed with scheduling the notification if permission is granted
         Intent intent = new Intent(requireContext(), TrackerReminderReceiver.class);
-
-        // Use FLAG_IMMUTABLE since you likely don't need to modify this PendingIntent after it is created
         PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        // Set up AlarmManager to fire the intent every 5 minutes
         AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-            long interval = 2 * 60 * 1000;
+            long interval = 3 * 60 * 1000;  // Set interval for 3 minutes (180,000 milliseconds)
             long triggerAtMillis = System.currentTimeMillis() + interval;
+            Log.d("TrackerReminderReceiver", "Notification set to trigger in 3 minutes at: " + triggerAtMillis);
 
             // Use setExactAndAllowWhileIdle to ensure the alarm fires exactly at the specified time
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // For newer versions (Android 6.0 and above), use setExactAndAllowWhileIdle
                 alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+                Log.d("TrackerReminderReceiver", "Exact alarm set using setExactAndAllowWhileIdle.");
             } else {
-                // For older versions, use setRepeating
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, interval, pendingIntent);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
+                Log.e("TrackerReminderReceiver", "AlarmManager is null, failed to set alarm.");
             }
         }
     }
+
 
     /*private void setDailyNotification() {
         // Check if the app can schedule exact alarms
