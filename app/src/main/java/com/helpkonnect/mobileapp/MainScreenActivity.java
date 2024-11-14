@@ -115,12 +115,11 @@ public class MainScreenActivity extends AppCompatActivity {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new ResourcesFragment());
             } else if (id == R.id.comnav) {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
-            } else if (id == R.id.setnav) {
-                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
             } else if (id == R.id.assonav) {
                 FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new AssociateFragment());
+            } else if (id == R.id.setnav) {
+                FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new UserSettingsFragment());
             }
-
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });

@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+
 import android.view.MotionEvent;
 import android.text.InputType;
 import android.content.SharedPreferences;
@@ -161,6 +163,7 @@ public class SigninFragment extends Fragment {
                                             if (!queryDocumentSnapshots.isEmpty()) {
                                                 // Assuming each user has only one document with their userId
                                                 String role = queryDocumentSnapshots.getDocuments().get(0).getString("role");
+                                                boolean isFirstSignIn = Boolean.TRUE.equals(queryDocumentSnapshots.getDocuments().get(0).getBoolean("firstTimeLogin"));
                                                 Log.d(TAG, "Role fetched for user: " + role);
 
                                                 // Save credentials if "Remember Me" is checked
@@ -182,14 +185,10 @@ public class SigninFragment extends Fragment {
                                                 updateUserSession(userId, true);
                                                 userActivity(userId);
 
-                                                //For Firsttimesignin ,change if value from tru to isFirstSignIn
-                                                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                                                boolean isFirstSignIn = preferences.getBoolean("isFirstSignIn", true);
-                                                if (true) {
+                                                if (isFirstSignIn && Objects.equals(role, "User")) {
                                                     showLoader(false, null);
                                                     androidx.fragment.app.FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                                                     FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new InitialSigninFragment());
-                                                    preferences.edit().putBoolean("isFirstSignIn", false).apply();
                                                 } else {
                                                     Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                                     intent.putExtra("userRole", role);

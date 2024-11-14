@@ -2,6 +2,7 @@ package com.helpkonnect.mobileapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +33,8 @@ public class InitialSigninFragment extends Fragment {
     private InitialSignInQnA surveyData;
     private int currentQuestionIndex = 0;
 
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
     private ArrayList<HashMap<String, String>> userResponses;
 
     @Override
@@ -44,6 +52,9 @@ public class InitialSigninFragment extends Fragment {
 
         surveyData = new InitialSignInQnA();
         userResponses = new ArrayList<>();
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         displayCurrentQuestion();
 
         nextOrFinish.setOnClickListener(v -> {
@@ -165,20 +176,41 @@ public class InitialSigninFragment extends Fragment {
             dyk.setText("You left some questions unanswered.");
             dyk.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fab_shake_up));
         } else {
+            String userId = mAuth.getCurrentUser().getUid();
+
+            CollectionReference answersRef = db.collection("answers");
             for (HashMap<String, String> response : userResponses) {
                 String question = response.get("question");
                 String answer = response.get("answer");
-                // Debug samples display answers
-                System.out.println("Question: " + question + " | Answer: " + answer);
+                String customAnswer = response.get("customAnswer");
+
+                HashMap<String, Object> answerData = new HashMap<>();
+                answerData.put("userId", userId);
+                answerData.put("question", question);
+                answerData.put("answer", answer);
+                answerData.put("customAnswer", customAnswer);
+
+                answersRef.add(answerData)
+                        .addOnSuccessListener(documentReference -> {
+                            Log.d("InitialSigninFragment", "Answers saved successfully!");
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.d("InitialSigninFragment", "Failed to save answers: " + e.getMessage());
+                        });
+
+                db.collection("credentials").document(userId)
+                        .update("firstTimeLogin", false)
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("InitialSigninFragment", "First-time login updated.");
+
+                            Intent toMainScreen = new Intent(getActivity(), MainScreenActivity.class);
+                            startActivity(toMainScreen);
+                            getActivity().finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.d("InitialSigninFragment", "Failed to update firstTimeLogin: " + e.getMessage());
+                        });
             }
-
-            //Save Answers to DB here
-
-            Intent toMainScreen = new Intent(getActivity(), MainScreenActivity.class);
-            startActivity(toMainScreen);
-            getActivity().finish();
-
         }
     }
-
 }
