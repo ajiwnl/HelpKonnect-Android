@@ -129,7 +129,7 @@ public class JournalFragment extends Fragment {
         });
 
         setRandomGreeting();
-        setDailyNotification();
+        /*setDailyNotification();*/
         fetchJournals(); // Load the journals
         fetchWeatherApiKey();
         return rootView;
@@ -408,7 +408,7 @@ public class JournalFragment extends Fragment {
         userGreetingTextView.setText(selectedGreeting);
     }
 
-    private void setDailyNotification() {
+    /*private void setDailyNotification() {
         // Check if the app can schedule exact alarms
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
             AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
@@ -440,7 +440,7 @@ public class JournalFragment extends Fragment {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, interval, pendingIntent);
             }
         }
-    }
+    }/*
 
     /*private void setDailyNotification() {
         // Check if the app can schedule exact alarms

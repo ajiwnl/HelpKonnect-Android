@@ -30,8 +30,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
@@ -72,6 +76,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import com.onesignal.OneSignal;
 
 public class TrackerFragment extends Fragment {
 
@@ -172,7 +177,7 @@ public class TrackerFragment extends Fragment {
 
         journalRecyclerView.setAdapter(adapter);
         fetchJournals();
-        setDailyNotification();
+        /*setDailyNotification();*/
         return rootView;
     }
 
@@ -551,91 +556,99 @@ public class TrackerFragment extends Fragment {
             }
         }
     }
-    private void setDailyNotification() {
-        Log.d("TrackerReminderReceiver", "Setting up daily notification...");
 
-        // Check if the app can schedule exact alarms
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
-            AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
-                Log.w("TrackerReminderReceiver", "Exact alarm permission not granted.");
+   /* private void setDailyNotification() {
+        Log.d("TrackerFragment", "Setting up daily notification with OneSignal...");
 
-                // Request permission for exact alarms if not granted
-                requestExactAlarmPermission();
-                return;  // Return early if the permission is not granted yet
-            }
+        // Check if the user hasn’t logged an entry today
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            Date startOfDay = calendar.getTime();
+
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            Date endOfDay = calendar.getTime();
+
+            Timestamp startTimestamp = new Timestamp(startOfDay);
+            Timestamp endTimestamp = new Timestamp(endOfDay);
+
+            db.collection("emotion_analysis")
+                    .whereEqualTo("journalUserId", userId)
+                    .whereGreaterThanOrEqualTo("dateCreated", startTimestamp)
+                    .whereLessThanOrEqualTo("dateCreated", endTimestamp)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult().isEmpty()) {
+                            Log.d("TrackerFragment", "No entry for today. Sending reminder...");
+
+                            try {
+                                // Fetch the correct OneSignal player ID
+                                String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
+
+
+                                if (oneSignalPlayerId != null) {
+                                    // Create the notification content
+                                    JSONObject json = new JSONObject();
+                                    json.put("app_id", "3d064d90-5221-48da-aaa6-0702f8531c99");  // Replace with your OneSignal app ID
+
+                                    // Add title (headings) and content (contents)
+                                    JSONObject headings = new JSONObject();
+                                    headings.put("en", "Emotion Analysis Reminder");  // Set your desired title here
+                                    json.put("headings", headings);
+
+                                    JSONObject contents = new JSONObject();
+                                    contents.put("en", "It’s time to analyze your emotions today!");
+                                    json.put("contents", contents);
+                                    json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
+
+
+                                    // Replace with your OneSignal REST API key
+                                    String apiKey = "os_v2_app_hude3ecsefenvkvga4bpquy4te4mxajyftqerken66en4mhhwrart2exdozrwrjhrf7sbivyriviti42pc32aev5ffkcwdsm26o63hy";  // Use your actual OneSignal API key here
+
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                                            Request.Method.POST,
+                                            "https://onesignal.com/api/v1/notifications",
+                                            json,
+                                            new Response.Listener<JSONObject>() {
+                                                @Override
+                                                public void onResponse(JSONObject response) {
+                                                    Log.d("OneSignal", "Notification sent successfully: " + response.toString());
+                                                }
+                                            },
+                                            new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    Log.e("OneSignal", "Failed to send notification", error);
+                                                }
+                                            }) {
+                                        @Override
+                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                            Map<String, String> headers = new HashMap<>();
+                                            headers.put("Content-Type", "application/json");
+                                            headers.put("Authorization", "Basic " + apiKey);
+                                            return headers;
+                                        }
+                                    };
+
+                                    // Add the request to the queue
+                                    Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+                                } else {
+                                    Log.e("TrackerFragment", "Invalid OneSignal player ID.");
+                                }
+
+                            } catch (JSONException e) {
+                                Log.e("OneSignal", "Error creating notification request", e);
+                            }
+                        }
+                    });
         }
-
-        // Proceed with scheduling the notification if permission is granted
-        Intent intent = new Intent(requireContext(), TrackerReminderReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            long interval = 3 * 60 * 1000;  // Set interval for 3 minutes (180,000 milliseconds)
-            long triggerAtMillis = System.currentTimeMillis() + interval;
-            Log.d("TrackerReminderReceiver", "Notification set to trigger in 3 minutes at: " + triggerAtMillis);
-
-            // Use setExactAndAllowWhileIdle to ensure the alarm fires exactly at the specified time
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-                Log.d("TrackerReminderReceiver", "Exact alarm set using setExactAndAllowWhileIdle.");
-            } else {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent);
-                Log.e("TrackerReminderReceiver", "AlarmManager is null, failed to set alarm.");
-            }
-        }
-    }
-
-
-    /*private void setDailyNotification() {
-        // Check if the app can schedule exact alarms
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API level 33 (Android 13)
-            AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
-                // Request permission for exact alarms if not granted
-                requestExactAlarmPermission();
-                return;  // Return early if the permission is not granted yet
-            }
-        }
-
-        Log.d("JournalFragment", "Setting daily notification...");
-
-        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) {
-            Log.e("JournalFragment", "AlarmManager is null. Unable to set notification.");
-            return;
-        }
-
-        Intent intent = new Intent(getContext(), JournalReminderReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 01);  // Set the hour to midnight
-        calendar.set(Calendar.MINUTE, 30);  // Set the minute to 50
-        calendar.set(Calendar.SECOND, 0);  // Set the second to 0
-
-        // If it's already past midnight today, schedule for tomorrow
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
-
-        Log.d("JournalFragment", "Notification scheduled for: " + calendar.getTime());
-
-        // Set the alarm
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),
-                pendingIntent
-        );
     }*/
 
 
-    // Method to request permission for exact alarms
-    private void requestExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            startActivityForResult(intent, 1001);  // Custom request code
-        }
-    }
 }
