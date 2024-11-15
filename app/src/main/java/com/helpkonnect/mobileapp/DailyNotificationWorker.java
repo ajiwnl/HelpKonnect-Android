@@ -37,6 +37,7 @@ public class DailyNotificationWorker extends Worker {
     private static final String TAG = "DailyNotificationWorker";
     private static final String jTAG = "Journal Reminder Tag";
     private static final String tTAG = "Tracker Reminder Tag";
+    private static final String rTAG = "Resources Reminder Tag";
     private static final String ONE_KEY_URL = "https://helpkonnect.vercel.app/api/onesignalKey";
     private String oneSignalKey = null;
     private String oneSignalID = null;
@@ -51,6 +52,7 @@ public class DailyNotificationWorker extends Worker {
         fetchOneSignalKeys();
         sendTrackerDailyNotification();
         sendJournalDailyNotification();
+        resourceReminderNotification();
         return Result.success();
     }
 
@@ -255,4 +257,75 @@ public class DailyNotificationWorker extends Worker {
                     });
         }
     }
+
+    private void resourceReminderNotification() {
+        Log.d(rTAG, "Checking time for resource reminder notification...");
+
+         Calendar calendar = Calendar.getInstance();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        int[] notificationHours = {9, 12, 15, 18};
+
+        boolean shouldSendNotification = false;
+        for (int hour : notificationHours) {
+            if (currentHour == hour) {
+                shouldSendNotification = true;
+                break;
+            }
+        }
+
+        if (!shouldSendNotification) {
+            Log.d(rTAG, "Not the right time for a resource reminder.");
+            return;
+        }
+
+        Log.d(rTAG, "Sending daily resource reminder notification with OneSignal...");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
+
+            if (oneSignalPlayerId != null) {
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("app_id", oneSignalID);
+
+                    JSONObject headings = new JSONObject();
+                    headings.put("en", "Resources Available");
+                    json.put("headings", headings);
+
+                    JSONObject contents = new JSONObject();
+                    contents.put("en", "Try using these mental health resources available in our app.");
+                    json.put("contents", contents);
+                    json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
+
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                            Request.Method.POST,
+                            "https://onesignal.com/api/v1/notifications",
+                            json,
+                            response -> Log.d(rTAG, "Notification sent successfully: " + response.toString()),
+                            error -> Log.e(rTAG, "Failed to send notification", error)
+                    ) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> headers = new HashMap<>();
+                            headers.put("Content-Type", "application/json");
+                            headers.put("Authorization", "Basic " + oneSignalKey);
+                            return headers;
+                        }
+                    };
+
+                    Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
+
+                } catch (JSONException e) {
+                    Log.e(rTAG, "Error creating notification request", e);
+                }
+            } else {
+                Log.e(rTAG, "Invalid OneSignal player ID.");
+            }
+        }
+    }
+
+
+
 }
