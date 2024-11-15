@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -81,7 +83,10 @@ import com.onesignal.OneSignal;
 public class TrackerFragment extends Fragment {
 
     private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
-    private ImageButton saveBtn, shareBtn;
+
+    private ImageButton saveBtn, shareBtn, expandBtn;
+    private Boolean isExpanded = false;
+
     private List<Journal> journalList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -116,9 +121,23 @@ public class TrackerFragment extends Fragment {
         totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
         dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
+
         //Save and share button on tracker fragment
         saveBtn = rootView.findViewById(R.id.saveBtn);
         shareBtn = rootView.findViewById(R.id.shareBtn);
+        expandBtn = rootView.findViewById(R.id.MoreOptionsBtn);
+
+        expandBtn.setOnClickListener( v ->{
+            toggleButtons(rootView.getContext());
+        });
+
+        saveBtn.setOnClickListener( v ->{
+            Toast.makeText(rootView.getContext(), "Clicked Save", Toast.LENGTH_SHORT).show();
+        });
+
+        shareBtn.setOnClickListener( v ->{
+            Toast.makeText(rootView.getContext(), "Clicked Share", Toast.LENGTH_SHORT).show();
+        });
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
         String todayDate = dateFormatDefault.format(new Date());
@@ -157,12 +176,18 @@ public class TrackerFragment extends Fragment {
                 if ("Overall Summary".equals(selectedOption)) {
                     barChartView.setVisibility(View.VISIBLE);
                     WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
+                    isExpanded = false;
+                    saveBtn.setVisibility(View.GONE);
+                    shareBtn.setVisibility(View.GONE);
                     fetchAndAggregateEmotionData();
                 } else if ("Weekly Summary".equals(selectedOption)) {
                     barChartView.setVisibility(View.GONE); // Hide bar chart
                     WeeklySummary.setVisibility(View.VISIBLE); // Show WeeklySummary card
                     fetchAndAggregateEmotionDataText();
                 } else {
+                    isExpanded = false;
+                    saveBtn.setVisibility(View.GONE);
+                    shareBtn.setVisibility(View.GONE);
                     barChartView.setVisibility(View.GONE); // Hide bar chart
                     WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
                 }
@@ -180,6 +205,28 @@ public class TrackerFragment extends Fragment {
         /*setDailyNotification();*/
         return rootView;
     }
+
+    private void toggleButtons(Context context) {
+        Animation animShow = AnimationUtils.loadAnimation(context, R.anim.fab_slide_up);
+        Animation animHide = AnimationUtils.loadAnimation(context, R.anim.fab_slide_down);
+        Animation animShake = AnimationUtils.loadAnimation(context, R.anim.fab_shake_up);
+
+        expandBtn.startAnimation(animShake);
+
+        if (isExpanded) {
+            saveBtn.startAnimation(animHide);
+            shareBtn.startAnimation(animHide);
+            saveBtn.setVisibility(View.GONE);
+            shareBtn.setVisibility(View.GONE);
+        } else {
+            saveBtn.setVisibility(View.VISIBLE);
+            shareBtn.setVisibility(View.VISIBLE);
+            saveBtn.startAnimation(animShow);
+            shareBtn.startAnimation(animShow);
+        }
+        isExpanded = !isExpanded;
+    }
+
 
     private void fetchJournals() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

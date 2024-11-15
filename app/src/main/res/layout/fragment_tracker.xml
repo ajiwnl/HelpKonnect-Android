@@ -144,39 +144,57 @@
                <LinearLayout
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:orientation="horizontal">
+                   android:padding="10dp"
+                   android:orientation="horizontal"
+                   android:gravity="end">
 
                   <ImageButton
-                      android:id="@+id/shareBtn"
+                      android:id="@+id/MoreOptionsBtn"
                       android:layout_width="56dp"
-                      android:layout_height="56dp"
-                      android:layout_margin="18dp"
+                      android:layout_height="40dp"
                       android:background="@drawable/background_textoutput"
                       android:clickable="true"
-                      android:elevation="10dp"
+                      android:elevation="6dp"
                       android:focusable="true"
-                      android:src="@drawable/edittextsendicon"
+                      android:src="@drawable/ic_more_horiz_24"
                       app:layout_constraintBottom_toBottomOf="parent"
                       app:layout_constraintEnd_toEndOf="parent" />
 
-                  <ImageButton
-                      android:id="@+id/saveBtn"
-                      android:layout_width="56dp"
-                      android:layout_height="56dp"
-                      android:layout_margin="18dp"
-                      android:background="@drawable/background_textoutput"
-                      android:clickable="true"
-                      android:elevation="10dp"
-                      android:focusable="true"
-                      android:src="@drawable/ic_save_24"
-                      app:layout_constraintBottom_toBottomOf="parent"
-                      app:layout_constraintEnd_toEndOf="parent" />
 
                </LinearLayout>
 
             </LinearLayout>
 
          </androidx.cardview.widget.CardView>
+
+         <ImageButton
+             android:id="@+id/saveBtn"
+             android:layout_width="56dp"
+             android:layout_height="56dp"
+             android:layout_marginEnd="18dp"
+             android:background="@drawable/background_textoutput"
+             android:clickable="true"
+             android:elevation="10dp"
+             android:focusable="true"
+             android:visibility="gone"
+             android:src="@drawable/ic_save_24"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/WeeklySummary" />
+
+         <ImageButton
+             android:id="@+id/shareBtn"
+             android:layout_width="56dp"
+             android:layout_height="56dp"
+             android:layout_marginTop="10dp"
+             android:layout_marginEnd="18dp"
+             android:background="@drawable/background_textoutput"
+             android:clickable="true"
+             android:elevation="10dp"
+             android:focusable="true"
+             android:visibility="gone"
+             android:src="@drawable/edittextsendicon"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/saveBtn" />
 
          <androidx.cardview.widget.CardView
              android:id="@+id/BarChartHolder"
