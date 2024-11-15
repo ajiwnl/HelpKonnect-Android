@@ -10,9 +10,11 @@ import androidx.work.WorkerParameters;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +34,13 @@ import javax.xml.transform.Result;
 
 public class DailyNotificationWorker extends Worker {
 
+    private static final String TAG = "DailyNotificationWorker";
+    private static final String jTAG = "Journal Reminder Tag";
+    private static final String tTAG = "Tracker Reminder Tag";
+    private static final String ONE_KEY_URL = "https://helpkonnect.vercel.app/api/onesignalKey";
+    private String oneSignalKey = null;
+    private String oneSignalID = null;
+
     public DailyNotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -39,14 +48,38 @@ public class DailyNotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        // Call your notification method here
+        fetchOneSignalKeys();
         sendTrackerDailyNotification();
         sendJournalDailyNotification();
         return Result.success();
     }
 
+    private void fetchOneSignalKeys() {
+
+        // Fetch the API keys using GET request
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
+                response -> {
+                    Log.d(TAG, "API Key Response: " + response); // Log the response
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+
+                        oneSignalID = jsonResponse.getString("onesignalID");
+                        oneSignalKey = jsonResponse.getString("onesignalKey");
+
+                        Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
+                        Log.d(TAG, "Fetched oneSignalKey: " + oneSignalKey);
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSON parsing error: " + e.getMessage());
+                    }
+                },
+                error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
+        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+
     private void sendTrackerDailyNotification() {
-        Log.d("OneSignal", "Setting up daily notification with OneSignal...");
+        Log.d(tTAG, "Setting up daily notification with OneSignal...");
 
         // Check if the user hasn’t logged an entry today
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -73,7 +106,7 @@ public class DailyNotificationWorker extends Worker {
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult().isEmpty()) {
-                            Log.d("OneSignal", "No entry for today. Sending reminder...");
+                            Log.d(tTAG, "No entry for today. Sending reminder...");
 
                             try {
                                 // Fetch the correct OneSignal player ID
@@ -83,7 +116,7 @@ public class DailyNotificationWorker extends Worker {
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id", "3d064d90-5221-48da-aaa6-0702f8531c99");  // Replace with your OneSignal app ID
+                                    json.put("app_id", oneSignalID);
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -95,10 +128,6 @@ public class DailyNotificationWorker extends Worker {
                                     json.put("contents", contents);
                                     json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
 
-
-                                    // Replace with your OneSignal REST API key
-                                    String apiKey = "os_v2_app_hude3ecsefenvkvga4bpquy4te4mxajyftqerken66en4mhhwrart2exdozrwrjhrf7sbivyriviti42pc32aev5ffkcwdsm26o63hy";  // Use your actual OneSignal API key here
-
                                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                                             Request.Method.POST,
                                             "https://onesignal.com/api/v1/notifications",
@@ -106,20 +135,20 @@ public class DailyNotificationWorker extends Worker {
                                             new Response.Listener<JSONObject>() {
                                                 @Override
                                                 public void onResponse(JSONObject response) {
-                                                    Log.d("OneSignal", "Notification sent successfully: " + response.toString());
+                                                    Log.d(tTAG, "Notification sent successfully: " + response.toString());
                                                 }
                                             },
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                    Log.e("OneSignal", "Failed to send notification", error);
+                                                    Log.e(tTAG, "Failed to send notification", error);
                                                 }
                                             }) {
                                         @Override
                                         public Map<String, String> getHeaders() throws AuthFailureError {
                                             Map<String, String> headers = new HashMap<>();
                                             headers.put("Content-Type", "application/json");
-                                            headers.put("Authorization", "Basic " + apiKey);
+                                            headers.put("Authorization", "Basic " + oneSignalKey);
                                             return headers;
                                         }
                                     };
@@ -127,11 +156,11 @@ public class DailyNotificationWorker extends Worker {
                                     // Add the request to the queue
                                     Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
                                 } else {
-                                    Log.e("OneSignal", "Invalid OneSignal player ID.");
+                                    Log.e(tTAG, "Invalid OneSignal player ID.");
                                 }
 
                             } catch (JSONException e) {
-                                Log.e("OneSignal", "Error creating notification request", e);
+                                Log.e(tTAG, "Error creating notification request", e);
                             }
                         }
                     });
@@ -139,7 +168,7 @@ public class DailyNotificationWorker extends Worker {
     }
 
     private void sendJournalDailyNotification() {
-        Log.d("OneSignalJournal", "Setting up daily notification with OneSignal...");
+        Log.d(jTAG, "Setting up daily notification with OneSignal...");
 
         // Check if the user hasn’t logged an entry today
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -166,7 +195,7 @@ public class DailyNotificationWorker extends Worker {
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult().isEmpty()) {
-                            Log.d("OneSignalJournal", "No entry for today. Sending reminder...");
+                            Log.d(jTAG, "No entry for today. Sending reminder...");
 
                             try {
                                 // Fetch the correct OneSignal player ID
@@ -176,7 +205,7 @@ public class DailyNotificationWorker extends Worker {
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id", "3d064d90-5221-48da-aaa6-0702f8531c99");  // Replace with your OneSignal app ID
+                                    json.put("app_id",oneSignalID);  // Replace with your OneSignal app ID
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -188,10 +217,6 @@ public class DailyNotificationWorker extends Worker {
                                     json.put("contents", contents);
                                     json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
 
-
-                                    // Replace with your OneSignal REST API key
-                                    String apiKey = "os_v2_app_hude3ecsefenvkvga4bpquy4te4mxajyftqerken66en4mhhwrart2exdozrwrjhrf7sbivyriviti42pc32aev5ffkcwdsm26o63hy";  // Use your actual OneSignal API key here
-
                                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                                             Request.Method.POST,
                                             "https://onesignal.com/api/v1/notifications",
@@ -199,20 +224,20 @@ public class DailyNotificationWorker extends Worker {
                                             new Response.Listener<JSONObject>() {
                                                 @Override
                                                 public void onResponse(JSONObject response) {
-                                                    Log.d("OneSignalJournal", "Notification sent successfully: " + response.toString());
+                                                    Log.d(jTAG, "Notification sent successfully: " + response.toString());
                                                 }
                                             },
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                    Log.e("OneSignalJournal", "Failed to send notification", error);
+                                                    Log.e(jTAG, "Failed to send notification", error);
                                                 }
                                             }) {
                                         @Override
                                         public Map<String, String> getHeaders() throws AuthFailureError {
                                             Map<String, String> headers = new HashMap<>();
                                             headers.put("Content-Type", "application/json");
-                                            headers.put("Authorization", "Basic " + apiKey);
+                                            headers.put("Authorization", "Basic " + oneSignalKey);
                                             return headers;
                                         }
                                     };
@@ -220,11 +245,11 @@ public class DailyNotificationWorker extends Worker {
                                     // Add the request to the queue
                                     Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
                                 } else {
-                                    Log.e("OneSignalJournal", "Invalid OneSignal player ID.");
+                                    Log.e(jTAG, "Invalid OneSignal player ID.");
                                 }
 
                             } catch (JSONException e) {
-                                Log.e("OneSignalJournal", "Error creating notification request", e);
+                                Log.e(jTAG, "Error creating notification request", e);
                             }
                         }
                     });

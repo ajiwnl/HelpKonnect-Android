@@ -14,6 +14,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
@@ -36,35 +37,35 @@ import com.onesignal.OneSignal;
 public class MyApp extends Application {
     private static final String TAG = "MyApp";
     private static final String STREAM_KEY_URL = "https://helpkonnect.vercel.app/api/streamKey";
+    private static final String ONE_KEY_URL = "https://helpkonnect.vercel.app/api/onesignalKey";
+    private String oneSignalKey = null;
+    private String oneSignalID = null;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate called");
 
-        // Set default locale if needed
+        // Set default locale
         setDefaultLocale("en");
 
         // Initialize Firebase and App Check
         FirebaseApp.initializeApp(this);
         FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-        firebaseAppCheck.installAppCheckProviderFactory(
-                PlayIntegrityAppCheckProviderFactory.getInstance());
+        firebaseAppCheck.installAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.getInstance());
 
-        OneSignal.initWithContext(this);
-        OneSignal.setAppId("3d064d90-5221-48da-aaa6-0702f8531c99");
-
-        // Schedule daily notifications
+        // Schedule notifications
         scheduleDailyNotifications();
 
-
-        // Fetch API key and initialize ChatClient
-        fetchApiKeyAndInitializeChatClient();
+        // Fetch API keys
+        fetchOneSignalKeys(); // Ensure to fetch OneSignal keys first
+        fetchApiKeyAndInitializeChatClient(); // Fetch Stream API keys
     }
+
 
     private void scheduleDailyNotifications() {
         PeriodicWorkRequest notificationWorkRequest = new PeriodicWorkRequest.Builder(
-                DailyNotificationWorker.class, 3, TimeUnit.MINUTES)
+                DailyNotificationWorker.class, 15, TimeUnit.MINUTES)
                 .build();
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -135,4 +136,33 @@ public class MyApp extends Application {
 
         requestQueue.add(jsonObjectRequest);
     }
+
+    private void fetchOneSignalKeys() {
+
+        // Fetch the API keys using GET request
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
+                response -> {
+                    Log.d(TAG, "API Key Response: " + response); // Log the response
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+
+                        oneSignalID = jsonResponse.getString("onesignalID");
+
+                        Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
+                        OneSignal.initWithContext(this);
+                        OneSignal.setAppId(oneSignalID);
+
+
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSON parsing error: " + e.getMessage());
+                    }
+                },
+                error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+
+
 }
