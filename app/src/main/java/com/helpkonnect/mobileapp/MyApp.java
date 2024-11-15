@@ -5,6 +5,9 @@ import android.content.res.Configuration;
 import android.util.Log;
 
 import androidx.annotation.OptIn;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
@@ -28,7 +32,7 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
-
+import com.onesignal.OneSignal;
 public class MyApp extends Application {
     private static final String TAG = "MyApp";
     private static final String STREAM_KEY_URL = "https://helpkonnect.vercel.app/api/streamKey";
@@ -47,9 +51,30 @@ public class MyApp extends Application {
         firebaseAppCheck.installAppCheckProviderFactory(
                 PlayIntegrityAppCheckProviderFactory.getInstance());
 
+        OneSignal.initWithContext(this);
+        OneSignal.setAppId("3d064d90-5221-48da-aaa6-0702f8531c99");
+
+        // Schedule daily notifications
+        scheduleDailyNotifications();
+
+
         // Fetch API key and initialize ChatClient
         fetchApiKeyAndInitializeChatClient();
     }
+
+    private void scheduleDailyNotifications() {
+        PeriodicWorkRequest notificationWorkRequest = new PeriodicWorkRequest.Builder(
+                DailyNotificationWorker.class, 3, TimeUnit.MINUTES)
+                .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "DailyNotificationWork",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                notificationWorkRequest
+        );
+
+    }
+
 
     private void setDefaultLocale(String lang) {
         Locale locale = new Locale(lang);

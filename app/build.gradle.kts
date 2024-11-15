@@ -66,5 +66,6 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation ("com.itextpdf:itext7-core:7.2.6")
-
+    implementation ("com.onesignal:OneSignal:4.8.4")
+    implementation ("androidx.work:work-runtime:2.7.1")
 }
