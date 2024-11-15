@@ -138,31 +138,42 @@ public class MyApp extends Application {
     }
 
     private void fetchOneSignalKeys() {
-
-        // Fetch the API keys using GET request
         StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
                 response -> {
-                    Log.d(TAG, "API Key Response: " + response); // Log the response
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-
                         oneSignalID = jsonResponse.getString("onesignalID");
 
-                        Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
+                        // Cache the key locally
+                        getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("oneSignalID", oneSignalID)
+                                .apply();
+
+                        // Initialize OneSignal
                         OneSignal.initWithContext(this);
                         OneSignal.setAppId(oneSignalID);
 
-
-
+                        Log.d(TAG, "Fetched and initialized OneSignal with ID: " + oneSignalID);
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON parsing error: " + e.getMessage());
                     }
                 },
-                error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
+                error -> Log.e(TAG, "Error fetching API keys: " + error.toString())
+        );
+
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
-    }
 
+        // Use cached value if network fails
+        String cachedKey = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                .getString("oneSignalID", null);
+        if (cachedKey != null) {
+            OneSignal.initWithContext(this);
+            OneSignal.setAppId(cachedKey);
+            Log.d(TAG, "Initialized OneSignal with cached ID: " + cachedKey);
+        }
+    }
 
 
 }
