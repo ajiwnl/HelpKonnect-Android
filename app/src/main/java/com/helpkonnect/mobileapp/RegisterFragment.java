@@ -215,6 +215,7 @@ public class RegisterFragment extends Fragment {
         user.put("dateCreated", formattedDate);
         user.put("firstName", "");
         user.put("lastName", "");
+        user.put("banned", false);
         user.put("bio", "No information given");
         user.put("imageUrl", "https://csassets.nintendo.com/noaext/image/private/f_auto/q_auto/t_KA_default/icon-menu-user-737373?_a=DATC1RAAZAA0");
         if(Objects.equals(role, "Professional")) {

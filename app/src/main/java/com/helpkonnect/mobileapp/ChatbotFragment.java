@@ -70,6 +70,7 @@ public class ChatbotFragment extends Fragment {
 
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put("userId", userId);
             jsonObject.put("message", message);
         } catch (JSONException e) {
             Log.e(TAG, "JSON Exception: ", e);

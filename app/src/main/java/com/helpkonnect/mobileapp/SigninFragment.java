@@ -163,8 +163,15 @@ public class SigninFragment extends Fragment {
                                             if (!queryDocumentSnapshots.isEmpty()) {
                                                 // Assuming each user has only one document with their userId
                                                 String role = queryDocumentSnapshots.getDocuments().get(0).getString("role");
+                                                boolean isBanned = Boolean.TRUE.equals(queryDocumentSnapshots.getDocuments().get(0).getBoolean("banned"));
                                                 boolean isFirstSignIn = Boolean.TRUE.equals(queryDocumentSnapshots.getDocuments().get(0).getBoolean("firstTimeLogin"));
                                                 Log.d(TAG, "Role fetched for user: " + role);
+
+                                                if(isBanned) {
+                                                    Toast.makeText(getContext(), "Your Account Has Been Banned", Toast.LENGTH_SHORT).show();
+                                                    showLoader(false, "Signing You In");
+                                                    return;
+                                                }
 
                                                 // Save credentials if "Remember Me" is checked
                                                 if (rememberMeCheckBox.isChecked()) {
