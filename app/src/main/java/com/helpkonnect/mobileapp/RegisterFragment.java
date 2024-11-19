@@ -3,6 +3,7 @@ package com.helpkonnect.mobileapp;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -233,7 +234,7 @@ public class RegisterFragment extends Fragment {
                     if (task.isSuccessful()) {
                         // Make a Volley request to register the user with Stream Chat API
                         registerUserWithStreamChat(userId, username);
-                        
+                        analyze_userPreference(userId);
                         // Navigate to SigninFragment and clear the back stack
                         FragmentTransaction transaction = requireFragmentManager().beginTransaction();
                         transaction.setCustomAnimations(
@@ -276,6 +277,44 @@ public class RegisterFragment extends Fragment {
             }
         };
 
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void analyze_userPreference(String userId) {
+        String url = "https://hk-recommender.vercel.app/preference";
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("userId", userId);
+        } catch (JSONException e) {
+            Log.d("AnalyzePreference", "JSON Error: " + e.getMessage());
+            return;
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String serverResponse = response.getString("response");
+                            String analyzedPreference = response.getString("preference");
+
+                            Log.d("AnalyzePreference", "Response: " + serverResponse);
+                            Log.d("AnalyzePreference", "Analyzed Preference: " + analyzedPreference);
+
+                        } catch (JSONException e) {
+                            Log.d("AnalyzePreference", "Response Parsing Error: " + e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("AnalyzePreference", "Volley Error: " + error.getMessage());
+            }
+        });
+
+        // Add the request to the Volley queue
         requestQueue.add(jsonObjectRequest);
     }
 
