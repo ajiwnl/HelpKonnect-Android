@@ -5,7 +5,9 @@ import android.content.res.Configuration;
 import android.util.Log;
 
 import androidx.annotation.OptIn;
+import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -64,17 +66,28 @@ public class MyApp extends Application {
 
 
     private void scheduleDailyNotifications() {
-        PeriodicWorkRequest notificationWorkRequest = new PeriodicWorkRequest.Builder(
-                DailyNotificationWorker.class, 15, TimeUnit.MINUTES)
+        // Define constraints for the worker
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED) // Requires any network connectivity
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+                .setRequiresBatteryNotLow(true) // Avoid running on low battery
                 .build();
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "DailyNotificationWork",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                notificationWorkRequest
-        );
+        // Create a PeriodicWorkRequest with the constraints
+        PeriodicWorkRequest notificationWorkRequest = new PeriodicWorkRequest.Builder(
+                DailyNotificationWorker.class, 15, TimeUnit.MINUTES) // Frequency of the task
+                .setConstraints(constraints) // Set the constraints
+                .build();
 
+        // Enqueue the periodic work request, replacing any existing one with the same name
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "DailyNotificationWork", // Unique work name
+                ExistingPeriodicWorkPolicy.REPLACE, // Replace any existing work with the same name
+                notificationWorkRequest // The work request to schedule
+        );
     }
+
 
 
     private void setDefaultLocale(String lang) {

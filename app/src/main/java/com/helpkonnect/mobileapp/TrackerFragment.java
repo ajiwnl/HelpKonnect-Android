@@ -509,9 +509,11 @@ public class TrackerFragment extends Fragment {
         // Prepare Firestore instance
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Create a map to hold the lastActive field with the Timestamp
+        // Create a map to hold the activity details
         Map<String, Object> data = new HashMap<>();
-        data.put("lastActive", currentTime);  // Use Timestamp object directly
+        data.put("lastActive", currentTime);  // Timestamp of the activity
+        data.put("featureAccessed", "TrackerFragment");  // The feature the user
+        data.put("userId", userId);
 
         // Create a custom document ID using the userId and timestamp
         SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());

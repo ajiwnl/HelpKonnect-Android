@@ -19,6 +19,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.onesignal.OneSignal;
 
@@ -52,7 +53,7 @@ public class DailyNotificationWorker extends Worker {
         fetchOneSignalKeys();
         sendTrackerDailyNotification();
         sendJournalDailyNotification();
-        resourceReminderNotification();
+        sendActivityReminderNotification();
         return Result.success();
     }
 
@@ -172,7 +173,6 @@ public class DailyNotificationWorker extends Worker {
     private void sendJournalDailyNotification() {
         Log.d(jTAG, "Setting up daily notification with OneSignal...");
 
-        // Check if the user hasn’t logged an entry today
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
@@ -207,7 +207,7 @@ public class DailyNotificationWorker extends Worker {
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id",oneSignalID);  // Replace with your OneSignal app ID
+                                    json.put("app_id", oneSignalID);  // Replace with your OneSignal app ID
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -258,74 +258,92 @@ public class DailyNotificationWorker extends Worker {
         }
     }
 
-    private void resourceReminderNotification() {
-        Log.d(rTAG, "Checking time for resource reminder notification...");
+    private void sendActivityReminderNotification() {
+        Log.d(rTAG, "Setting up daily activity reminder with OneSignal...");
 
-         Calendar calendar = Calendar.getInstance();
-        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        int[] notificationHours = {9, 12, 15, 18};
-
-        boolean shouldSendNotification = false;
-        for (int hour : notificationHours) {
-            if (currentHour == hour) {
-                shouldSendNotification = true;
-                break;
-            }
-        }
-
-        if (!shouldSendNotification) {
-            Log.d(rTAG, "Not the right time for a resource reminder.");
-            return;
-        }
-
-        Log.d(rTAG, "Sending daily resource reminder notification with OneSignal...");
-
+        // Check if the user is logged in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
+            String userId = user.getUid();
 
-            if (oneSignalPlayerId != null) {
-                try {
-                    JSONObject json = new JSONObject();
-                    json.put("app_id", oneSignalID);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Calendar calendar = Calendar.getInstance();
 
-                    JSONObject headings = new JSONObject();
-                    headings.put("en", "Resources Available");
-                    json.put("headings", headings);
+            // Set the start of the day (00:00)
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            Date startOfDay = calendar.getTime();
 
-                    JSONObject contents = new JSONObject();
-                    contents.put("en", "Try using these mental health resources available in our app.");
-                    json.put("contents", contents);
-                    json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
+            // Set the end of the day (23:59)
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            Date endOfDay = calendar.getTime();
 
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                            Request.Method.POST,
-                            "https://onesignal.com/api/v1/notifications",
-                            json,
-                            response -> Log.d(rTAG, "Notification sent successfully: " + response.toString()),
-                            error -> Log.e(rTAG, "Failed to send notification", error)
-                    ) {
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> headers = new HashMap<>();
-                            headers.put("Content-Type", "application/json");
-                            headers.put("Authorization", "Basic " + oneSignalKey);
-                            return headers;
+            Timestamp startTimestamp = new Timestamp(startOfDay);
+            Timestamp endTimestamp = new Timestamp(endOfDay);
+
+            // Query the userActivity collection to count how many times "ResourcesFragment" was accessed today
+            db.collection("userActivity")
+                    .whereEqualTo("userId", userId) // Match the user's ID
+                    .whereEqualTo("featureAccessed", "ResourcesFragment") // Match the feature accessed
+                    .whereGreaterThanOrEqualTo("lastActive", startTimestamp) // Activity after the start of the day
+                    .whereLessThanOrEqualTo("lastActive", endTimestamp) // Activity before the end of the day
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null && task.getResult().size() < 3) {
+                            Log.d(rTAG, "Less than 3 accesses for ResourcesFragment today. Sending reminder...");
+
+                            try {
+                                // Fetch the correct OneSignal player ID
+                                String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
+
+                                if (oneSignalPlayerId != null) {
+                                    // Create the notification content
+                                    JSONObject json = new JSONObject();
+                                    json.put("app_id", oneSignalID);  // Replace with your OneSignal app ID
+
+                                    // Add title (headings) and content (contents)
+                                    JSONObject headings = new JSONObject();
+                                    headings.put("en", "Help-Konnect Available Resources");  // Set your desired title here
+                                    json.put("headings", headings);
+
+                                    JSONObject contents = new JSONObject();
+                                    contents.put("en", "Try using these mental health resources available in our app.");
+                                    json.put("contents", contents);
+                                    json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
+
+                                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                                            Request.Method.POST,
+                                            "https://onesignal.com/api/v1/notifications",
+                                            json,
+                                            response -> Log.d(jTAG, "Notification sent successfully: " + response.toString()),
+                                            error -> Log.e(jTAG, "Failed to send notification", error)) {
+                                        @Override
+                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                            Map<String, String> headers = new HashMap<>();
+                                            headers.put("Content-Type", "application/json");
+                                            headers.put("Authorization", "Basic " + oneSignalKey);
+                                            return headers;
+                                        }
+                                    };
+
+                                    // Add the request to the queue
+                                    Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
+                                } else {
+                                    Log.e(rTAG, "Invalid OneSignal player ID.");
+                                }
+
+                            } catch (JSONException e) {
+                                Log.e(rTAG, "Error creating notification request", e);
+                            }
+                        } else if (task.isSuccessful() && task.getResult() != null) {
+                            Log.d(rTAG, "User has accessed ResourcesFragment 3 or more times today. No reminder needed.");
+                        } else {
+                            Log.e(rTAG, "Failed to query user activity: " + task.getException());
                         }
-                    };
-
-                    Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
-
-                } catch (JSONException e) {
-                    Log.e(rTAG, "Error creating notification request", e);
-                }
-            } else {
-                Log.e(rTAG, "Invalid OneSignal player ID.");
-            }
+                    });
         }
     }
-
-
-
 }

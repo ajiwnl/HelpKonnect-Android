@@ -59,6 +59,8 @@ public class UserProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
+        FirebaseUser user = mAuth.getCurrentUser();
+        String userId = user.getUid();
 
         if (currentUser != null) {
             loadUserData(currentUser.getUid());
@@ -82,6 +84,8 @@ public class UserProfileActivity extends AppCompatActivity {
             startActivity(new Intent(UserProfileActivity.this, ChangePasswordActivity.class));
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
+
+        userActivity(userId);
     }
 
     private void showEditProfileFragment() {
@@ -149,18 +153,34 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void userActivity(String userId) {
-        Timestamp currentTime = Timestamp.now();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> data = new HashMap<>();
-        data.put("lastActive", currentTime);
+        // Get the current time
+        Timestamp currentTime = Timestamp.now();  // Use Firestore's Timestamp class
 
+        // Prepare Firestore instance
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Create a map to hold the activity details
+        Map<String, Object> data = new HashMap<>();
+        data.put("lastActive", currentTime);  // Timestamp of the activity
+        data.put("featureAccessed", "UserProfileActivity");  // The feature the user accessed
+        data.put("userId", userId);
+
+        // Create a custom document ID using the userId and timestamp
         SimpleDateFormat idSdf = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        String timestamp = idSdf.format(new Date());
+        String timestamp = idSdf.format(new Date());  // Use current date for document ID
         String documentId = userId + "_" + timestamp;
 
-        db.collection("userActivity").document(documentId)
+        // Add a new document with a custom ID (userId + timestamp) to the "userActivity" collection
+        db.collection("userActivity")
+                .document(documentId)  // Use the custom document ID
                 .set(data)
-                .addOnSuccessListener(aVoid -> Log.d("Firestore", "New activity recorded successfully with ID: " + documentId))
-                .addOnFailureListener(e -> Log.e("Firestore", "Failed to record activity: " + e.getMessage()));
+                .addOnSuccessListener(aVoid -> {
+                    // Successfully created a new activity document
+                    Log.d("Firestore", "New activity recorded successfully with ID: " + documentId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("Firestore", "Failed to record activity: " + e.getMessage());
+                });
     }
 }
