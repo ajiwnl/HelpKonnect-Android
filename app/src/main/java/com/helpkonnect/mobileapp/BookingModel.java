@@ -41,6 +41,10 @@ public class BookingModel {
     public String getBookingPrice() {
         return bookingPrice;
     }
+
+    public void setBookingDetails(String ProfessionalName) {
+        this.bookingDetails = ProfessionalName;
+    }
 }
 
 
