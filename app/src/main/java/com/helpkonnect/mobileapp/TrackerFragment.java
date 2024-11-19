@@ -1,15 +1,20 @@
 package com.helpkonnect.mobileapp;
 
-import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +23,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,16 +32,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.BarChart;
@@ -58,31 +58,34 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpkonnect.mobileapp.JournalListAdapter.Journal;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import com.google.firebase.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.onesignal.OneSignal;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import android.Manifest;
+
+
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
+    private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView, weeklyTitleTxtView;
 
     private ImageButton saveBtn, shareBtn, expandBtn;
     private Boolean isExpanded = false;
@@ -99,6 +102,9 @@ public class TrackerFragment extends Fragment {
     private Map<String, Float> emotionData = new HashMap<>();
     private Spinner selectOptions ;
     private CardView barChartView, WeeklySummary;
+    private static final int STORAGE_PERMISSION_CODE = 1;
+    private static final String TAG = "PDFSave";
+
 
     @Nullable
     @Override
@@ -121,6 +127,7 @@ public class TrackerFragment extends Fragment {
         totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
         dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
+        weeklyTitleTxtView = rootView.findViewById(R.id.weeklySummaryTitle);
 
         //Save and share button on tracker fragment
         saveBtn = rootView.findViewById(R.id.saveBtn);
@@ -132,7 +139,14 @@ public class TrackerFragment extends Fragment {
         });
 
         saveBtn.setOnClickListener( v ->{
-            Toast.makeText(rootView.getContext(), "Clicked Save", Toast.LENGTH_SHORT).show();
+            if (hasStoragePermission()) {
+                Log.d(TAG, "Storage permission granted.");
+                Toast.makeText(rootView.getContext(), "Weekly Emotion Summary, Saved successfully!", Toast.LENGTH_SHORT).show();
+                saveViewAsPDF();
+            } else {
+                Log.d(TAG, "Requesting storage permission...");
+                requestStoragePermission();
+            }
         });
 
         shareBtn.setOnClickListener( v ->{
@@ -408,8 +422,6 @@ public class TrackerFragment extends Fragment {
         emotionBarChart.invalidate(); // Refresh the chart
     }
 
-
-
     private void analyzeEmotion(String translatedNotes, String journalId) { // Add journalId parameter
         if (translatedNotes != null && !translatedNotes.isEmpty()) {
             // Show the loading indicator
@@ -582,6 +594,192 @@ public class TrackerFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> Log.d("TrackerFragment", "Emotion analysis saved successfully"))
                 .addOnFailureListener(e -> Log.w("TrackerFragment", "Error saving emotion analysis", e));
     }
+
+    private boolean hasStoragePermission() {
+        boolean permissionGranted = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        Log.d(TAG, "Storage permission status: " + permissionGranted);
+        return permissionGranted;
+    }
+
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(requireContext(), "Storage permission is required to save PDF", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Showing permission rationale to the user.");
+        }
+        ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "User granted storage permission.");
+                saveViewAsPDF();
+            } else {
+                Log.d(TAG, "User denied storage permission.");
+                Toast.makeText(requireContext(), "Permission denied to save PDF", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void saveViewAsPDF() {
+        Log.d(TAG, "Starting PDF creation process...");
+
+        // Define page dimensions (8.5 x 11 inches in points, 1 inch = 72 points)
+        int pageWidth = (int) (8.5 * 72); // Width in points
+        int pageHeight = (int) (8 * 72); // Height in points
+
+        // Create a PdfDocument
+        PdfDocument document = new PdfDocument();
+
+        // Define the page size
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+
+        // Start a new page
+        PdfDocument.Page page = document.startPage(pageInfo);
+
+        // Get the canvas to draw
+        Canvas canvas = page.getCanvas();
+
+        // Set up Paint for drawing text
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(16);
+
+        // Load the Help Konnect logo
+        Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.hk_headv2);
+
+        // Scale the logo proportionally to fit the page width
+        int logoMaxWidth = pageWidth; // Max width available for the logo
+        double aspectRatio = (double) logo.getHeight() / logo.getWidth(); // Aspect ratio (height/width)
+        int logoScaledWidth = logoMaxWidth; // Use full width of the page
+        int logoScaledHeight = (int) (logoMaxWidth * aspectRatio); // Scale height proportionally
+
+        // Create a scaled bitmap of the logo
+        Bitmap scaledLogo = Bitmap.createScaledBitmap(logo, logoScaledWidth, logoScaledHeight, true);
+
+        // Draw the logo at the very top of the page
+        float logoX = 0; // X position at the very left
+        float logoY = 0; // Y position at the very top
+        canvas.drawBitmap(scaledLogo, logoX, logoY, null);
+
+        // Position the text below the logo
+        float textX = 50; // X position for text with some margin
+        float textY = logoY + logoScaledHeight + 20; // Y position below the logo with padding
+
+        // Set up Paint for the bold date text
+        Paint dateTextPaint = new Paint();
+        dateTextPaint.setColor(Color.BLACK);
+        dateTextPaint.setTextSize(18);
+        dateTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+        // Extract text from TextViews
+        String dateText = dateTxtView.getText().toString();
+        String totalEmotion = totalEmotionTxtView.getText().toString();
+        String specificEmotions = specificEmotionsTxtView.getText().toString();
+
+        // Draw the date text with bold font and size 18
+        canvas.drawText(dateText, textX, textY, dateTextPaint);
+        textY += 40; // Move down for the next line (adjusted for larger font size)
+
+        // Draw the totalEmotion text
+        canvas.drawText(totalEmotion, textX, textY, textPaint);
+        textY += 30; // Move down for the next line
+
+        // Split and draw multi-line text for specific emotions
+        String[] emotionLines = specificEmotions.split("\n");
+        for (String line : emotionLines) {
+            canvas.drawText(line, textX, textY, textPaint);
+            textY += 30; // Move down for each line
+        }
+
+        // Finish the page
+        document.finishPage(page);
+
+        // Save the PDF to storage
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            savePDFUsingMediaStore(document);
+        } else {
+            savePDFUsingFileSystem(document);
+        }
+
+        Log.d(TAG, "PDF creation process completed successfully.");
+    }
+
+    private void savePDFUsingMediaStore(PdfDocument document) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            Log.e(TAG, "MediaStore requires API level 29 or higher");
+            savePDFUsingFileSystem(document);
+            return;
+        }
+
+        try {
+            String fileName = "EmotionSummary_"+dateTxtView.getText().toString();;
+
+            // Set up values for the PDF file
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+            values.put(MediaStore.Downloads.MIME_TYPE, "application/pdf");
+            values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/MyPDFs");
+
+            // Insert the new file into MediaStore and get the URI for the file
+            Uri uri = requireContext().getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+
+            if (uri != null) {
+                // Open the OutputStream for the URI returned by the insert
+                try (OutputStream fos = requireContext().getContentResolver().openOutputStream(uri)) {
+                    if (fos != null) {
+                        document.writeTo(fos);
+                        Log.d(TAG, "PDF saved successfully using MediaStore.");
+                        Toast.makeText(requireContext(), "PDF saved in Downloads/MyPDFs folder.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e(TAG, "Failed to get OutputStream from MediaStore.");
+                        Toast.makeText(requireContext(), "Failed to save PDF.", Toast.LENGTH_LONG).show();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Error saving PDF using MediaStore: " + e.getMessage(), e);
+                    Toast.makeText(requireContext(), "Error saving PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Log.e(TAG, "Failed to insert file into MediaStore.");
+                Toast.makeText(requireContext(), "Failed to save PDF in MediaStore.", Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error inserting PDF file into MediaStore: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error saving PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            document.close();
+            Log.d(TAG, "PDF document closed.");
+        }
+    }
+
+    private void savePDFUsingFileSystem(PdfDocument document) {
+        File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MyPDFs");
+        if (!pdfDir.exists()) {
+            boolean dirCreated = pdfDir.mkdirs();
+            Log.d(TAG, "Creating PDF directory: " + dirCreated);
+        }
+
+        File pdfFile = new File(pdfDir, "textview_content.pdf");
+
+        try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+            document.writeTo(fos);
+            Log.d(TAG, "PDF saved successfully at: " + pdfFile.getAbsolutePath());
+            Toast.makeText(requireContext(), "PDF saved at: " + pdfFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e(TAG, "Error saving PDF: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Failed to save PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            document.close();
+            Log.d(TAG, "PDF document closed.");
+        }
+    }
+
+
+
+
 
     private void showLoader(boolean show, String message) {
         if (loaderView == null) {
