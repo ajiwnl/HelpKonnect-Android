@@ -19,4 +19,4 @@ Other tech stacks will be added as the project is still ongoing.
 
 ### 
 
-**APIs:** [Purgomalum Text Filtering](https://www.purgomalum.com/), [Stream Chat-Realtime Messaging](https://getstream.io/chat/), [Google API](https://rapidapi.com/rphrp1985/api/google-api31)
+**APIs:** [Purgomalum Text Filtering](https://www.purgomalum.com/), [Stream Chat-Realtime Messaging](https://getstream.io/chat/), [Google API](https://rapidapi.com/rphrp1985/api/google-api31), [Reverse Geocoding](https://rapidapi.com/googlecloud/api/google-maps-geocoding/playground/apiendpoint_499ace75-c9f5-4280-a3e3-38221585f09d), [One Signal](https://documentation.onesignal.com/), [Open Weather Map](https://openweathermap.org/api), [OpenAi](https://platform.openai.com/docs/overview)
