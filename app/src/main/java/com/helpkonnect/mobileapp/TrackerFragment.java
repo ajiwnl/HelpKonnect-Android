@@ -2,6 +2,7 @@ package com.helpkonnect.mobileapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -150,7 +151,8 @@ public class TrackerFragment extends Fragment {
         });
 
         shareBtn.setOnClickListener( v ->{
-            Toast.makeText(rootView.getContext(), "Clicked Share", Toast.LENGTH_SHORT).show();
+            Toast.makeText(rootView.getContext(), "Sharing PDF...", Toast.LENGTH_SHORT).show();
+            sharePDF();
         });
 
         SimpleDateFormat dateFormatDefault = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
@@ -708,6 +710,33 @@ public class TrackerFragment extends Fragment {
         Log.d(TAG, "PDF creation process completed successfully.");
     }
 
+    private void sharePDF() {
+        // Define the file location (same path as in your savePDF methods)
+        File pdfDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MyPDFs");
+        File pdfFile = new File(pdfDir, "EmotionSummary_" + dateTxtView.getText().toString() + ".pdf");
+
+        if (pdfFile.exists()) {
+            // Create a URI for the PDF file
+            Uri pdfUri = FileProvider.getUriForFile(requireContext(), "com.helpkonnect.mobileapp.fileprovider", pdfFile);
+
+            // Create an Intent to share the PDF
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("application/pdf");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, pdfUri);
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Emotion Summary PDF");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Here's the Emotion Summary PDF.");
+
+            // Grant temporary permission to the receiving app to access the file
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            // Start the chooser (this allows the user to pick an app to share with)
+            startActivity(Intent.createChooser(shareIntent, "Share PDF"));
+        } else {
+            Log.e(TAG, "PDF file does not exist.");
+            Toast.makeText(requireContext(), "PDF file not found. Please save it first.", Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void savePDFUsingMediaStore(PdfDocument document) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Log.e(TAG, "MediaStore requires API level 29 or higher");
@@ -776,10 +805,6 @@ public class TrackerFragment extends Fragment {
             Log.d(TAG, "PDF document closed.");
         }
     }
-
-
-
-
 
     private void showLoader(boolean show, String message) {
         if (loaderView == null) {

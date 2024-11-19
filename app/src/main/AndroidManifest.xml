@@ -26,6 +26,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HelpKonnectMobile"
         tools:targetApi="31">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.helpkonnect.mobileapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".BookingActivity"
             android:exported="false"/>
