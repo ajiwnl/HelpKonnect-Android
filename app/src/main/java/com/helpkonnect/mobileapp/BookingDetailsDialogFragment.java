@@ -52,8 +52,8 @@ public class BookingDetailsDialogFragment extends DialogFragment {
             dateTextView.setText(getArguments().getString(ARG_DATE));
             detailsTextView.setText(getArguments().getString(ARG_DETAILS));
             startTimeTextView.setText(getArguments().getString(ARG_START_TIME));
-            durationTextView.setText(getArguments().getString(ARG_DURATION) + "Hours");
-            priceTextView.setText("Php" + getArguments().getString(ARG_PRICE));
+            durationTextView.setText(getArguments().getString(ARG_DURATION) + " Hours");
+            priceTextView.setText("Php " + getArguments().getString(ARG_PRICE));
         }
 
         dismissButton.setOnClickListener(v -> dismiss());

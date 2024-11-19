@@ -143,13 +143,18 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
     }
 
     private void saveBookingDetails(String userId, String professionalId, float amount, String sessionDuration) {
+        String selectedDate = availableDateEditText.getText().toString();
+        String selectedTime = startTimeEditText.getText().toString();
+
+        String bookingDateTime = selectedDate + " " + selectedTime;
+
         Map<String, Object> booking = new HashMap<>();
         booking.put("bookingId", UUID.randomUUID().toString());
         booking.put("userId", userId);
         booking.put("professionalId", professionalId);
         booking.put("amount", amount);
         booking.put("sessionDuration", sessionDuration);
-        booking.put("bookingDate", availableDateEditText.getText().toString());
+        booking.put("bookingDate", bookingDateTime);
         booking.put("createdAt", FieldValue.serverTimestamp());
         booking.put("facilityName", facility);
 
