@@ -107,50 +107,78 @@ public class FacilitiesFragment extends Fragment {
         loaderNearbyFacilities.setVisibility(View.VISIBLE);
         facilities.clear();
 
-        // Fetch data from Firestore
+        // Fetch data from Firestore for facilities
         db.collection("credentials")
-            .whereEqualTo("role", "facility")
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        FacilityAdapter.Facility facility = new FacilityAdapter.Facility(
-                            document.getString("imageUrl"),
-                            document.getString("facilityName"),
-                            document.getString("facilityLocation"),
-                            document.getString("userId"),
-                            4,
-                            "1200"
-                        );
-                        facilities.add(facility);
-                    }
+                .whereEqualTo("role", "facility")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot facilityDoc : task.getResult()) {
+                            String facilityId = facilityDoc.getString("userId");
+                            FacilityAdapter.Facility facility = new FacilityAdapter.Facility(
+                                    facilityDoc.getString("imageUrl"),
+                                    facilityDoc.getString("facilityName"),
+                                    facilityDoc.getString("facilityLocation"),
+                                    facilityId,
+                                    4,
+                                    "0"
+                            );
 
-                    // Hide loader after data is displayed
-                    loaderNearbyFacilities.setVisibility(View.GONE);
+                            // Fetch professionals associated with this facility
+                            db.collection("credentials")
+                                    .whereEqualTo("role", "Professional")
+                                    .whereEqualTo("associated", facilityId)
+                                    .get()
+                                    .addOnCompleteListener(professionalTask -> {
+                                        if (professionalTask.isSuccessful()) {
+                                            List<Integer> rates = new ArrayList<>();
+                                            for (QueryDocumentSnapshot professionalDoc : professionalTask.getResult()) {
+                                                // Add the rates to the list
+                                                rates.add(professionalDoc.getLong("rate").intValue());
+                                            }
 
-                    if (facilities.isEmpty()) {
-                        noFacilityTextView.setVisibility(View.VISIBLE);
+                                            // Find the minimum rate
+                                            if (!rates.isEmpty()) {
+                                                int minRate = rates.stream().min(Integer::compare).orElse(0);
+                                                facility.setPriceRange(String.valueOf(minRate));
+                                            }
+
+                                            // Add facility to the list after processing professionals
+                                            facilities.add(facility);
+
+                                            // Update the RecyclerView
+                                            if (adapter == null) {
+                                                adapter = new FacilityAdapter(facilities, facilityItem -> {
+                                                    Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
+                                                    intent.putExtra("imageUrl", facilityItem.getImage());
+                                                    intent.putExtra("name", facilityItem.getTitle());
+                                                    intent.putExtra("location", facilityItem.getLocation());
+                                                    intent.putExtra("rating", facilityItem.getRating());
+                                                    intent.putExtra("userId", facilityItem.getUserId());
+                                                    startActivity(intent);
+                                                });
+                                                facilityRecyclerView.setAdapter(adapter);
+                                            } else {
+                                                adapter.notifyDataSetChanged();
+                                            }
+
+                                            // Hide loader after data is displayed
+                                            loaderNearbyFacilities.setVisibility(View.GONE);
+                                        }
+                                    });
+                        }
+
+                        if (facilities.isEmpty()) {
+                            noFacilityTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            noFacilityTextView.setVisibility(View.GONE);
+                        }
                     } else {
-                        noFacilityTextView.setVisibility(View.GONE);
-                        adapter = new FacilityAdapter(facilities, facility -> {
-                            Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
-                            intent.putExtra("imageUrl", facility.getImage());
-                            intent.putExtra("name", facility.getTitle());
-                            intent.putExtra("location", facility.getLocation());
-                            intent.putExtra("rating", facility.getRating());
-                            intent.putExtra("userId", facility.getUserId());
-
-                            // Start the activity
-                            startActivity(intent);
-                        });
-                        facilityRecyclerView.setAdapter(adapter);
+                        // Handle errors
+                        loaderNearbyFacilities.setVisibility(View.GONE);
+                        noFacilityTextView.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    // Handle the error
-                    loaderNearbyFacilities.setVisibility(View.GONE);
-                    noFacilityTextView.setVisibility(View.VISIBLE);
-                }
-            });
+                });
     }
 
     //Filter results and display from fetched data
