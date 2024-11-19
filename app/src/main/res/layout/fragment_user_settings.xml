@@ -121,6 +121,40 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/PreferencesMenu"
+            style="@style/CardbgColor"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layout_roundcorners"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileMenu">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="@color/PrimaryLight"
+                android:src="@drawable/pref_settings_24" />
+
+            <TextView
+                style="@style/TextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingStart="10dp"
+                android:text="Preferences"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ProfileBooking"
             style="@style/CardbgColor"
             android:layout_width="200dp"
@@ -134,7 +168,7 @@
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileMenu">
+            app:layout_constraintTop_toBottomOf="@+id/PreferencesMenu">
 
             <ImageView
 
@@ -155,7 +189,6 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/logoutMenu"
@@ -190,10 +223,6 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-
-
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
