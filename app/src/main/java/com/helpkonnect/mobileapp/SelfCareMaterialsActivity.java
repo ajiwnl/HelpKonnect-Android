@@ -115,9 +115,10 @@ public class SelfCareMaterialsActivity extends AppCompatActivity {
                         resourceList.clear(); // Clear existing list
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Resource resource = document.toObject(Resource.class);
-                            resourceList.add(resource);
-                        }
-                        resourceAdapter.notifyDataSetChanged(); // Notify adapter of data change
+                            if (!"Audio".equals(resource.getType())) {
+                                resourceList.add(resource);
+                            }                        }
+                        resourceAdapter.notifyDataSetChanged();
 
                         if (resourceList.isEmpty()) {
                             noResourcesMessage.setVisibility(View.VISIBLE);
