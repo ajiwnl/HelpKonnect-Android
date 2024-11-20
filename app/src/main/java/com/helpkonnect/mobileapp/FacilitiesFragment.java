@@ -107,7 +107,6 @@ public class FacilitiesFragment extends Fragment {
         loaderNearbyFacilities.setVisibility(View.VISIBLE);
         facilities.clear();
 
-        // Fetch data from Firestore for facilities
         db.collection("credentials")
                 .whereEqualTo("role", "facility")
                 .get()
@@ -115,55 +114,81 @@ public class FacilitiesFragment extends Fragment {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot facilityDoc : task.getResult()) {
                             String facilityId = facilityDoc.getString("userId");
+
                             FacilityAdapter.Facility facility = new FacilityAdapter.Facility(
                                     facilityDoc.getString("imageUrl"),
                                     facilityDoc.getString("facilityName"),
                                     facilityDoc.getString("facilityLocation"),
                                     facilityId,
-                                    4,
-                                    "0"
+                                    0, // Placeholder for rating
+                                    "0" // Placeholder for price range
                             );
 
-                            // Fetch professionals associated with this facility
-                            db.collection("credentials")
-                                    .whereEqualTo("role", "Professional")
-                                    .whereEqualTo("associated", facilityId)
+                            // Fetch feedback ratings for this facility
+                            db.collection("feedback")
+                                    .whereEqualTo("facilityId", facilityId)
                                     .get()
-                                    .addOnCompleteListener(professionalTask -> {
-                                        if (professionalTask.isSuccessful()) {
-                                            List<Integer> rates = new ArrayList<>();
-                                            for (QueryDocumentSnapshot professionalDoc : professionalTask.getResult()) {
-                                                // Add the rates to the list
-                                                rates.add(professionalDoc.getLong("rate").intValue());
+                                    .addOnCompleteListener(feedbackTask -> {
+                                        if (feedbackTask.isSuccessful()) {
+                                            List<Double> ratings = new ArrayList<>();
+                                            for (QueryDocumentSnapshot feedbackDoc : feedbackTask.getResult()) {
+                                                Double rating = feedbackDoc.getDouble("rating");
+                                                if (rating != null) {
+                                                    ratings.add(rating);
+                                                }
                                             }
 
-                                            // Find the minimum rate
-                                            if (!rates.isEmpty()) {
-                                                int minRate = rates.stream().min(Integer::compare).orElse(0);
-                                                facility.setPriceRange(String.valueOf(minRate));
+                                            // Calculate average rating
+                                            double averageRating = 0;
+                                            if (!ratings.isEmpty()) {
+                                                averageRating = ratings.stream()
+                                                        .mapToDouble(Double::doubleValue)
+                                                        .average()
+                                                        .orElse(0);
                                             }
+                                            facility.setRating((float) averageRating);
 
-                                            // Add facility to the list after processing professionals
-                                            facilities.add(facility);
+                                            // Fetch professionals associated with this facility
+                                            db.collection("credentials")
+                                                    .whereEqualTo("role", "Professional")
+                                                    .whereEqualTo("associated", facilityId)
+                                                    .get()
+                                                    .addOnCompleteListener(professionalTask -> {
+                                                        if (professionalTask.isSuccessful()) {
+                                                            List<Integer> rates = new ArrayList<>();
+                                                            for (QueryDocumentSnapshot professionalDoc : professionalTask.getResult()) {
+                                                                rates.add(professionalDoc.getLong("rate").intValue());
+                                                            }
 
-                                            // Update the RecyclerView
-                                            if (adapter == null) {
-                                                adapter = new FacilityAdapter(facilities, facilityItem -> {
-                                                    Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
-                                                    intent.putExtra("imageUrl", facilityItem.getImage());
-                                                    intent.putExtra("name", facilityItem.getTitle());
-                                                    intent.putExtra("location", facilityItem.getLocation());
-                                                    intent.putExtra("rating", facilityItem.getRating());
-                                                    intent.putExtra("userId", facilityItem.getUserId());
-                                                    startActivity(intent);
-                                                });
-                                                facilityRecyclerView.setAdapter(adapter);
-                                            } else {
-                                                adapter.notifyDataSetChanged();
-                                            }
+                                                            // Find the minimum rate
+                                                            if (!rates.isEmpty()) {
+                                                                int minRate = rates.stream().min(Integer::compare).orElse(0);
+                                                                facility.setPriceRange(String.valueOf(minRate));
+                                                            }
 
-                                            // Hide loader after data is displayed
-                                            loaderNearbyFacilities.setVisibility(View.GONE);
+                                                            // Add facility to the list after processing
+                                                            facilities.add(facility);
+
+                                                            // Update the RecyclerView
+                                                            if (adapter == null) {
+                                                                adapter = new FacilityAdapter(facilities, facilityItem -> {
+                                                                    Intent intent = new Intent(requireActivity(), FacilityDetailsActivity.class);
+                                                                    intent.putExtra("imageUrl", facilityItem.getImage());
+                                                                    intent.putExtra("name", facilityItem.getTitle());
+                                                                    intent.putExtra("location", facilityItem.getLocation());
+                                                                    intent.putExtra("rating", facilityItem.getRating());
+                                                                    intent.putExtra("userId", facilityItem.getUserId());
+                                                                    startActivity(intent);
+                                                                });
+                                                                facilityRecyclerView.setAdapter(adapter);
+                                                            } else {
+                                                                adapter.notifyDataSetChanged();
+                                                            }
+
+                                                            // Hide loader
+                                                            loaderNearbyFacilities.setVisibility(View.GONE);
+                                                        }
+                                                    });
                                         }
                                     });
                         }
@@ -174,12 +199,13 @@ public class FacilitiesFragment extends Fragment {
                             noFacilityTextView.setVisibility(View.GONE);
                         }
                     } else {
-                        // Handle errors
+                        // Handle errors fetching facilities
                         loaderNearbyFacilities.setVisibility(View.GONE);
                         noFacilityTextView.setVisibility(View.VISIBLE);
                     }
                 });
     }
+
 
     //Filter results and display from fetched data
     private void filterFacilities(String query) {
