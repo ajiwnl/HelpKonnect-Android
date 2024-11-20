@@ -47,6 +47,8 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         public void setPriceRange(String priceRange) {
             this.priceRange = priceRange;
         }
+
+        public void setRating(float rating) { this.rating = rating; }
     }
 
     // Define the interface for click handling

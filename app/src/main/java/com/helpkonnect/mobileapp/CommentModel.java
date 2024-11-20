@@ -1,20 +1,24 @@
 package com.helpkonnect.mobileapp;
 
 public class CommentModel {
-    private String userName;
-    private String commentText;
+    private String username;
+    private String comment;
+    private float rating;
 
-    public CommentModel(String userName, String commentText) {
-        this.userName = userName;
-        this.commentText = commentText;
+    public CommentModel(String username, String comment, float rating) {
+        this.username = username;
+        this.comment = comment;
+        this.rating = rating;
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public String getCommentText() {
-        return commentText;
+        return comment;
     }
+
+    public float getRating() { return rating; }
 }
 

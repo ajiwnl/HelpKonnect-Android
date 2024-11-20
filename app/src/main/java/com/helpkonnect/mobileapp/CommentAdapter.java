@@ -1,8 +1,10 @@
 package com.helpkonnect.mobileapp;
 
+import android.media.Rating;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +29,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         CommentModel comment = commentList.get(position);
         holder.userNameTextView.setText(comment.getUserName());
         holder.commentTextView.setText(comment.getCommentText());
+        holder.userRatingBar.setRating(comment.getRating());
     }
 
     @Override
@@ -37,11 +40,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     static class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView userNameTextView;
         TextView commentTextView;
+        RatingBar userRatingBar;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameTextView = itemView.findViewById(R.id.userNameTextView);
             commentTextView = itemView.findViewById(R.id.commentTextView);
+            userRatingBar = itemView.findViewById(R.id.userRatingBar);
         }
     }
 }

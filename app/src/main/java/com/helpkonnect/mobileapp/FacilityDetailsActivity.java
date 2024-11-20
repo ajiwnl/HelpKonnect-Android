@@ -21,9 +21,11 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -147,18 +149,33 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         errorTextView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
 
-        new Handler().postDelayed(() -> {
-            if (comments.isEmpty()) {
-                showError("No Comments Yet Add One...");
-            } else {
-                setupCommentRecyclerView(comments);
-            }
-        }, 2000);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("feedback")
+                .whereEqualTo("facilityId", currentFacility)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        comments.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String userName = document.getString("userName");
+                            String commentText = document.getString("comment");
+                            float rating = (float)document.getLong("rating");
+                            comments.add(new CommentModel(userName, commentText, rating));
+                        }
+
+                        if (comments.isEmpty()) {
+                            showError("No Comments Yet. Add One...");
+                        } else {
+                            setupCommentRecyclerView(comments);
+                        }
+                    } else {
+                        showError("Failed to load comments: " + task.getException().getMessage());
+                    }
+                });
     }
 
     private void setupCommentRecyclerView(List<CommentModel> comments) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         CommentAdapter adapter = new CommentAdapter(comments);
         recyclerView.setAdapter(adapter);
 
@@ -195,8 +212,10 @@ public class FacilityDetailsActivity extends AppCompatActivity {
     private void showCommentDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
         View dialogView = inflater.inflate(R.layout.dialog_add_comment, null);
+
         EditText editTextComment = dialogView.findViewById(R.id.editTextComment);
         CheckBox checkBoxAnonymous = dialogView.findViewById(R.id.CommentAsAnonymous);
+        RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Add Comment")
@@ -204,8 +223,9 @@ public class FacilityDetailsActivity extends AppCompatActivity {
                 .setPositiveButton("Submit", (dialogInterface, i) -> {
                     String commentText = editTextComment.getText().toString();
                     boolean isAnonymous = checkBoxAnonymous.isChecked();
+                    float rating = ratingBar.getRating();
                     if (!commentText.isEmpty()) {
-                        addComment(commentText, isAnonymous);
+                        addComment(commentText, isAnonymous, rating);
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -214,14 +234,47 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void addComment(String commentText, boolean isAnonymous) {
-        String userName = isAnonymous ? "Anonymous Client" : "User";
-        CommentModel newComment = new CommentModel(userName, commentText);
+    private void addComment(String commentText, boolean isAnonymous, float rating) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String defaultUserName = "Anonymous Client";
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        comments.add(newComment);
-        if (comments.size() == 1) {
-            setupCommentRecyclerView(comments);
-        }
-        recyclerView.getAdapter().notifyDataSetChanged();
+        db.collection("credentials")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String userName = isAnonymous
+                                ? defaultUserName
+                                : task.getResult().getDocuments().get(0).getString("username");
+
+                        HashMap<String, Object> commentData = new HashMap<>();
+                        commentData.put("userId", userId);
+                        commentData.put("userName", userName);
+                        commentData.put("comment", commentText);
+                        commentData.put("facilityId", currentFacility);
+                        commentData.put("rating", rating);
+
+                        // Add the comment to Firestore
+                        db.collection("comments").add(commentData)
+                                .addOnCompleteListener(addTask -> {
+                                    if (addTask.isSuccessful()) {
+                                        comments.add(new CommentModel(userName, commentText, rating
+                                        ));
+                                        if (comments.size() == 1) {
+                                            setupCommentRecyclerView(comments);
+                                        }
+                                        recyclerView.getAdapter().notifyDataSetChanged();
+                                    } else {
+                                        showError("Failed to add comment: " + addTask.getException().getMessage());
+                                    }
+                                });
+                    } else {
+                        String error = task.getResult().isEmpty()
+                                ? "User not found in credentials collection."
+                                : task.getException().getMessage();
+                        showError("Failed to fetch user details: " + error);
+                    }
+                });
     }
 }
