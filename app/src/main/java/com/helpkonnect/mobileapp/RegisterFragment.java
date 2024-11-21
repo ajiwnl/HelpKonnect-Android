@@ -254,7 +254,7 @@ public class RegisterFragment extends Fragment {
         JSONObject userObject = new JSONObject();
         try {
             userObject.put("id", userId);
-            userObject.put("name", username);
+            userObject.put("username", username);
         } catch (JSONException e) {
             e.printStackTrace();
         }
