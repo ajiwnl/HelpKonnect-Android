@@ -59,6 +59,16 @@ public class SigninFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+/*      boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (isLoggedIn) {
+            // If already logged in, navigate to the main activity or another fragment
+            Intent intent = new Intent(getContext(), MainScreenActivity.class);
+            startActivity(intent);
+            getActivity().finish(); // Close the SignInFragment
+        }*/
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
 
@@ -71,7 +81,6 @@ public class SigninFragment extends Fragment {
         forgotPasswordTextView = rootView.findViewById(R.id.ToForgotPasswordTextView);
         signupTextView = rootView.findViewById(R.id.ToSignInTextView);
         rememberMeCheckBox = rootView.findViewById(R.id.rememberMeCheckBox);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         passwordEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.edittextpasswordicon, 0, R.drawable.ic_eye_off, 0); // Eye icon on (hidden)
 
         // Load saved email and password if "Remember Me" was checked
@@ -181,14 +190,12 @@ public class SigninFragment extends Fragment {
                                                             .putString("password", password)
                                                             .apply();
                                                 } else {
-                                                    // Clear saved credentials if "Remember Me" is unchecked
                                                     sharedPreferences.edit()
                                                             .remove("email")
                                                             .remove("password")
                                                             .putBoolean("rememberMe", false)
                                                             .apply();
                                                 }
-
                                                 updateUserSession(userId, true);
                                                 userActivity(userId);
 
@@ -199,6 +206,9 @@ public class SigninFragment extends Fragment {
                                                 } else {
                                                     Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                                     intent.putExtra("userRole", role);
+                                                    sharedPreferences.edit()
+                                                            .putBoolean("isLoggedIn", true) // Ensure flag is updated
+                                                            .apply();
                                                     startActivity(intent);
                                                     getActivity().finish();
                                                 }
@@ -335,6 +345,5 @@ public class SigninFragment extends Fragment {
                     Log.e("Firestore", "Failed to update session data: " + e.getMessage());
                 });
     }
-
 
 }

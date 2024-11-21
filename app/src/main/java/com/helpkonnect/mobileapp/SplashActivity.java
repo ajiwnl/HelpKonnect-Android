@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,18 +20,29 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_uam_termsandcondition);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("YourPreferencesName", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        if (isLoggedIn) {
+            // If user is logged in, directly go to the MainScreenActivity
+            Intent intent = new Intent(SplashActivity.this, MainScreenActivity.class);
+            startActivity(intent);
+            finish(); // Prevent returning to the splash screen
+            return;
+        }
+
+        // Otherwise, load the splash screen UI as usual
+        setContentView(R.layout.activity_uam_termsandcondition);
         HelpKonnectLogo = findViewById(R.id.HelpKonnectLogo);
         startapp = findViewById(R.id.touseraccount);
-        //Animation to float up the logo after user clicks the app
+
         Animation floatUpAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_float_up);
-        long animationDuration = floatUpAnimation.getDuration(); // Get the animation duration
+        long animationDuration = floatUpAnimation.getDuration();
 
         overridePendingTransition(R.anim.appear_in, R.anim.disappear_out);
 
         startapp.setOnClickListener(v -> {
-
             startapp.setEnabled(false);
             startapp.setVisibility(View.GONE);
 
@@ -39,11 +51,9 @@ public class SplashActivity extends AppCompatActivity {
                 HelpKonnectLogo.setVisibility(View.GONE);
                 Intent tosignin = new Intent(SplashActivity.this, UserAccountManagementActivity.class);
                 startActivity(tosignin);
-               //Need Fix Later
                 finish();
-
             }, animationDuration + 500);
         });
-
     }
+
 }
