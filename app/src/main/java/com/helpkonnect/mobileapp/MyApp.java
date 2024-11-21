@@ -58,7 +58,7 @@ public class MyApp extends Application {
 
         // Schedule notifications
         scheduleDailyNotifications();
-
+        NotificationScheduler.scheduleBookingReminder(this);
         // Fetch API keys
         fetchOneSignalKeys(); // Ensure to fetch OneSignal keys first
         fetchApiKeyAndInitializeChatClient(); // Fetch Stream API keys
