@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Base.Theme.HelpKonnectMobile" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.Theme.HelpKonnectMobile" parent="Theme.MaterialComponents.Light.NoActionBar">
 
         
     </style>
