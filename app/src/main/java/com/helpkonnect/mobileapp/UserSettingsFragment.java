@@ -1,6 +1,8 @@
 package com.helpkonnect.mobileapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -117,7 +119,6 @@ public class UserSettingsFragment extends Fragment {
         return rootView;
     }
 
-
     // Method to handle sign out
     private void signOutUser() {
         LogoutDialogFragment dialog = new LogoutDialogFragment();
@@ -127,22 +128,28 @@ public class UserSettingsFragment extends Fragment {
             if (user != null) {
                 String userId = user.getUid();
 
-                updateUserSession(userId, false); // Update session in Firestore
+                // Update session in Firestore
+                updateUserSession(userId, false);
+
+                // Sign out from Firebase Auth
+                mAuth.signOut();
+
+                // Clear the "isLoggedIn" flag from SharedPre
+                // ferences
+                SharedPreferences sharedPreferences = requireContext().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                sharedPreferences.edit()
+                        .putBoolean("isLoggedIn", false)
+                        .apply();
+
+                // Redirect to SignInFragment (or MainScreenActivity, as per your use case)
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                SigninFragment signinFragment = new SigninFragment();
+                transaction.replace(R.id.FragmentContent, signinFragment); // Replace with your fragment container ID
+                transaction.commit();
             }
-
-            // Sign out from Firebase Auth
-            mAuth.signOut();
-
-           //Go back to Account MAnagement Activity with fragment of Sign in
-            Intent intent = new Intent(requireContext(), UserAccountManagementActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
         });
-
-        // Show the dialog
-        dialog.show(requireFragmentManager(), "LogoutConfirmationDialog");
+        dialog.show(getChildFragmentManager(), "LogoutDialog");
     }
-
 
     private void updateUserSession(String userId, boolean isActive) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
