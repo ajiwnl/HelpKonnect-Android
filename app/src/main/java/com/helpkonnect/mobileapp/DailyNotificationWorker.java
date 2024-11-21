@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.util.Log;
 
@@ -50,10 +51,21 @@ public class DailyNotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE);
+
         fetchOneSignalKeys();
-        sendTrackerDailyNotification();
-        sendJournalDailyNotification();
-        sendActivityReminderNotification();
+        // Check preferences before sending notifications
+        if (sharedPreferences.getBoolean("journal_notification", true)) {
+            sendJournalDailyNotification();
+        }
+        if (sharedPreferences.getBoolean("analysis_notification", true)) {
+            sendTrackerDailyNotification();
+        }
+        if (sharedPreferences.getBoolean("resources_notification", true)) {
+            sendActivityReminderNotification();
+        }
+
         return Result.success();
     }
 

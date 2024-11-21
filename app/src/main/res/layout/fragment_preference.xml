@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:text="Preference Title 1"
+            android:text="Journal Notifications"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -63,7 +63,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/prefTitleSwitch1"
+            android:id="@+id/journalSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -76,15 +76,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:text="Preference Title 2"
+            android:text="Emotion Analysis Notifications"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/prefTitleSwitch1" />
+            app:layout_constraintTop_toBottomOf="@+id/journalSwitch" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/prefTitleSwitch2"
+            android:id="@+id/analysisSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -97,15 +97,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="10dp"
-            android:text="Preference Title 3"
+            android:text="Resources Reminder Notifications"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/prefTitleSwitch2" />
+            app:layout_constraintTop_toBottomOf="@+id/analysisSwitch" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/prefTitleSwitch3"
+            android:id="@+id/resSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
