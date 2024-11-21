@@ -61,14 +61,6 @@ public class SigninFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        /*boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-        if (isLoggedIn) {
-            // If already logged in, navigate to the main activity or another fragment
-            Intent intent = new Intent(getContext(), MainScreenActivity.class);
-            startActivity(intent);
-            getActivity().finish(); // Close the SignInFragment
-        }*/
-
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_signin, container, false);
 
@@ -139,16 +131,18 @@ public class SigninFragment extends Fragment {
         // Validate inputs
         if (TextUtils.isEmpty(email)) {
             emailEditText.setError("Email is required.");
-            showLoader(false,null);
+            showLoader(false, null);
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
             passwordEditText.setError("Password is required.");
-            showLoader(false,null);
+            showLoader(false, null);
             return;
         }
+
         showLoader(true, "Signing You In");
+
         // Sign in with Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
@@ -176,7 +170,7 @@ public class SigninFragment extends Fragment {
                                                 boolean isFirstSignIn = Boolean.TRUE.equals(queryDocumentSnapshots.getDocuments().get(0).getBoolean("firstTimeLogin"));
                                                 Log.d(TAG, "Role fetched for user: " + role);
 
-                                                if(isBanned) {
+                                                if (isBanned) {
                                                     Toast.makeText(getContext(), "Your Account Has Been Banned", Toast.LENGTH_SHORT).show();
                                                     showLoader(false, "Signing You In");
                                                     return;
@@ -199,20 +193,21 @@ public class SigninFragment extends Fragment {
                                                 updateUserSession(userId, true);
                                                 userActivity(userId);
 
-                                                if (isFirstSignIn && Objects.equals(role, "User")) {
+                                                // Mark the user as logged in in SharedPreferences
+                                                sharedPreferences.edit()
+                                                        .putBoolean("isLoggedIn", true)
+                                                        .apply();  // Set the flag to true
+
+                                                if (isFirstSignIn && "User".equals(role)) {
                                                     showLoader(false, null);
                                                     androidx.fragment.app.FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                                                     FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new InitialSigninFragment());
                                                 } else {
                                                     Intent intent = new Intent(getContext(), MainScreenActivity.class);
                                                     intent.putExtra("userRole", role);
-                                                    sharedPreferences.edit()
-                                                            .putBoolean("isLoggedIn", true) // Ensure flag is updated
-                                                            .apply();
                                                     startActivity(intent);
                                                     getActivity().finish();
                                                 }
-
                                             } else {
                                                 Log.d(TAG, "No document found with userId: " + userId);
                                                 Toast.makeText(getContext(), "User role not found.", Toast.LENGTH_SHORT).show();
@@ -250,6 +245,7 @@ public class SigninFragment extends Fragment {
                     }
                 });
     }
+
 
     @Override
     public void onStop() {

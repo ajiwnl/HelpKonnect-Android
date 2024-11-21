@@ -95,7 +95,7 @@ public class UserSettingsFragment extends Fragment {
         });
 
         rootView.findViewById(R.id.PreferencesMenu).setOnClickListener( v ->{
-            FragmentMethods.displayFragment(getActivity().getSupportFragmentManager(),R.id.fragment_container,new PreferenceFragment()) ;
+            FragmentMethods.displayFragment(getActivity().getSupportFragmentManager(),R.id.FragmentContent,new PreferenceFragment()) ;
         });
 
         profileLayout.setOnClickListener(new View.OnClickListener() {

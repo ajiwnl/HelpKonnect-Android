@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -23,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("YourPreferencesName", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
+        Log.d("Splash Value: isLoggedIn:", String.valueOf(isLoggedIn));
         if (isLoggedIn) {
             // If user is logged in, directly go to the MainScreenActivity
             Intent intent = new Intent(SplashActivity.this, MainScreenActivity.class);
@@ -55,5 +56,6 @@ public class SplashActivity extends AppCompatActivity {
             }, animationDuration + 500);
         });
     }
+
 
 }

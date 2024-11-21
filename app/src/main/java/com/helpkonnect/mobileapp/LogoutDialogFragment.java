@@ -1,6 +1,8 @@
 package com.helpkonnect.mobileapp;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class LogoutDialogFragment extends DialogFragment {
 
+    private SharedPreferences SigninStatus;
+    private SharedPreferences.Editor editor;
     private OnLogoutConfirmationListener listener;
 
     public interface OnLogoutConfirmationListener {
@@ -22,6 +26,14 @@ public class LogoutDialogFragment extends DialogFragment {
 
     public void setOnLogoutConfirmationListener(OnLogoutConfirmationListener listener) {
         this.listener = listener;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        // Initialize SharedPreferences here
+        SigninStatus = context.getSharedPreferences("appPrefs", Context.MODE_PRIVATE);
+        editor = SigninStatus.edit(); // Get the editor to modify preferences
     }
 
     @NonNull
@@ -42,6 +54,10 @@ public class LogoutDialogFragment extends DialogFragment {
             if (listener != null) {
                 listener.onConfirmLogout();
             }
+            editor.putBoolean("isLoggedIn", false);
+            editor.apply();
+
+            requireActivity().finish();
             dismiss(); // Close the dialog
         });
 

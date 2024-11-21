@@ -78,6 +78,9 @@ public class MainScreenActivity extends AppCompatActivity {
             fetchTokenAndConnectUser(userId, userName);
         } else {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            Intent tosignin = new Intent(this, UserAccountManagementActivity.class);
+            startActivity(tosignin);
+            finish();
         }
 
         drawerLayout = findViewById(R.id.drawer_layout);

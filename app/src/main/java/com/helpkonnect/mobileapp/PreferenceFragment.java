@@ -36,7 +36,7 @@ public class PreferenceFragment extends Fragment {
         });
 
         backButton.setOnClickListener(v->{
-            FragmentMethods.displayFragment(getActivity().getSupportFragmentManager(),R.id.fragment_container,new UserSettingsFragment());
+            FragmentMethods.displayFragment(getActivity().getSupportFragmentManager(),R.id.FragmentContent,new UserSettingsFragment());
         });
 
         return rootView;

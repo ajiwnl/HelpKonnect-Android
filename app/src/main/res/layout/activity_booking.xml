@@ -27,10 +27,10 @@
         android:indeterminateTint="@color/PrimaryLight"
         android:padding="5dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/BookingListTextView"
-        app:layout_constraintEnd_toEndOf="@+id/BookingListTextView"
-        app:layout_constraintStart_toStartOf="@+id/BookingListTextView"
-        app:layout_constraintTop_toTopOf="@+id/BookingListTextView" />
+        app:layout_constraintBottom_toBottomOf="@+id/BookingListRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/BookingListRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/BookingListRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/BookingListRecyclerView" />
 
     <TextView
         android:id="@+id/BookingErrorTextView"
@@ -38,10 +38,10 @@
         android:layout_height="wrap_content"
         android:text="No Booking History Found"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/BookingListTextView"
-        app:layout_constraintEnd_toEndOf="@+id/BookingListTextView"
-        app:layout_constraintStart_toStartOf="@+id/BookingListTextView"
-        app:layout_constraintTop_toTopOf="@+id/BookingListTextView"/>
+        app:layout_constraintBottom_toBottomOf="@+id/BookingListRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/BookingListRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/BookingListRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/BookingListRecyclerView" />
 
 
     <TextView
