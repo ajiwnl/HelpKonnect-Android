@@ -141,11 +141,10 @@ public class UserSettingsFragment extends Fragment {
                         .putBoolean("isLoggedIn", false)
                         .apply();
 
-                // Redirect to SignInFragment (or MainScreenActivity, as per your use case)
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                SigninFragment signinFragment = new SigninFragment();
-                transaction.replace(R.id.FragmentContent, signinFragment); // Replace with your fragment container ID
-                transaction.commit();
+                //Go back to Account MAnagement Activity with fragment of Sign in
+                Intent intent = new Intent(requireContext(), UserAccountManagementActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
             }
         });
         dialog.show(getChildFragmentManager(), "LogoutDialog");
