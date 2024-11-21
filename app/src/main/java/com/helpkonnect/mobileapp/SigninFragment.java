@@ -61,7 +61,7 @@ public class SigninFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-/*      boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        /*boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
         if (isLoggedIn) {
             // If already logged in, navigate to the main activity or another fragment
             Intent intent = new Intent(getContext(), MainScreenActivity.class);
