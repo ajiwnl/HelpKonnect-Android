@@ -33,6 +33,7 @@ public class BookingReminderWorker extends Worker {
 
     private static final String TAG = "BookingReminderWorker";
     private static final String ONE_KEY_URL = "https://helpkonnect.vercel.app/api/onesignalKey";
+
     private String oneSignalKey = null;
     private String oneSignalID = null;
 
@@ -49,7 +50,6 @@ public class BookingReminderWorker extends Worker {
     }
 
     private void fetchOneSignalKeys() {
-
         // Fetch the API keys using GET request
         StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
                 response -> {
@@ -67,53 +67,37 @@ public class BookingReminderWorker extends Worker {
                         Log.e(TAG, "JSON parsing error: " + e.getMessage());
                     }
                 },
-                error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
+                error -> Log.e(TAG, "Error fetching API keys: " + error.toString())
+        );
         RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
         requestQueue.add(stringRequest);
     }
 
-
     private void sendBookingReminderNotification() {
         Log.d("BookingReminder", "Setting up booking reminder notification with OneSignal...");
 
-        // Check if the user is logged in
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            // Query bookings for the user
             db.collection("bookings")
                     .whereEqualTo("userId", userId)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && task.getResult() != null) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String bookingDateStr = document.getString("bookingDate");  // Example: "21/11/2024 01:30 PM"
-                                String sessionDurationStr = document.getString("sessionDuration");  // Example: "2" (hours)
-
+                                String bookingDateStr = document.getString("bookingDate");
                                 try {
-                                    // Parse the booking date string
                                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
                                     Date bookingDate = format.parse(bookingDateStr);
 
-                                    // Check if sessionDuration exists and parse it as an integer
-                                    if (sessionDurationStr != null) {
-                                        int sessionDuration = Integer.parseInt(sessionDurationStr); // Duration in hours
+                                    long currentTimeMillis = System.currentTimeMillis();
+                                    long timeDifference = bookingDate.getTime() - currentTimeMillis;
 
-                                        // Convert session duration from hours to milliseconds (1 hour = 3600000 milliseconds)
-                                        long sessionStartTimeMillis = bookingDate.getTime() + (sessionDuration * 3600000); // sessionDuration in milliseconds
-                                        Date sessionStartTime = new Date(sessionStartTimeMillis);
-
-                                        // Calculate the time difference between now and the session start time
-                                        long currentTimeMillis = System.currentTimeMillis();
-                                        long timeDifference = sessionStartTimeMillis - currentTimeMillis;
-
-                                        // If the time difference is 30 minutes (1800000 ms), send the notification
-                                        if (timeDifference > 0 && timeDifference <= 1800000) {  // 30 minutes in milliseconds
-                                            sendOneSignalNotification(userId, sessionStartTime);
-                                        }
+                                    // Check for a 30-minute notification window
+                                    if (timeDifference > 0 && timeDifference <= 1800000) {
+                                        sendOneSignalNotification(bookingDate);
                                     }
                                 } catch (Exception e) {
                                     Log.e("BookingReminder", "Error parsing booking date/time", e);
@@ -125,48 +109,57 @@ public class BookingReminderWorker extends Worker {
                     });
         }
     }
-    private void sendOneSignalNotification(String userId, Date bookingDate) {
-        Log.d("BookingReminder", "Sending OneSignal notification for booking reminder...");
 
-        // Fetch OneSignal player ID
+    private void sendOneSignalNotification(Date bookingDate) {
         String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
 
         if (oneSignalPlayerId != null) {
             try {
-                // Create notification content
+                // Construct the notification payload
                 JSONObject json = new JSONObject();
-                json.put("app_id", oneSignalID);  // Replace with your OneSignal app ID
+                Log.d("BookingReminder", "Sending notification with App ID: " + oneSignalID);
+                json.put("app_id", oneSignalID);  // Ensure this is not null or empty
 
-                // Add title (headings) and content (contents)
+
                 JSONObject headings = new JSONObject();
                 headings.put("en", "Booking Reminder");
 
-                String bookingTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(bookingDate);
+                String bookingTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(bookingDate);
                 JSONObject contents = new JSONObject();
-                contents.put("en", "You have a booking starting at " + bookingTime + ". Don't forget!");
+                contents.put("en", "You have a booking at " + bookingTime + ". Be prepared!");
 
                 json.put("headings", headings);
                 json.put("contents", contents);
                 json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
 
-                // Send notification request
+                Log.d(TAG, "Sending notification: " + json.toString()); // Log the JSON request
+
+                // Send the notification using a POST request
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                         Request.Method.POST,
                         "https://onesignal.com/api/v1/notifications",
                         json,
                         response -> Log.d("BookingReminder", "Notification sent successfully: " + response.toString()),
-                        error -> Log.e("BookingReminder", "Failed to send notification", error)) {
+                        error -> {
+                            Log.e("BookingReminder", "Failed to send notification: " + error.getMessage());
+                            if (error.networkResponse != null) {
+                                Log.e("BookingReminder", "Response Code: " + error.networkResponse.statusCode);
+                                Log.e("BookingReminder", "Error Body: " + new String(error.networkResponse.data));
+                            }
+                        }
+                ) {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<>();
                         headers.put("Content-Type", "application/json");
-                        headers.put("Authorization", "Basic " + oneSignalKey);  // Replace with your OneSignal REST API Key
+                        headers.put("Authorization", "Basic " + oneSignalKey); // OneSignal Key
                         return headers;
                     }
                 };
 
                 // Add the request to the queue
                 Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
+
             } catch (JSONException e) {
                 Log.e("BookingReminder", "Error creating notification request", e);
             }
@@ -174,6 +167,4 @@ public class BookingReminderWorker extends Worker {
             Log.e("BookingReminder", "Invalid OneSignal player ID.");
         }
     }
-
 }
-
