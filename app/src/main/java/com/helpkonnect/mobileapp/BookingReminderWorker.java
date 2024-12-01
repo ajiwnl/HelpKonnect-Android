@@ -105,6 +105,7 @@ public class BookingReminderWorker extends Worker {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String bookingDateStr = document.getString("bookingDate");
                                 String facilityName = document.getString("facilityName");
+                                String professionalId = document.getString("professionalId"); // Fetch professionalId
 
                                 try {
                                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
@@ -115,7 +116,13 @@ public class BookingReminderWorker extends Worker {
 
                                     // Check for a 30-minute notification window
                                     if (timeDifference > 0 && timeDifference <= 1800000) {
-                                        sendOneSignalNotification(bookingDate, facilityName);
+                                        // Notify the user
+                                        sendOneSignalNotification(bookingDate, facilityName, OneSignal.getDeviceState().getUserId());
+
+                                        // Fetch and notify the professional
+                                        fetchProfessionalPlayerId(professionalId, professionalPlayerId -> {
+                                            sendOneSignalNotification(bookingDate, facilityName, professionalPlayerId);
+                                        });
                                     }
                                 } catch (Exception e) {
                                     Log.e("BookingReminder", "Error parsing booking date/time", e);
@@ -128,15 +135,36 @@ public class BookingReminderWorker extends Worker {
         }
     }
 
-    private void sendOneSignalNotification(Date bookingDate, String facilityName) {
-        String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
+    private void fetchProfessionalPlayerId(String professionalId, OnProfessionalPlayerIdFetchedCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users")
+                .whereEqualTo("userId", professionalId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String playerId = document.getString("playerId");
+                            if (playerId != null && !playerId.isEmpty()) {
+                                callback.onPlayerIdFetched(playerId);
+                            } else {
+                                Log.e("BookingReminder", "Professional Player ID not found.");
+                            }
+                        }
+                    } else {
+                        Log.e("BookingReminder", "Failed to fetch professional Player ID: ", task.getException());
+                    }
+                });
+    }
 
-        if (oneSignalPlayerId != null) {
+    interface OnProfessionalPlayerIdFetchedCallback {
+        void onPlayerIdFetched(String playerId);
+    }
+
+    private void sendOneSignalNotification(Date bookingDate, String facilityName, String playerId) {
+        if (playerId != null && !playerId.isEmpty()) {
             try {
-                // Construct the notification payload
                 JSONObject json = new JSONObject();
-                Log.d("BookingReminder", "Sending notification with App ID: " + oneSignalID);
-                json.put("app_id", oneSignalID);  // Ensure this is not null or empty
+                json.put("app_id", oneSignalID);
 
                 JSONObject headings = new JSONObject();
                 headings.put("en", "Upcoming Booking Reminder");
@@ -153,41 +181,31 @@ public class BookingReminderWorker extends Worker {
 
                 json.put("headings", headings);
                 json.put("contents", contents);
-                json.put("include_player_ids", new JSONArray().put(oneSignalPlayerId));
+                json.put("include_player_ids", new JSONArray().put(playerId));
 
-                Log.d(TAG, "Sending notification: " + json.toString()); // Log the JSON request
-
-                // Send the notification using a POST request
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                         Request.Method.POST,
                         "https://onesignal.com/api/v1/notifications",
                         json,
                         response -> Log.d("BookingReminder", "Notification sent successfully: " + response.toString()),
-                        error -> {
-                            Log.e("BookingReminder", "Failed to send notification: " + error.getMessage());
-                            if (error.networkResponse != null) {
-                                Log.e("BookingReminder", "Response Code: " + error.networkResponse.statusCode);
-                                Log.e("BookingReminder", "Error Body: " + new String(error.networkResponse.data));
-                            }
-                        }
+                        error -> Log.e("BookingReminder", "Failed to send notification: ", error)
                 ) {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<>();
                         headers.put("Content-Type", "application/json");
-                        headers.put("Authorization", "Basic " + oneSignalKey); // OneSignal Key
+                        headers.put("Authorization", "Basic " + oneSignalKey);
                         return headers;
                     }
                 };
 
-                // Add the request to the queue
                 Volley.newRequestQueue(getApplicationContext()).add(jsonObjectRequest);
 
             } catch (JSONException e) {
                 Log.e("BookingReminder", "Error creating notification request", e);
             }
         } else {
-            Log.e("BookingReminder", "Invalid OneSignal player ID.");
+            Log.e("BookingReminder", "Invalid Player ID.");
         }
     }
 
