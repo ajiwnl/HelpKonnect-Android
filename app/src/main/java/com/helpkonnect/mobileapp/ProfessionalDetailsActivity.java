@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -195,10 +196,24 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
                             String checkoutUrl = response.getJSONObject("data").getJSONObject("attributes").getString("checkout_url");
                             Log.d("CheckoutSession", "Checkout URL: " + checkoutUrl);
 
+                            // Open the third-party URL in a web browser
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl));
                             startActivity(intent);
 
+                            // Save booking details
                             saveBookingDetails(userId, professionalId, subtotal, sessionDurationEditText.getText().toString());
+
+                            Toast.makeText(ProfessionalDetailsActivity.this, "Creating your facility booking! Redirecting...", Toast.LENGTH_SHORT).show();
+
+                            // Navigate back to the FacilitiesFragment after some delay
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Go back to FacilitiesFragment
+                                    onBackPressed();
+                                }
+                            }, 3000);  // Delay 3 seconds before navigating back
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -214,6 +229,7 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
 
         queue.add(jsonObjectRequest);
     }
+
 
     private void showTimePickerDialog() {
         final Calendar calendar = Calendar.getInstance();
