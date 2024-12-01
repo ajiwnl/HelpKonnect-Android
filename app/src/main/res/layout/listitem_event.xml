@@ -65,7 +65,7 @@
             <Button
                 android:id="@+id/participateBtn"
                 android:layout_width="200dp"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:paddingVertical="4dp"
                 android:text="@string/participate"
                 android:textAllCaps="false"
