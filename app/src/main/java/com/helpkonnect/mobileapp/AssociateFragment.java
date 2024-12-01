@@ -29,7 +29,7 @@ public class AssociateFragment extends Fragment {
 
     private ImageView facilityImage;
 
-    private CardView resources, events;
+    private CardView resources, events, booking;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class AssociateFragment extends Fragment {
 
         resources = rootView.findViewById(R.id.ResourcesCardView);
         events = rootView.findViewById(R.id.EventsCardView);
+        booking = rootView.findViewById(R.id.BookingCardView);
 
         resources.setOnClickListener( v -> {
             Intent intent = new Intent(getActivity(), ManageResourcesActivity.class);
@@ -53,6 +54,12 @@ public class AssociateFragment extends Fragment {
         events.setOnClickListener(v -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentMethods.displayFragment(fragmentManager, R.id.FragmentContent, new CommunityFragment());
+        });
+
+        booking.setOnClickListener( v -> {
+            Intent intent = new Intent(getActivity(), BookingHistoryActivity.class);
+            intent.putExtra("facilityName", facilityName.getText());
+            startActivity(intent);
         });
 
         checkUserAssociation();
