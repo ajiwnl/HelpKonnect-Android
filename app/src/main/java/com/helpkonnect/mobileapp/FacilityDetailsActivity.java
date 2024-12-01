@@ -90,11 +90,15 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             String location = args.getString("location");
             float rating = args.getFloat("rating");
             currentFacility = args.getString("userId");
+            String description = args.getString("description");
+            String email = args.getString("email");
 
             ImageView facilityImage = findViewById(R.id.facilityImage);
             TextView facilityName = findViewById(R.id.FacilityName);
             TextView facilityLocation = findViewById(R.id.FacilityLocation);
             RatingBar facilityRatingBar = findViewById(R.id.FacilityRating);
+            TextView facilityDescription = findViewById(R.id.FacilityDescription);
+            TextView facilityEmail = findViewById(R.id.FacilityEmail);
 
             Glide.with(this)
                     .load(imageUrl)
@@ -103,6 +107,8 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             facilityName.setText(name);
             facilityLocation.setText(location);
             facilityRatingBar.setRating(rating);
+            facilityDescription.setText(description);
+            facilityEmail.setText(email);
         }
 
         loadAssociatedProfessionals();

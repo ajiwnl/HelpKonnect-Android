@@ -60,19 +60,50 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/FacilityDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:text="Facility Description"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/FacilityName"
+                />
+
+            <TextView
                 android:id="@+id/FacilityLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:paddingStart="40dp"
                 android:paddingEnd="40dp"
-                android:text="Facility Name"
+                android:text="Facility Location"
                 android:textAlignment="center"
-                android:textSize="16sp"
-                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/FacilityName" />
+                app:layout_constraintTop_toBottomOf="@+id/FacilityDescription" />
+
+            <TextView
+                android:id="@+id/FacilityEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:text="Facility Email"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/FacilityLocation" />
 
             <View
                 android:id="@+id/divider"
@@ -83,7 +114,7 @@
                 android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/FacilityLocation"/>
+                app:layout_constraintTop_toBottomOf="@id/FacilityEmail"/>
 
             <RatingBar
                 android:id="@+id/FacilityRating"

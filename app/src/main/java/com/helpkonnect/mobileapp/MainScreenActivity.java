@@ -185,6 +185,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 String role = documentSnapshot.getString("role");
                 String username = documentSnapshot.getString("username");
                 String imageUrl = documentSnapshot.getString("imageUrl");
+                String associated = documentSnapshot.getString("associated");
 
                 profileNameTextView.setText("Hello, " + username);
                 if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -200,6 +201,9 @@ public class MainScreenActivity extends AppCompatActivity {
                     menu.findItem(R.id.tracknav).setVisible(false);
                     menu.findItem(R.id.chatbotnav).setVisible(false);
                     menu.findItem(R.id.resnav).setVisible(false);
+                    if(!associated.isEmpty()) {
+                        menu.findItem(R.id.facnav).setVisible(false);
+                    }
                 } else {
                     menu.findItem(R.id.assonav).setVisible(false);
                 }

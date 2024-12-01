@@ -121,7 +121,9 @@ public class FacilitiesFragment extends Fragment {
                                     facilityDoc.getString("facilityLocation"),
                                     facilityId,
                                     0, // Placeholder for rating
-                                    "0" // Placeholder for price range
+                                    "0", // Placeholder for price range
+                                    facilityDoc.getString("facilityDescription"),
+                                    facilityDoc.getString("email")
                             );
 
                             // Fetch feedback ratings for this facility
@@ -178,6 +180,8 @@ public class FacilitiesFragment extends Fragment {
                                                                     intent.putExtra("location", facilityItem.getLocation());
                                                                     intent.putExtra("rating", facilityItem.getRating());
                                                                     intent.putExtra("userId", facilityItem.getUserId());
+                                                                    intent.putExtra("description", facilityItem.getDescription());
+                                                                    intent.putExtra("email", facilityItem.getEmail());
                                                                     startActivity(intent);
                                                                 });
                                                                 facilityRecyclerView.setAdapter(adapter);

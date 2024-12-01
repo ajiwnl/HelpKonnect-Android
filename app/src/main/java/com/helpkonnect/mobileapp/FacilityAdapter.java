@@ -25,16 +25,20 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         private float rating;
         private String priceRange;
         private String userId;
+        private String description;
+        private String email;
 
 
         // Constructor
-        public Facility(String image, String title, String location, String userId, float rating, String priceRange) {
+        public Facility(String image, String title, String location, String userId, float rating, String priceRange, String description, String email) {
             this.image = image;
             this.title = title;
             this.location = location;
             this.rating = rating;
             this.priceRange = priceRange;
             this.userId = userId;
+            this.description = description;
+            this.email = email;
         }
 
         // Getters
@@ -44,11 +48,16 @@ public class FacilityAdapter extends RecyclerView.Adapter<FacilityAdapter.Facili
         public float getRating() { return rating; }
         public String getPriceRange() { return priceRange; }
         public String getUserId() { return userId; }
+        public String getEmail() { return email; }
         public void setPriceRange(String priceRange) {
             this.priceRange = priceRange;
         }
 
         public void setRating(float rating) { this.rating = rating; }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     // Define the interface for click handling
