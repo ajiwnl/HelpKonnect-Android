@@ -44,36 +44,52 @@ public class BookingReminderWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        fetchOneSignalKeys();
-        sendBookingReminderNotification();
+        fetchOneSignalKeys(new OnKeysFetchedCallback() {
+            @Override
+            public void onKeysFetched() {
+                sendBookingReminderNotification();
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Failed to fetch OneSignal keys: " + error);
+            }
+        });
         return Result.success();
     }
 
-    private void fetchOneSignalKeys() {
-        // Fetch the API keys using GET request
+    private void fetchOneSignalKeys(OnKeysFetchedCallback callback) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
                 response -> {
-                    Log.d(TAG, "API Key Response: " + response); // Log the response
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-
                         oneSignalID = jsonResponse.getString("onesignalID");
                         oneSignalKey = jsonResponse.getString("onesignalKey");
 
                         Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
                         Log.d(TAG, "Fetched oneSignalKey: " + oneSignalKey);
-
+                        callback.onKeysFetched();
                     } catch (JSONException e) {
-                        Log.e(TAG, "JSON parsing error: " + e.getMessage());
+                        callback.onError(e.getMessage());
                     }
                 },
-                error -> Log.e(TAG, "Error fetching API keys: " + error.toString())
+                error -> callback.onError(error.toString())
         );
-        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
-        requestQueue.add(stringRequest);
+        Volley.newRequestQueue(this.getApplicationContext()).add(stringRequest);
     }
 
+    interface OnKeysFetchedCallback {
+        void onKeysFetched();
+        void onError(String error);
+    }
+
+
     private void sendBookingReminderNotification() {
+        if (oneSignalID == null || oneSignalID.isEmpty()) {
+            Log.e("BookingReminder", "OneSignal app ID is null or empty. Cannot send notification.");
+            return;
+        }
+
         Log.d("BookingReminder", "Setting up booking reminder notification with OneSignal...");
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -88,6 +104,8 @@ public class BookingReminderWorker extends Worker {
                         if (task.isSuccessful() && task.getResult() != null) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String bookingDateStr = document.getString("bookingDate");
+                                String facilityName = document.getString("facilityName");
+
                                 try {
                                     SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
                                     Date bookingDate = format.parse(bookingDateStr);
@@ -97,7 +115,7 @@ public class BookingReminderWorker extends Worker {
 
                                     // Check for a 30-minute notification window
                                     if (timeDifference > 0 && timeDifference <= 1800000) {
-                                        sendOneSignalNotification(bookingDate);
+                                        sendOneSignalNotification(bookingDate, facilityName);
                                     }
                                 } catch (Exception e) {
                                     Log.e("BookingReminder", "Error parsing booking date/time", e);
@@ -110,7 +128,7 @@ public class BookingReminderWorker extends Worker {
         }
     }
 
-    private void sendOneSignalNotification(Date bookingDate) {
+    private void sendOneSignalNotification(Date bookingDate, String facilityName) {
         String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
 
         if (oneSignalPlayerId != null) {
@@ -120,13 +138,18 @@ public class BookingReminderWorker extends Worker {
                 Log.d("BookingReminder", "Sending notification with App ID: " + oneSignalID);
                 json.put("app_id", oneSignalID);  // Ensure this is not null or empty
 
-
                 JSONObject headings = new JSONObject();
-                headings.put("en", "Booking Reminder");
+                headings.put("en", "Upcoming Booking Reminder");
 
-                String bookingTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(bookingDate);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                String bookingDateFormatted = dateFormat.format(bookingDate);
+                String bookingTimeFormatted = timeFormat.format(bookingDate);
+
+                String facilityText = (facilityName != null && !facilityName.isEmpty()) ? facilityName : "your facility";
+
                 JSONObject contents = new JSONObject();
-                contents.put("en", "You have a booking at " + bookingTime + ". Be prepared!");
+                contents.put("en", "You have a booking at " + facilityText + " on " + bookingDateFormatted + " at " + bookingTimeFormatted + ".");
 
                 json.put("headings", headings);
                 json.put("contents", contents);
@@ -167,4 +190,5 @@ public class BookingReminderWorker extends Worker {
             Log.e("BookingReminder", "Invalid OneSignal player ID.");
         }
     }
+
 }
