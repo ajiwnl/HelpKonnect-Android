@@ -33,6 +33,7 @@ import java.util.Map;
 
 public class UserSettingsFragment extends Fragment {
 
+    private View rootView; // Declare rootView as a class-level variable
     private FirebaseAuth mAuth;
 
     private FirebaseFirestore firestore;
@@ -53,7 +54,7 @@ public class UserSettingsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_user_settings, container, false);
+        rootView = inflater.inflate(R.layout.fragment_user_settings, container, false);
 
         // Initialize Firebase Auth and Firestore
         mAuth = FirebaseAuth.getInstance();
@@ -192,11 +193,18 @@ public class UserSettingsFragment extends Fragment {
                 String bio = documentSnapshot.getString("bio");
                 String address = documentSnapshot.getString("address");
                 String imageUrl = documentSnapshot.getString("imageUrl");
+                String role = documentSnapshot.getString("role"); // Fetch the role field
+
 
                 // Update TextViews with real-time data
                 userFullName.setText(fullName);
                 userBio.setText(bio);
                 userAddress.setText(address);
+
+                if ("Professional".equalsIgnoreCase(role)) {
+                    rootView.findViewById(R.id.PreferencesMenu).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.ProfileBooking).setVisibility(View.GONE);
+                }
 
                 // Load the profile image using Picasso
                 if (imageUrl != null && !imageUrl.isEmpty()) {
