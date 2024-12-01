@@ -33,8 +33,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -98,13 +102,34 @@ public class ProfessionalDetailsActivity extends AppCompatActivity {
 
         requestBookButton.setOnClickListener(v -> {
             String amountText = sessionDurationEditText.getText().toString();
-            float amount;
+            String selectedDate = availableDateEditText.getText().toString();
+            String selectedTime = startTimeEditText.getText().toString();
 
+            if (selectedDate.isEmpty() || selectedTime.isEmpty()) {
+                Toast.makeText(this, "Please select a date and time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
             try {
-                amount = Float.parseFloat(amountText);
+                Date selectedDateTime = dateFormat.parse(selectedDate + " " + selectedTime);
+
+                Calendar calendar = Calendar.getInstance();
+                Date currentDateTime = calendar.getTime();
+
+                if (selectedDateTime != null && selectedDateTime.before(currentDateTime)) {
+                    Toast.makeText(this, "Cannot book for a past date or time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                float amount = Float.parseFloat(amountText);
                 subtotal = amount * rate;
 
                 createCheckoutSession(subtotal);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Invalid date or time format", Toast.LENGTH_SHORT).show();
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show();

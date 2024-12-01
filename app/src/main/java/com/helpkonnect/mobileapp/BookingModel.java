@@ -8,6 +8,10 @@ public class BookingModel {
     private String bookingDuration;
     private String bookingPrice;
 
+    public BookingModel(){
+        // Required for Firestore deserialization
+    }
+
     public BookingModel(String bookingTitle, String bookingDate, String bookingDetails,
                         String bookingStartTime, String bookingDuration, String bookingPrice) {
         this.bookingTitle = bookingTitle;
@@ -40,6 +44,26 @@ public class BookingModel {
 
     public String getBookingPrice() {
         return bookingPrice;
+    }
+
+    public void setBookingPrice(String bookingPrice) {
+        this.bookingPrice = bookingPrice;
+    }
+
+    public void setBookingTitle(String bookingTitle) {
+        this.bookingTitle = bookingTitle;
+    }
+
+    public void setBookingDate(String bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+    public void setBookingStartTime(String bookingStartTime) {
+        this.bookingStartTime = bookingStartTime;
+    }
+
+    public void setBookingDuration(String bookingDuration) {
+        this.bookingDuration = bookingDuration;
     }
 
     public void setBookingDetails(String ProfessionalName) {

@@ -22,6 +22,10 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         this.onItemClickListener = onItemClickListener;
     }
 
+    public BookingAdapter(List<BookingModel> bookingList) {
+        this.bookingList = bookingList;
+    }
+
     @NonNull
     @Override
     public BookingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -37,6 +41,11 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.BookingV
         holder.bookingDate.setText(booking.getBookingDate());
 
         holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(booking));
+    }
+
+    public void updateData(List<BookingModel> newBookings) {
+        this.bookingList = newBookings;
+        notifyDataSetChanged();
     }
 
     @Override
