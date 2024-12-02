@@ -262,7 +262,7 @@ public class FacilityDetailsActivity extends AppCompatActivity {
                         commentData.put("rating", rating);
 
                         // Add the comment to Firestore
-                        db.collection("comments").add(commentData)
+                        db.collection("feedback").add(commentData)
                                 .addOnCompleteListener(addTask -> {
                                     if (addTask.isSuccessful()) {
                                         comments.add(new CommentModel(userName, commentText, rating
