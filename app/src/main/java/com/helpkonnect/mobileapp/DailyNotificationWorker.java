@@ -20,22 +20,16 @@ import com.android.volley.toolbox.Volley;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.onesignal.OneSignal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import javax.xml.transform.Result;
 
 public class DailyNotificationWorker extends Worker {
 
@@ -43,9 +37,10 @@ public class DailyNotificationWorker extends Worker {
     private static final String jTAG = "Journal Reminder Tag";
     private static final String tTAG = "Tracker Reminder Tag";
     private static final String rTAG = "Resources Reminder Tag";
-    private static final String ONE_KEY_URL = "https://helpkonnect.vercel.app/api/onesignalKey";
-    private String oneSignalKey = null;
-    private String oneSignalID = null;
+
+    // Storing app ID and signal key directly
+    private static final String appID = "3d064d90-5221-48da-aaa6-0702f8531c99";
+    private static final String signalKey = "os_v2_app_hude3ecsefenvkvga4bpquy4te4mxajyftqerken66en4mhhwrart2exdozrwrjhrf7sbivyriviti42pc32aev5ffkcwdsm26o63hy";  // Your OneSignal Signal Key
 
     public DailyNotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -54,54 +49,30 @@ public class DailyNotificationWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        // Initialize OneSignal with the app ID directly
+        OneSignal.initWithContext(getApplicationContext());
+        OneSignal.setAppId(appID);
 
-        fetchOneSignalKeys();
+        Log.d(TAG, "Initialized OneSignal with app ID: " + appID);
+
+        // Proceed to check preferences and send notifications
+        checkPreferencesAndSendNotifications();
 
         return Result.success();
     }
 
-    private void fetchOneSignalKeys() {
-        // Fetch the API keys using a GET request
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
-                response -> {
-                    Log.d(TAG, "API Key Response: " + response);
-                    try {
-                        JSONObject jsonResponse = new JSONObject(response);
-                        oneSignalID = jsonResponse.getString("onesignalID");
-                        oneSignalKey = jsonResponse.getString("onesignalKey");
+    private void checkPreferencesAndSendNotifications() {
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE);
 
-                        Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
-                        Log.d(TAG, "Fetched oneSignalKey: " + oneSignalKey);
-
-                        sendNotificationsIfNeeded();
-
-                    } catch (JSONException e) {
-                        Log.e(TAG, "JSON parsing error: " + e.getMessage());
-                    }
-                },
-                error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
-    }
-
-    private void sendNotificationsIfNeeded() {
-        // Ensure that the OneSignal keys are available before sending notifications
-        if (oneSignalID != null && oneSignalKey != null) {
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE);
-
-            // Check preferences and send notifications if needed
-            if (sharedPreferences.getBoolean("journal_notification", true)) {
-                sendJournalDailyNotification();
-            }
-            if (sharedPreferences.getBoolean("analysis_notification", true)) {
-                sendTrackerDailyNotification();
-            }
-            if (sharedPreferences.getBoolean("resources_notification", true)) {
-                sendActivityReminderNotification();
-            }
-        } else {
-            Log.e(TAG, "OneSignal keys are not available. Cannot send notifications.");
+        // Check preferences before sending notifications
+        if (sharedPreferences.getBoolean("journal_notification", true)) {
+            sendJournalDailyNotification();
+        }
+        if (sharedPreferences.getBoolean("analysis_notification", true)) {
+            sendTrackerDailyNotification();
+        }
+        if (sharedPreferences.getBoolean("resources_notification", true)) {
+            sendActivityReminderNotification();
         }
     }
 
@@ -112,13 +83,11 @@ public class DailyNotificationWorker extends Worker {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             Date startOfDay = calendar.getTime();
-
             calendar.set(Calendar.HOUR_OF_DAY, 23);
             calendar.set(Calendar.MINUTE, 59);
             Date endOfDay = calendar.getTime();
@@ -139,11 +108,10 @@ public class DailyNotificationWorker extends Worker {
                                 // Fetch the correct OneSignal player ID
                                 String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
 
-
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id", oneSignalID);
+                                    json.put("app_id", appID);  // Using the stored app ID
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -168,14 +136,19 @@ public class DailyNotificationWorker extends Worker {
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                    Log.e(tTAG, "Failed to send notification", error);
+                                                    if (error.networkResponse != null) {
+                                                        Log.e(TAG, "Error Code: " + error.networkResponse.statusCode);
+                                                        Log.e(TAG, "Error Response: " + new String(error.networkResponse.data));
+                                                    } else {
+                                                        Log.e(TAG, "Volley Error: " + error.toString());
+                                                    }
                                                 }
                                             }) {
                                         @Override
                                         public Map<String, String> getHeaders() throws AuthFailureError {
                                             Map<String, String> headers = new HashMap<>();
                                             headers.put("Content-Type", "application/json");
-                                            headers.put("Authorization", "Basic " + oneSignalKey);
+                                            headers.put("Authorization", "Basic " + signalKey);  // Using the stored signal key
                                             return headers;
                                         }
                                     };
@@ -200,13 +173,11 @@ public class DailyNotificationWorker extends Worker {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             Date startOfDay = calendar.getTime();
-
             calendar.set(Calendar.HOUR_OF_DAY, 23);
             calendar.set(Calendar.MINUTE, 59);
             Date endOfDay = calendar.getTime();
@@ -227,11 +198,10 @@ public class DailyNotificationWorker extends Worker {
                                 // Fetch the correct OneSignal player ID
                                 String oneSignalPlayerId = OneSignal.getDeviceState().getUserId();
 
-
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id", oneSignalID);  // Replace with your OneSignal app ID
+                                    json.put("app_id", appID);  // Using the stored app ID
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -263,7 +233,7 @@ public class DailyNotificationWorker extends Worker {
                                         public Map<String, String> getHeaders() throws AuthFailureError {
                                             Map<String, String> headers = new HashMap<>();
                                             headers.put("Content-Type", "application/json");
-                                            headers.put("Authorization", "Basic " + oneSignalKey);
+                                            headers.put("Authorization", "Basic " + signalKey);  // Using the stored signal key
                                             return headers;
                                         }
                                     };
@@ -326,7 +296,7 @@ public class DailyNotificationWorker extends Worker {
                                 if (oneSignalPlayerId != null) {
                                     // Create the notification content
                                     JSONObject json = new JSONObject();
-                                    json.put("app_id", oneSignalID);  // Replace with your OneSignal app ID
+                                    json.put("app_id", appID);  // Replace with your OneSignal app ID
 
                                     // Add title (headings) and content (contents)
                                     JSONObject headings = new JSONObject();
@@ -348,7 +318,7 @@ public class DailyNotificationWorker extends Worker {
                                         public Map<String, String> getHeaders() throws AuthFailureError {
                                             Map<String, String> headers = new HashMap<>();
                                             headers.put("Content-Type", "application/json");
-                                            headers.put("Authorization", "Basic " + oneSignalKey);
+                                            headers.put("Authorization", "Basic " + signalKey);
                                             return headers;
                                         }
                                     };
