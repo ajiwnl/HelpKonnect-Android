@@ -40,6 +40,20 @@
             app:layout_constraintStart_toStartOf="@+id/userName"
             app:layout_constraintTop_toBottomOf="@+id/userName" />
 
+        <Button
+            android:id="@+id/clearBtn"
+            android:layout_width="120dp"
+            android:layout_height="45dp"
+            android:textAllCaps="false"
+            android:text="Clear Chat"
+            android:layout_marginVertical="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/messageDisplayList"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.727"
+            app:layout_constraintStart_toEndOf="@+id/userProfession"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messageDisplayList"
             android:layout_width="match_parent"

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +33,8 @@ public class ChatbotFragment extends Fragment {
     private ArrayList<Message> messageList;
     private EditText messageInput;
     private Button sendButton;
+    private Button clearBtn;
+
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
@@ -52,6 +56,7 @@ public class ChatbotFragment extends Fragment {
 
         messageInput = rootView.findViewById(R.id.messageInput);
         sendButton = rootView.findViewById(R.id.sendButton);
+        clearBtn = rootView.findViewById(R.id.clearBtn);
 
         sendButton.setOnClickListener(v -> {
             String message = messageInput.getText().toString();
@@ -60,6 +65,8 @@ public class ChatbotFragment extends Fragment {
                 messageInput.setText("");
             }
         });
+
+        clearBtn.setOnClickListener(v -> clearChat());
 
         return rootView;
     }
@@ -105,6 +112,30 @@ public class ChatbotFragment extends Fragment {
                 });
 
         Volley.newRequestQueue(getContext()).add(jsonObjectRequest);
+    }
+
+    private void clearChat() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        String userId = currentUser != null ? currentUser.getUid() : "unknownUser";
+
+        db.collection("messages")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            db.collection("messages").document(document.getId()).delete()
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Message deleted"))
+                                    .addOnFailureListener(e -> Log.e(TAG, "Error deleting message: ", e));
+                        }
+                        messageList.clear();
+                        messageAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Chat cleared successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e(TAG, "Error fetching messages to delete: ", task.getException());
+                        Toast.makeText(getContext(), "Failed to clear chat", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void fetchMessages() {
