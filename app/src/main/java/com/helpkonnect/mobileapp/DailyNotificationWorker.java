@@ -55,45 +55,54 @@ public class DailyNotificationWorker extends Worker {
     @Override
     public Result doWork() {
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE);
-
         fetchOneSignalKeys();
-        // Check preferences before sending notifications
-        if (sharedPreferences.getBoolean("journal_notification", true)) {
-            sendJournalDailyNotification();
-        }
-        if (sharedPreferences.getBoolean("analysis_notification", true)) {
-            sendTrackerDailyNotification();
-        }
-        if (sharedPreferences.getBoolean("resources_notification", true)) {
-            sendActivityReminderNotification();
-        }
 
         return Result.success();
     }
 
     private void fetchOneSignalKeys() {
-
-        // Fetch the API keys using GET request
+        // Fetch the API keys using a GET request
         StringRequest stringRequest = new StringRequest(Request.Method.GET, ONE_KEY_URL,
                 response -> {
-                    Log.d(TAG, "API Key Response: " + response); // Log the response
+                    Log.d(TAG, "API Key Response: " + response);
                     try {
                         JSONObject jsonResponse = new JSONObject(response);
-
                         oneSignalID = jsonResponse.getString("onesignalID");
                         oneSignalKey = jsonResponse.getString("onesignalKey");
 
                         Log.d(TAG, "Fetched oneSignalID: " + oneSignalID);
                         Log.d(TAG, "Fetched oneSignalKey: " + oneSignalKey);
 
+                        sendNotificationsIfNeeded();
+
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON parsing error: " + e.getMessage());
                     }
                 },
                 error -> Log.e(TAG, "Error fetching API keys: " + error.toString()));
-        RequestQueue requestQueue = Volley.newRequestQueue(this.getApplicationContext());
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
+    }
+
+    private void sendNotificationsIfNeeded() {
+        // Ensure that the OneSignal keys are available before sending notifications
+        if (oneSignalID != null && oneSignalKey != null) {
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("NotificationPrefs", Context.MODE_PRIVATE);
+
+            // Check preferences and send notifications if needed
+            if (sharedPreferences.getBoolean("journal_notification", true)) {
+                sendJournalDailyNotification();
+            }
+            if (sharedPreferences.getBoolean("analysis_notification", true)) {
+                sendTrackerDailyNotification();
+            }
+            if (sharedPreferences.getBoolean("resources_notification", true)) {
+                sendActivityReminderNotification();
+            }
+        } else {
+            Log.e(TAG, "OneSignal keys are not available. Cannot send notifications.");
+        }
     }
 
     private void sendTrackerDailyNotification() {
