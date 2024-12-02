@@ -34,6 +34,7 @@ import java.util.Map;
 public class LocationFragment extends Fragment {
     private WebView webView;
     private FirebaseAuth mAuth;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1337; // Updated request code
 
     @Nullable
     @Override
@@ -73,7 +74,7 @@ public class LocationFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Request permission if not granted
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             // Load the remote URL for the Leaflet map hosted on Vercel
             webView.loadUrl("https://helpkonnect.vercel.app/location");
@@ -88,14 +89,17 @@ public class LocationFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {  // Check for the location permission request
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {  // Updated to match the new request code
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission granted, load the map
                 webView.loadUrl("https://helpkonnect.vercel.app/location");
                 Toast.makeText(requireContext(), "Location permission granted", Toast.LENGTH_SHORT).show();
+                Log.d("LocationPermission", "Location permission has been granted.");
             } else {
                 // Permission denied, show a message or take necessary action
                 Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
+                Log.d("LocationPermission", "Location permission was denied.");
+
             }
         }
     }
