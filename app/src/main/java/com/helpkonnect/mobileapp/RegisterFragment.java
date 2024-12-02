@@ -253,7 +253,7 @@ public class RegisterFragment extends Fragment {
     private void registerUserWithStreamChat(String userId, String username) {
         JSONObject userObject = new JSONObject();
         try {
-            userObject.put("id", userId);
+            userObject.put("userId", userId);
             userObject.put("username", username);
         } catch (JSONException e) {
             e.printStackTrace();
