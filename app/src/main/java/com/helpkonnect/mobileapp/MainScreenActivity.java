@@ -52,6 +52,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private int strokeColor = Color.BLACK;
     private int strokeWidth = 1;
+    private String username = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +74,8 @@ public class MainScreenActivity extends AppCompatActivity {
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            String userName = currentUser.getDisplayName();
             loadUserData(userId, menu);
-            fetchTokenAndConnectUser(userId, userName);
+            fetchTokenAndConnectUser(userId);
         } else {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
             Intent tosignin = new Intent(this, UserAccountManagementActivity.class);
@@ -183,7 +183,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
                 String role = documentSnapshot.getString("role");
-                String username = documentSnapshot.getString("username");
+                username = documentSnapshot.getString("username");
                 String imageUrl = documentSnapshot.getString("imageUrl");
                 String associated = documentSnapshot.getString("associated");
 
@@ -213,7 +213,7 @@ public class MainScreenActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchTokenAndConnectUser(String userId, String userName) {
+    private void fetchTokenAndConnectUser(String userId) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url = "https://helpkonnect.vercel.app/api/generateToken";
 
@@ -232,7 +232,7 @@ public class MainScreenActivity extends AppCompatActivity {
                 response -> {
                     try {
                         String token = response.getString("token");
-                        connectUserToStreamChat(userId, token, userName);
+                        connectUserToStreamChat(userId, token);
                     } catch (JSONException e) {
                         Log.e("MainScreenActivity", "Failed to parse token from response", e);
                     }
@@ -243,12 +243,10 @@ public class MainScreenActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void connectUserToStreamChat(String userId, String token, String userName) {
-        if (userName == null) {
-            userName = "Default Name";
-        }
+    private void connectUserToStreamChat(String userId, String token) {
+        Log.d("Username: " , "Current User is:" + username);
 
-        User user = UserKt.connectUser(userId, userName);
+        User user = UserKt.connectUser(userId, username);
 
         ChatClient chatClient = ChatClient.instance();
         chatClient.connectUser(user, token).enqueue(result -> {
