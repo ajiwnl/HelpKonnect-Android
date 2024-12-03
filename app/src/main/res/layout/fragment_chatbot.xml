@@ -16,7 +16,7 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_margin="10dp"
-            android:background="@drawable/edittextusericon"
+            android:background="@drawable/help_konnect_logo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
