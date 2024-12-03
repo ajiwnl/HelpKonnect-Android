@@ -429,7 +429,7 @@ public class TrackerFragment extends Fragment {
             // Show the loading indicator
             showLoader(true, null);
 
-            String url = "http://192.168.1.5:5000/predict";
+            String url = "http://192.168.1.8:5000/predict";
 
             JSONObject jsonBody = new JSONObject();
             try {
