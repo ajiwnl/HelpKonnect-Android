@@ -110,7 +110,6 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             facilityDescription.setText(description);
             facilityEmail.setText(email);
         }
-
         loadAssociatedProfessionals();
     }
 
