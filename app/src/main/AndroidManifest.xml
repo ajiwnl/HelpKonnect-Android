@@ -25,6 +25,9 @@
         android:theme="@style/Theme.HelpKonnectMobile"
         tools:targetApi="31">
         <activity
+            android:name=".BookFacilityActivity"
+            android:exported="false" />
+        <activity
             android:name=".BookingHistoryActivity"
             android:exported="false" />
 

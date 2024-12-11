@@ -126,26 +126,33 @@ public class BookingActivity extends AppCompatActivity {
 
                             bookingList.add(booking);
 
-                            // Fetch professional's name
-                            Task<DocumentSnapshot> credentialTask = db.collection("credentials")
-                                    .document(professionalId)
-                                    .get();
-                            credentialTasks.add(credentialTask);
+                            if (professionalId != null && !professionalId.isEmpty()) {
+                                Task<DocumentSnapshot> credentialTask = db.collection("credentials")
+                                        .document(professionalId)
+                                        .get();
+                                credentialTasks.add(credentialTask);
+                            } else {
+                                booking.setBookingDetails("No Professional Yet!");
+                            }
                         }
 
                         // Handle professional name fetch results
                         Tasks.whenAllComplete(credentialTasks)
                                 .addOnCompleteListener(credentialsTask -> {
-                                    for (int i = 0; i < credentialTasks.size(); i++) {
-                                        Task<DocumentSnapshot> credentialTask = credentialTasks.get(i);
-                                        if (credentialTask.isSuccessful() && credentialTask.getResult() != null) {
-                                            DocumentSnapshot credentialDoc = credentialTask.getResult();
-                                            String firstName = credentialDoc.getString("firstName");
-                                            String lastName = credentialDoc.getString("lastName");
-                                            BookingModel booking = bookingList.get(i);
+                                    int taskIndex = 0; // Keep track of credentialTasks index
+                                    for (int i = 0; i < bookingList.size(); i++) {
+                                        BookingModel booking = bookingList.get(i);
 
-                                            // Update booking details with professional's name
-                                            booking.setBookingDetails(firstName + " " + lastName);
+                                        // If professionalId was valid, update with fetched name
+                                        if (taskIndex < credentialTasks.size()) {
+                                            Task<DocumentSnapshot> credentialTask = credentialTasks.get(taskIndex);
+                                            if (credentialTask.isSuccessful() && credentialTask.getResult() != null) {
+                                                DocumentSnapshot credentialDoc = credentialTask.getResult();
+                                                String firstName = credentialDoc.getString("firstName");
+                                                String lastName = credentialDoc.getString("lastName");
+                                                booking.setBookingDetails(firstName + " " + lastName);
+                                            }
+                                            taskIndex++; // Increment taskIndex only if a task was processed
                                         }
                                     }
 
@@ -165,5 +172,4 @@ public class BookingActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

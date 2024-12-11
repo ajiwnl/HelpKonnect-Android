@@ -1,6 +1,7 @@
 package com.helpkonnect.mobileapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,15 +34,16 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
     private TextView listTitle;
     private ImageButton backButton, commentButton;
+    private ImageView applyBooking;
     private TextSwitcher listTitleSwitcher;
     private String[] ListTitles = {"Professionals", "Comments"};
-    private String currentFacility;
+    private String currentFacility, name, location, description, email, imageUrl;
     private int currentIndex = 0;
+    private float rating;
     private ProgressBar loadingIndicator;
     private TextView errorTextView;
     private RecyclerView recyclerView;
     private List<CommentModel> comments = new ArrayList<>();
-    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +57,13 @@ public class FacilityDetailsActivity extends AppCompatActivity {
         errorTextView = findViewById(R.id.ListNotAvailableError);
         recyclerView = findViewById(R.id.FacilityListView);
         commentButton = findViewById(R.id.CreateCommentButton);
+        applyBooking = findViewById(R.id.applyBooking);
 
         backButton.setOnClickListener(v -> finish());
 
         commentButton.setOnClickListener(v -> showCommentDialog());
+
+        applyBooking.setOnClickListener(v -> redirectBookFacility(this));
 
         listTitleSwitcher.setFactory(() -> {
             TextView textView = new TextView(this);
@@ -85,13 +90,13 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            String imageUrl = args.getString("imageUrl");
+            imageUrl = args.getString("imageUrl");
             name = args.getString("name");
-            String location = args.getString("location");
-            float rating = args.getFloat("rating");
+            location = args.getString("location");
+            rating = args.getFloat("rating");
             currentFacility = args.getString("userId");
-            String description = args.getString("description");
-            String email = args.getString("email");
+            description = args.getString("description");
+            email = args.getString("email");
 
             ImageView facilityImage = findViewById(R.id.facilityImage);
             TextView facilityName = findViewById(R.id.FacilityName);
@@ -111,6 +116,17 @@ public class FacilityDetailsActivity extends AppCompatActivity {
             facilityEmail.setText(email);
         }
         loadAssociatedProfessionals();
+    }
+
+    private void redirectBookFacility(Context context) {
+        Intent intent = new Intent(context, BookFacilityActivity.class);
+        intent.putExtra("imageUrl", imageUrl);
+        intent.putExtra("name", name);
+        intent.putExtra("description", description);
+        intent.putExtra("email", email);
+        intent.putExtra("location", location);
+        intent.putExtra("rating", rating);
+        startActivity(intent);
     }
 
     private void loadAssociatedProfessionals() {
@@ -190,17 +206,7 @@ public class FacilityDetailsActivity extends AppCompatActivity {
 
     private void setupProfessionalRecyclerView(List<ProfessionalAdapter.Professional> professionals) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        ProfessionalAdapter adapter = new ProfessionalAdapter(professionals, professional -> {
-            Intent intent = new Intent(FacilityDetailsActivity.this, ProfessionalDetailsActivity.class);
-            intent.putExtra("imageUrl", professional.getImage());
-            intent.putExtra("name", professional.getName());
-            intent.putExtra("facility", currentFacility);
-            intent.putExtra("facilityName", name);
-            intent.putExtra("userId", professional.getUserId());
-            intent.putExtra("rate", professional.getRate());
-            startActivity(intent);
-        });
+        ProfessionalAdapter adapter = new ProfessionalAdapter(professionals);
 
         recyclerView.setAdapter(adapter);
 

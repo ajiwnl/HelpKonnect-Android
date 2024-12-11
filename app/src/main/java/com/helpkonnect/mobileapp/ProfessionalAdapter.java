@@ -14,11 +14,6 @@ import java.util.List;
 public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapter.ProfessionalViewHolder> {
 
     private List<Professional> professionals;
-    private OnItemClickListener onItemClickListener;
-
-    public interface OnItemClickListener {
-        void onItemClick(Professional professional);
-    }
 
     public static class Professional {
         private String image; // Image URL
@@ -42,7 +37,7 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
         public String getProfession() { return profession; }
         public String getIntroduction() { return introduction; }
         public String getUserId() { return userId; }
-        public float getRate() {return rate;}
+        public float getRate() { return rate; }
     }
 
     public class ProfessionalViewHolder extends RecyclerView.ViewHolder {
@@ -57,20 +52,12 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
             therapistName = itemView.findViewById(R.id.therapistName);
             profession = itemView.findViewById(R.id.profession);
             introduction = itemView.findViewById(R.id.introduction);
-
-            // Set click listener for the entire item view
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && onItemClickListener != null) {
-                    onItemClickListener.onItemClick(professionals.get(position));
-                }
-            });
+            // No click listener is set here
         }
     }
 
-    public ProfessionalAdapter(List<Professional> professionals, OnItemClickListener listener) {
+    public ProfessionalAdapter(List<Professional> professionals) {
         this.professionals = professionals;
-        this.onItemClickListener = listener;
     }
 
     @NonNull

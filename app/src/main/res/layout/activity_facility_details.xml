@@ -212,11 +212,19 @@
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-
+        <ImageView
+            android:id="@+id/applyBooking"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:padding="12dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/floatingactionbutton_background"
+            android:elevation="8dp"
+            android:src="@drawable/book_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/todo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </LinearLayout>
