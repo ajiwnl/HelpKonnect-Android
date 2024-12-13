@@ -45,6 +45,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:text="Journal Title 1"
+            android:maxLines="1"
             android:ellipsize="end"
             android:textSize="16sp"
             android:textStyle="bold"

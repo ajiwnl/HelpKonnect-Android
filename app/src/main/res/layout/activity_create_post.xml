@@ -7,32 +7,50 @@
     android:layout_height="match_parent"
     tools:context=".CreatePostActivity">
 
-    <ImageView
-        android:id="@+id/postingBackButton"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_margin="20dp"
-        android:focusable="true"
-        android:clickable="true"
-        android:src="@drawable/backbuttonicon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/postingButton"
-        android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        android:padding="5dp"
-        android:layout_margin="20dp"
-        android:text="Post"
-        android:focusable="true"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:textStyle="bold"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/PrimaryLight"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/postingBackButton"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/backbuttonicon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/postingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:text="Post"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <EditText
         android:id="@+id/postingContentsEditText"
@@ -51,19 +69,18 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postingBackButton" />
+        app:layout_constraintTop_toBottomOf="@+id/topBarContainer" />
 
     <ImageView
         android:id="@+id/postingAddImage"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_margin="20dp"
         android:background="@drawable/edittextdesign"
         android:contentDescription="Add Image"
         android:elevation="10dp"
         android:src="@drawable/addjournalimageicon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

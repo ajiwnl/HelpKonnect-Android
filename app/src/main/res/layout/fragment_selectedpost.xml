@@ -150,8 +150,12 @@
             android:id="@+id/commentText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:padding="11dp"
             android:hint="@string/comment_here"
+            android:background="@drawable/edittextdesign"
             android:inputType="text"
+            android:elevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/commentButton"
             app:layout_constraintStart_toStartOf="parent" />

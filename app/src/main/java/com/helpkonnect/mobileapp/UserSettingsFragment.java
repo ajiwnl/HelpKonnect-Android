@@ -95,8 +95,9 @@ public class UserSettingsFragment extends Fragment {
             startActivity(toBookingCollection);
         });
 
-        rootView.findViewById(R.id.PreferencesMenu).setOnClickListener( v ->{
-            FragmentMethods.displayFragment(getActivity().getSupportFragmentManager(),R.id.FragmentContent,new PreferenceFragment()) ;
+        rootView.findViewById(R.id.PreferencesMenu).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PreferenceActivity.class);
+            startActivity(intent);
         });
 
         profileLayout.setOnClickListener(new View.OnClickListener() {

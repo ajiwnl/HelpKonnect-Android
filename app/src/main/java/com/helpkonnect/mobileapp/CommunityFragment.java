@@ -98,6 +98,12 @@ public class CommunityFragment extends Fragment {
 
         fetchEvents();
 
+        if(events.isEmpty()){
+            eventsRecyclerView.setVisibility(View.GONE);
+        }else{
+            eventsRecyclerView.setVisibility(View.VISIBLE);
+        }
+
         return rootView;
     }
 
