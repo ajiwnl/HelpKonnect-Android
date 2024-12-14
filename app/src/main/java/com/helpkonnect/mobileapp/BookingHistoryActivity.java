@@ -21,7 +21,7 @@ import java.util.List;
 public class BookingHistoryActivity extends AppCompatActivity {
 
     private RecyclerView bookingRecyclerView;
-    private BookingHistoryAdapter bookingAdapter;
+    private BookingAdapter bookingAdapter;
     private FirebaseFirestore db;
     private String professionalId;
     private TextView emptyTextView;
@@ -46,7 +46,7 @@ public class BookingHistoryActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         bookingRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        bookingAdapter = new BookingHistoryAdapter(new ArrayList<>());
+        bookingAdapter = new BookingAdapter(new ArrayList<>());
         bookingRecyclerView.setAdapter(bookingAdapter);
     }
 
@@ -56,9 +56,14 @@ public class BookingHistoryActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-                        List<BookingHistoryModel> bookings = new ArrayList<>();
+                        List<BookingModel> bookings = new ArrayList<>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            BookingHistoryModel booking = document.toObject(BookingHistoryModel.class);
+                            BookingModel booking = document.toObject(BookingModel.class);
+
+                            if (booking.getProfessionalId() == null || booking.getProfessionalId().isEmpty()) {
+                                booking.setBookingDetails("");
+                            }
+
                             bookings.add(booking);
                         }
 
@@ -76,4 +81,5 @@ public class BookingHistoryActivity extends AppCompatActivity {
                     }
                 });
     }
+
 }

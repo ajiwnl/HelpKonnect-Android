@@ -115,25 +115,29 @@ public class BookingActivity extends AppCompatActivity {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
                                 createdAt = dateFormat.format(date);
                             }
+
+                            // Initialize booking details
                             BookingModel booking = new BookingModel(
                                     document.getString("facilityName"),
                                     createdAt,
-                                    "",
                                     document.getString("bookingDate"),
                                     document.getString("sessionDuration"),
-                                    String.valueOf(document.getLong("amount"))
+                                    String.valueOf(document.getLong("amount")),
+                                    professionalId
                             );
 
-                            bookingList.add(booking);
-
-                            if (professionalId != null && !professionalId.isEmpty()) {
+                            // If professionalId is empty, set the default booking details
+                            if (professionalId == null || professionalId.isEmpty()) {
+                                booking.setBookingDetails("No Professional Yet!");
+                            } else {
+                                // If professionalId is valid, fetch credentials
                                 Task<DocumentSnapshot> credentialTask = db.collection("credentials")
                                         .document(professionalId)
                                         .get();
                                 credentialTasks.add(credentialTask);
-                            } else {
-                                booking.setBookingDetails("No Professional Yet!");
                             }
+
+                            bookingList.add(booking);
                         }
 
                         // Handle professional name fetch results
@@ -143,7 +147,7 @@ public class BookingActivity extends AppCompatActivity {
                                     for (int i = 0; i < bookingList.size(); i++) {
                                         BookingModel booking = bookingList.get(i);
 
-                                        // If professionalId was valid, update with fetched name
+                                        // Only update the booking if professionalId was valid
                                         if (taskIndex < credentialTasks.size()) {
                                             Task<DocumentSnapshot> credentialTask = credentialTasks.get(taskIndex);
                                             if (credentialTask.isSuccessful() && credentialTask.getResult() != null) {
