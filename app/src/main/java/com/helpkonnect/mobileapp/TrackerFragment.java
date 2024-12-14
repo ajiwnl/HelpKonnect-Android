@@ -196,8 +196,6 @@ public class TrackerFragment extends Fragment {
                     fetchAndAggregateEmotionDataText();
                 } else {
                     isExpanded = false;
-                    saveBtn.setVisibility(View.GONE);
-                    shareBtn.setVisibility(View.GONE);
                     barChartView.setVisibility(View.GONE); // Hide bar chart
                     WeeklySummary.setVisibility(View.GONE); // Hide WeeklySummary card
                 }

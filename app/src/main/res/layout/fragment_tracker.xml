@@ -110,7 +110,7 @@
 
          <androidx.cardview.widget.CardView
              android:id="@+id/WeeklySummary"
-             android:layout_width="0dp"
+             android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:visibility="visible"
              android:layout_margin="10dp"
@@ -175,6 +175,7 @@
                       android:background="@drawable/background_textoutput"
                       android:clickable="true"
                       android:elevation="10dp"
+                      android:visibility="visible"
                       android:focusable="true"
                       android:src="@drawable/ic_save_24" />
 
@@ -185,6 +186,7 @@
                       android:background="@drawable/background_textoutput"
                       android:clickable="true"
                       android:elevation="10dp"
+                      android:visibility="visible"
                       android:focusable="true"
                       android:src="@drawable/edittextsendicon" />
 

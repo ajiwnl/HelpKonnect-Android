@@ -2,7 +2,10 @@ package com.helpkonnect.mobileapp;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,12 +20,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,9 +51,12 @@ public class BookFacilityActivity extends AppCompatActivity {
     private EditText startTimeEditText, sessionDurationEditText, availableDateEditText;
     private ImageButton backButton;
     private Button requestBookButton;
-    private String description, userId, facility;
+    private String description, userId, facility, professionalId, userEmail, userUsername, subtotal;
+
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private static final String BASE_URL = "https://helpkonnect.vercel.app/api/createCheckout";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +120,7 @@ public class BookFacilityActivity extends AppCompatActivity {
                 }
 
                 saveBookingDetails(userId, sessionDurationEditText.getText().toString());
+                createCheckoutSession(1000); // Pass a professional rate here or something of a different strategy
 
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -158,6 +174,62 @@ public class BookFacilityActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e("Booking", "Error saving booking: ", e);
                 });
+    }
+
+    private void createCheckoutSession(float subtotal) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("title", facility);
+            requestBody.put("amount", subtotal);
+            requestBody.put("username", userUsername);
+            requestBody.put("email", userEmail);
+            requestBody.put("phone", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                BASE_URL,
+                requestBody,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String checkoutUrl = response.getJSONObject("data").getJSONObject("attributes").getString("checkout_url");
+                            Log.d("CheckoutSession", "Checkout URL: " + checkoutUrl);
+
+                            // Open the third-party URL in a web browser
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl));
+                            startActivity(intent);
+
+                            Toast.makeText(BookFacilityActivity.this, "Creating your facility booking! Redirecting...", Toast.LENGTH_SHORT).show();
+
+                            // Navigate back to the FacilitiesFragment after some delay
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Go back to FacilitiesFragment
+                                    onBackPressed();
+                                }
+                            }, 3000);  // Delay 3 seconds before navigating back
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("CheckoutSession", "Request failed: " + error.getMessage());
+                    }
+                }
+        );
+
+        queue.add(jsonObjectRequest);
     }
 
     private void showTimePickerDialog() {
