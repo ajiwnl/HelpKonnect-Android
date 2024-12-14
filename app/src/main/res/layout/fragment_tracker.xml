@@ -75,19 +75,38 @@
 
          </androidx.cardview.widget.CardView>
 
-         <Spinner
-             android:id="@+id/summarySpinner"
+         <androidx.cardview.widget.CardView
+             android:id="@+id/summaryContainer"
              android:layout_width="match_parent"
              android:layout_height="40dp"
-             android:layout_marginTop="10dp"
-             android:textAlignment="center"
-             android:elevation="8dp"
-             android:background="@drawable/buttondesign"
+             android:layout_margin="10dp"
+             app:cardCornerRadius="20dp"
              app:layout_constraintTop_toBottomOf="@+id/PieChartHolder"
              app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintEnd_toEndOf="parent"
-             android:clickable="true"
-             android:layout_gravity="center" />
+             app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/buttondesign">
+
+               <Spinner
+                   android:id="@+id/summarySpinner"
+                   android:layout_width="match_parent"
+                   android:layout_height="40dp"
+                   android:padding="5dp"
+                   android:textAlignment="center"
+                   android:elevation="8dp"
+                   android:clickable="true"
+                   android:layout_gravity="center" />
+
+            </LinearLayout>
+
+
+
+         </androidx.cardview.widget.CardView>
+
 
          <androidx.cardview.widget.CardView
              android:id="@+id/WeeklySummary"
@@ -100,7 +119,7 @@
              android:elevation="12dp"
              app:cardCornerRadius="12dp"
              app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintTop_toBottomOf="@id/summarySpinner"
+             app:layout_constraintTop_toBottomOf="@id/summaryContainer"
              app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
@@ -149,16 +168,25 @@
                    android:gravity="end">
 
                   <ImageButton
-                      android:id="@+id/MoreOptionsBtn"
-                      android:layout_width="56dp"
-                      android:layout_height="40dp"
+                      android:id="@+id/saveBtn"
+                      android:layout_width="66dp"
+                      android:layout_height="46dp"
+                      android:layout_marginEnd="18dp"
                       android:background="@drawable/background_textoutput"
                       android:clickable="true"
-                      android:elevation="6dp"
+                      android:elevation="10dp"
                       android:focusable="true"
-                      android:src="@drawable/ic_more_horiz_24"
-                      app:layout_constraintBottom_toBottomOf="parent"
-                      app:layout_constraintEnd_toEndOf="parent" />
+                      android:src="@drawable/ic_save_24" />
+
+                  <ImageButton
+                      android:id="@+id/shareBtn"
+                      android:layout_width="66dp"
+                      android:layout_height="46dp"
+                      android:background="@drawable/background_textoutput"
+                      android:clickable="true"
+                      android:elevation="10dp"
+                      android:focusable="true"
+                      android:src="@drawable/edittextsendicon" />
 
 
                </LinearLayout>
@@ -167,34 +195,6 @@
 
          </androidx.cardview.widget.CardView>
 
-         <ImageButton
-             android:id="@+id/saveBtn"
-             android:layout_width="56dp"
-             android:layout_height="56dp"
-             android:layout_marginEnd="18dp"
-             android:background="@drawable/background_textoutput"
-             android:clickable="true"
-             android:elevation="10dp"
-             android:focusable="true"
-             android:visibility="gone"
-             android:src="@drawable/ic_save_24"
-             app:layout_constraintEnd_toEndOf="parent"
-             app:layout_constraintTop_toBottomOf="@+id/WeeklySummary" />
-
-         <ImageButton
-             android:id="@+id/shareBtn"
-             android:layout_width="56dp"
-             android:layout_height="56dp"
-             android:layout_marginTop="10dp"
-             android:layout_marginEnd="18dp"
-             android:background="@drawable/background_textoutput"
-             android:clickable="true"
-             android:elevation="10dp"
-             android:focusable="true"
-             android:visibility="gone"
-             android:src="@drawable/edittextsendicon"
-             app:layout_constraintEnd_toEndOf="parent"
-             app:layout_constraintTop_toBottomOf="@+id/saveBtn" />
 
          <androidx.cardview.widget.CardView
              android:id="@+id/BarChartHolder"

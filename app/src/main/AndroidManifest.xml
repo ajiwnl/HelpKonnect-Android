@@ -42,6 +42,9 @@
         </provider>
 
         <activity
+            android:name=".PreferenceActivity"
+            android:exported="false" />
+        <activity
             android:name=".BookingActivity"
             android:exported="false" />
         <activity

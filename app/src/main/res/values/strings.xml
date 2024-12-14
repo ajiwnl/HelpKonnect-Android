@@ -35,9 +35,9 @@
     <string name="view_facility">View Facility</string>
 
     <string-array name="summary_options">
-        <item>None</item>
-        <item>Overall Summary</item>
+        <item>No Summary</item>
         <item>Weekly Summary</item>
+        <item>Overall Summary</item>
     </string-array>
 
 </resources>

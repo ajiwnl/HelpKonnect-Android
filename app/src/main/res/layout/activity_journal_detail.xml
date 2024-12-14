@@ -88,11 +88,10 @@
 
             <ImageView
                 android:id="@+id/detailJournalImage"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:maxHeight="300dp"
-                android:maxWidth="350dp"
                 android:scaleType="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

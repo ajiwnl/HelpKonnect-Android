@@ -86,9 +86,9 @@ import android.Manifest;
 
 public class TrackerFragment extends Fragment {
 
-    private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView, weeklyTitleTxtView;
+    private TextView dateDisplay, predictEmotionTxtView, totalEmotionTxtView, dateTxtView, specificEmotionsTxtView;
 
-    private ImageButton saveBtn, shareBtn, expandBtn;
+    private ImageButton saveBtn, shareBtn;
     private Boolean isExpanded = false;
 
     private List<Journal> journalList;
@@ -128,16 +128,10 @@ public class TrackerFragment extends Fragment {
         totalEmotionTxtView = rootView.findViewById(R.id.totalEmotionsTextView);
         specificEmotionsTxtView = rootView.findViewById(R.id.specEmotionTextView);
         dateTxtView =  rootView.findViewById(R.id.currentWeekTextView);
-        weeklyTitleTxtView = rootView.findViewById(R.id.weeklySummaryTitle);
 
         //Save and share button on tracker fragment
         saveBtn = rootView.findViewById(R.id.saveBtn);
         shareBtn = rootView.findViewById(R.id.shareBtn);
-        expandBtn = rootView.findViewById(R.id.MoreOptionsBtn);
-
-        expandBtn.setOnClickListener( v ->{
-            toggleButtons(rootView.getContext());
-        });
 
         saveBtn.setOnClickListener( v ->{
             if (hasStoragePermission()) {
@@ -221,28 +215,6 @@ public class TrackerFragment extends Fragment {
         /*setDailyNotification();*/
         return rootView;
     }
-
-    private void toggleButtons(Context context) {
-        Animation animShow = AnimationUtils.loadAnimation(context, R.anim.fab_slide_up);
-        Animation animHide = AnimationUtils.loadAnimation(context, R.anim.fab_slide_down);
-        Animation animShake = AnimationUtils.loadAnimation(context, R.anim.fab_shake_up);
-
-        expandBtn.startAnimation(animShake);
-
-        if (isExpanded) {
-            saveBtn.startAnimation(animHide);
-            shareBtn.startAnimation(animHide);
-            saveBtn.setVisibility(View.GONE);
-            shareBtn.setVisibility(View.GONE);
-        } else {
-            saveBtn.setVisibility(View.VISIBLE);
-            shareBtn.setVisibility(View.VISIBLE);
-            saveBtn.startAnimation(animShow);
-            shareBtn.startAnimation(animShow);
-        }
-        isExpanded = !isExpanded;
-    }
-
 
     private void fetchJournals() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
